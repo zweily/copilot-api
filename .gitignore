@@ -1,0 +1,6 @@
+# deps
+node_modules/
+
+# local env
+*.local
+.aider*

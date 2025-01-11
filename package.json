@@ -1,0 +1,23 @@
+{
+  "name": "copilot-api",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts"
+  },
+  "dependencies": {
+    "@echristian/env": "^0.0.6",
+    "effect": "^3.12.1",
+    "hono": "^4.6.16",
+    "ofetch": "^1.4.1",
+    "std-env": "^3.8.0"
+  },
+  "devDependencies": {
+    "@echristian/eslint-config": "^0.0.13",
+    "@types/bun": "latest",
+    "eslint": "^9.17.0"
+  },
+  "module": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
