@@ -1,7 +1,7 @@
-import { getEnv } from "@echristian/env";
+import { getEnv } from "@echristian/env"
 
-const GITHUB_AUTH_HEADER = getEnv('GITHUB_AUTH_HEADER')
+const GITHUB_AUTH_HEADER = getEnv("GITHUB_AUTH_HEADER")
 
 export const ENV = {
-  GITHUB_AUTH_HEADER
+  GITHUB_AUTH_HEADER,
 }

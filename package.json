@@ -1,13 +1,17 @@
 {
   "name": "copilot-api",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run ./src/main.ts",
+    "start": "bun run ./src/main.ts"
   },
   "dependencies": {
     "@echristian/env": "^0.0.6",
-    "effect": "^3.12.1",
+    "consola": "^3.3.3",
+    "defu": "^6.1.4",
+    "execa": "^9.5.2",
     "hono": "^4.6.16",
     "ofetch": "^1.4.1",
+    "pathe": "^2.0.1",
     "std-env": "^3.8.0"
   },
   "devDependencies": {
