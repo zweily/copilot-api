@@ -1,16 +1,21 @@
-import { chatCompletions } from "./services/copilot-vscode/chat-completions/service"
+import consola from "consola"
 
-const gen = chatCompletions({
-  messages: [
-    {
-      content:
-        "Hey how do write a factorial function in typescript in functional programming style",
-      role: "user",
-    },
-  ],
-  model: "gpt-4o-mini",
-})
+import { TOKENS } from "./lib/tokens"
+import { getCopilotToken } from "./services/copilot-vscode/get-token/copilot-token"
+import { getGitHubToken } from "./services/copilot-vscode/get-token/github-token"
 
-for await (const chunk of gen) {
-  console.log(chunk)
-}
+const githubToken = await getGitHubToken()
+TOKENS.GITHUB_TOKEN = githubToken
+
+const { token: copilotToken, refresh_in } = await getCopilotToken()
+TOKENS.COPILOT_TOKEN = copilotToken
+
+// refresh_in is in minutes
+// we're refreshing 100 minutes early
+const refreshInterval = (refresh_in - 100) * 60 * 1000
+
+setInterval(async () => {
+  consola.start("Refreshing copilot token")
+  const { token: copilotToken } = await getCopilotToken()
+  TOKENS.COPILOT_TOKEN = copilotToken
+}, refreshInterval)

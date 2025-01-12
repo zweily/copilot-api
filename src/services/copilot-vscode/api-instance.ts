@@ -1,18 +1,28 @@
 import { ofetch } from "ofetch"
 
-import { getToken } from "./get-token/service"
-
-const result = await getToken()
-
-export const COPILOT_VSCODE_BASE_URL =
-  "https://api.individual.githubcopilot.com"
-export const COPILOT_VSCODE_TOKEN = result.token
-export const COPILOT_VSCODE_HEADERS = {
-  authorization: `Bearer ${COPILOT_VSCODE_TOKEN}`,
-  "copilot-integration-id": "vscode-chat",
-}
+import { TOKENS } from "~/lib/tokens"
 
 export const copilotVSCode = ofetch.create({
-  baseURL: COPILOT_VSCODE_BASE_URL,
-  headers: COPILOT_VSCODE_HEADERS,
+  baseURL: "https://api.individual.githubcopilot.com",
+  headers: {
+    "copilot-integration-id": "vscode-chat",
+  },
+
+  onRequest({ options }) {
+    options.headers.set("authorization", `Bearer ${TOKENS.COPILOT_TOKEN}`)
+  },
+})
+
+export const github = ofetch.create({
+  baseURL: "https://api.github.com",
+  headers: {
+    // "editor-plugin-version": "copilot-chat/0.23.2",
+    // "editor-version": "vscode/1.96.2",
+    // "user-agent": "GitHubCopilotChat/0.23.2",
+    // "x-github-api-version": "2024-12-15",
+  },
+
+  onRequest({ options }) {
+    options.headers.set("authorization", `token ${TOKENS.GITHUB_TOKEN}`)
+  },
 })

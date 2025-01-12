@@ -1,4 +1,4 @@
-export interface GetTokenResponse {
+export interface GetCopilotTokenResponse {
   annotations_enabled: boolean
   chat_enabled: boolean
   chat_jetbrains_enabled: boolean

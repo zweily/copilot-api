@@ -1,26 +1,7 @@
-import consola from "consola"
 import { execa } from "execa"
 
-import { PATHS } from "~/lib/paths"
-
-import type { GetTokenResponse } from "./types"
-
-const TEN_MINUTES = 10 * 60 * 1000
-
 // @ts-expect-error TypeScript can't analyze timeout
-export async function getToken(): Promise<GetTokenResponse> {
-  try {
-    const cachedToken = await readCachedToken()
-
-    if (Date.now() - cachedToken.expires_at > ONE_DAY) {
-      return cachedToken
-    }
-  } catch (e) {
-    if (!(e instanceof Error)) throw e
-    if (e.message === "No such file or directory")
-      consola.info(`No cached token found in ${PATHS.PATH_TOKEN_CACHE}`)
-  }
-
+export async function getGitHubToken(): Promise<string> {
   // Kill any existing vscode processes
   // otherwise, no token call will be made
   await killVSCodeProcesses()
@@ -34,20 +15,24 @@ export async function getToken(): Promise<GetTokenResponse> {
 
   for await (const line of mitmdump.stdout) {
     if (typeof line !== "string") continue
-    if (!line.includes("tid=")) continue
+    if (!line.includes("authorization: token")) continue
 
-    consola.debug(`Found token output line: ${line}`)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const token = line
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .find((line) => line.includes("authorization: token"))!
+      .split("authorization: token ")
+      .at(1)!
+      .trim()
 
     clearTimeout(timeout)
 
     await killVSCodeProcesses()
     mitmdump.kill()
 
-    const parsed = JSON.parse(line) as GetTokenResponse
-    parsed.expires_at = Date.now() + t
-
-    await writeCachedToken(line)
-    return JSON.parse(line) as GetTokenResponse
+    return token
   }
 }
 
@@ -73,11 +58,3 @@ const createVSCodeProcess = () =>
   ])
 
 const killVSCodeProcesses = () => execa({ reject: false })("pkill", ["code"])
-
-const readCachedToken = async () => {
-  const content = await Bun.file(PATHS.PATH_TOKEN_CACHE).text()
-  return JSON.parse(content) as GetTokenResponse
-}
-
-const writeCachedToken = async (token: string) =>
-  Bun.write(PATHS.PATH_TOKEN_CACHE, token)
