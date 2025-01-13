@@ -9,7 +9,6 @@ A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usab
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
 - Bun (version 1.0.0 or higher)
 - GitHub account with Copilot access
 
