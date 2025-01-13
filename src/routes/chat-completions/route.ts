@@ -50,7 +50,8 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
         ],
         created: response.created,
         id: response.id,
-        model: response.model,
+        // Aider expects the model to be the same as the one used in the request
+        model: payload.model,
         usage: response.usage,
       },
     }),
@@ -83,7 +84,8 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
       ],
       created: response.created,
       id: response.id,
-      model: response.model,
+      // Aider expects the model to be the same as the one used in the request
+      model: payload.model,
       usage: {
         completion_tokens: 0,
         prompt_tokens: 0,
