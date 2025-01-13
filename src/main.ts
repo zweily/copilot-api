@@ -18,13 +18,8 @@ let githubToken: string
 
 const cachedGithubToken = await CACHE.get("github-token")
 
-const FOUR_HOURS = 4 * 60 * 60 * 1000
-
 // If exists and at most 4 hours old
-if (
-  cachedGithubToken &&
-  Date.now() - cachedGithubToken.createdAt < FOUR_HOURS
-) {
+if (cachedGithubToken) {
   githubToken = cachedGithubToken.value
 } else {
   githubToken = await getGitHubToken()
@@ -49,7 +44,7 @@ setInterval(async () => {
 const models = await getModels()
 
 consola.info(
-  `Available models: ${models.data.map((model) => model.id).join("\n")}`,
+  `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
 )
 
 export default server
