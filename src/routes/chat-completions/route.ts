@@ -1,5 +1,7 @@
+import consola from "consola"
 import { Hono } from "hono"
 import { streamSSE } from "hono/streaming"
+import { FetchError } from "ofetch"
 
 import type { ChatCompletionsPayload } from "~/services/copilot-vscode/chat-completions/types"
 import type { ChatCompletionsChunk } from "~/services/copilot-vscode/chat-completions/types.streaming"
@@ -13,7 +15,16 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
   payload.stream = false
 
-  const response = await chatCompletions(payload)
+  const response = await chatCompletions(payload).catch((error: unknown) => {
+    if (error instanceof FetchError) {
+      consola.error(
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+        `Request failed: ${JSON.stringify(payload)} \n ${error} \n ${error.response?._data}`,
+      )
+    }
+
+    throw error
+  })
 
   const segmenter = new Intl.Segmenter("en", { granularity: "word" })
 
