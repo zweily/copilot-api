@@ -54,11 +54,12 @@ interface Usage {
 interface ChatCompletionResponse {
   choices: [Choice]
   created: number
+  object: "chat.completion.chunk"
   id: string
   model: string
   system_fingerprint?: string
   prompt_filter_results?: Array<PromptFilterResult>
-  usage?: Usage
+  usage?: Usage | null
 }
 
 export interface ChatCompletionsChunk {

@@ -15,7 +15,7 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
   payload.stream = false
 
-  consola.info(`Received request: ${JSON.stringify(payload).slice(0, 100)}`)
+  consola.info(`Received request: ${JSON.stringify(payload).slice(0, 500)}`)
 
   const response = await chatCompletions(payload).catch((error: unknown) => {
     if (error instanceof FetchError) {
@@ -36,9 +36,10 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
     response.choices[0].message.content,
   )
 
-  let chunks: Array<ChatCompletionsChunk> = Array.from(segmentedMessages).map(
+  const chunks: Array<ChatCompletionsChunk> = Array.from(segmentedMessages).map(
     (segment) => ({
       data: {
+        object: "chat.completion.chunk",
         choices: [
           {
             delta: {
@@ -50,31 +51,16 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
         ],
         created: response.created,
         id: response.id,
-        // Aider expects the model to be the same as the one used in the request
         model: payload.model,
-        usage: response.usage,
+        usage: null,
+        system_fingerprint: "fp_44709d6fcb",
       },
     }),
   )
 
-  const usagePerChunk: ChatCompletionsChunk["data"]["usage"] = {
-    completion_tokens: Math.round(
-      response.usage.completion_tokens / chunks.length,
-    ),
-    prompt_tokens: Math.round(response.usage.prompt_tokens / chunks.length),
-    total_tokens: Math.round(response.usage.total_tokens / chunks.length),
-  }
-
-  chunks = chunks.map((chunk) => ({
-    ...chunk,
-    data: {
-      ...chunk.data,
-      usage: usagePerChunk,
-    },
-  }))
-
   chunks.push({
     data: {
+      object: "chat.completion.chunk",
       choices: [
         {
           delta: {},
@@ -84,17 +70,13 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
       ],
       created: response.created,
       id: response.id,
-      // Aider expects the model to be the same as the one used in the request
       model: payload.model,
-      usage: {
-        completion_tokens: 0,
-        prompt_tokens: 0,
-        total_tokens: 0,
-      },
+      usage: response.usage,
+      system_fingerprint: "fp_44709d6fcb",
     },
   })
 
-  console.info(
+  consola.info(
     `Streaming response, first chunk: ${JSON.stringify(chunks.at(0))}`,
   )
 
