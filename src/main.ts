@@ -5,9 +5,9 @@ import { CACHE } from "./lib/cache"
 import { PATHS } from "./lib/paths"
 import { TOKENS } from "./lib/tokens"
 import { server } from "./server"
-import { getModels } from "./services/copilot-vscode/get-models/service"
-import { getCopilotToken } from "./services/copilot-vscode/get-token/copilot-token"
-import { getGitHubToken } from "./services/copilot-vscode/get-token/github-token"
+import { getModels } from "./services/copilot/get-models/service"
+import { getCopilotToken } from "./services/copilot/get-token/copilot-token"
+import { getGitHubToken } from "./services/copilot/get-token/github-token"
 
 if (!fs.existsSync(PATHS.PATH_CACHE_FILE)) {
   fs.mkdirSync(PATHS.DIR_CACHE, { recursive: true })

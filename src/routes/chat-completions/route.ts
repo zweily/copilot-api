@@ -3,10 +3,10 @@ import { Hono } from "hono"
 import { streamSSE } from "hono/streaming"
 import { FetchError } from "ofetch"
 
-import type { ChatCompletionsPayload } from "~/services/copilot-vscode/chat-completions/types"
-import type { ChatCompletionsChunk } from "~/services/copilot-vscode/chat-completions/types.streaming"
+import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
+import type { ChatCompletionsChunk } from "~/services/copilot/chat-completions/types.streaming"
 
-import { chatCompletions } from "~/services/copilot-vscode/chat-completions/service"
+import { chatCompletions } from "~/services/copilot/chat-completions/service"
 
 export const chatCompletionsRoutes = new Hono()
 
