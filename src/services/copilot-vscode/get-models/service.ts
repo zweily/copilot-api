@@ -1,8 +1,8 @@
 import type { GetModelsResponse } from "./types"
 
-import { copilotVSCode } from "../api-instance"
+import { copilot } from "../../api-instance"
 
 export const getModels = () =>
-  copilotVSCode<GetModelsResponse>("/models", {
+  copilot<GetModelsResponse>("/models", {
     method: "GET",
   })
