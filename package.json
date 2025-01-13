@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun run --hot ./src/main.ts",
     "lint": "eslint . --cache",
-    "start": "bun run ./src/main.ts"
+    "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "dependencies": {
     "@echristian/env": "^0.0.6",
