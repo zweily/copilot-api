@@ -15,6 +15,8 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
   payload.stream = false
 
+  consola.info(`Received request: ${JSON.stringify(payload)}`)
+
   const response = await chatCompletions(payload).catch((error: unknown) => {
     if (error instanceof FetchError) {
       consola.error(
@@ -25,6 +27,8 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
     throw error
   })
+
+  consola.info(`Response from Copilot: ${JSON.stringify(response)}`)
 
   const segmenter = new Intl.Segmenter("en", { granularity: "word" })
 
