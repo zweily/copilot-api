@@ -15,7 +15,7 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
   payload.stream = false
 
-  consola.info(`Received request: ${JSON.stringify(payload)}`)
+  consola.info(`Received request: ${JSON.stringify(payload).slice(0, 100)}`)
 
   const response = await chatCompletions(payload).catch((error: unknown) => {
     if (error instanceof FetchError) {
@@ -91,6 +91,10 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
       },
     },
   })
+
+  console.info(
+    `Streaming response, first chunk: ${JSON.stringify(chunks.at(0))}`,
+  )
 
   return streamSSE(c, async (stream) => {
     for (const chunk of chunks) {
