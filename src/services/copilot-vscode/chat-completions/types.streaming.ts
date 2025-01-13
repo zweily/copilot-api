@@ -52,7 +52,7 @@ interface Usage {
 }
 
 interface ChatCompletionResponse {
-  choices: Array<Choice>
+  choices: [Choice]
   created: number
   id: string
   model: string

@@ -1,7 +1,7 @@
 {
   "name": "copilot-api",
   "scripts": {
-    "dev": "bun run ./src/main.ts",
+    "dev": "bun run --hot ./src/main.ts",
     "start": "bun run ./src/main.ts"
   },
   "dependencies": {

@@ -1,11 +1,36 @@
 import consola from "consola"
+import fs from "node:fs"
 
+import { CACHE } from "./lib/cache"
+import { PATHS } from "./lib/paths"
 import { TOKENS } from "./lib/tokens"
-import { chatCompletions } from "./services/copilot-vscode/chat-completions/service"
+import { server } from "./server"
+import { getModels } from "./services/copilot-vscode/get-models/service"
 import { getCopilotToken } from "./services/copilot-vscode/get-token/copilot-token"
 import { getGitHubToken } from "./services/copilot-vscode/get-token/github-token"
 
-const githubToken = await getGitHubToken()
+if (!fs.existsSync(PATHS.PATH_CACHE_FILE)) {
+  fs.mkdirSync(PATHS.DIR_CACHE, { recursive: true })
+  await CACHE._write({})
+}
+
+let githubToken: string
+
+const cachedGithubToken = await CACHE.get("github-token")
+
+const FOUR_HOURS = 4 * 60 * 60 * 1000
+
+// If exists and at most 4 hours old
+if (
+  cachedGithubToken &&
+  Date.now() - cachedGithubToken.createdAt < FOUR_HOURS
+) {
+  githubToken = cachedGithubToken.value
+} else {
+  githubToken = await getGitHubToken()
+  await CACHE.set("github-token", githubToken)
+}
+
 TOKENS.GITHUB_TOKEN = githubToken
 
 const { token: copilotToken, refresh_in } = await getCopilotToken()
@@ -21,17 +46,10 @@ setInterval(async () => {
   TOKENS.COPILOT_TOKEN = copilotToken
 }, refreshInterval)
 
-const response = await chatCompletions({
-  messages: [
-    {
-      role: "user",
-      content: "Write a function that returns the sum of two numbers",
-    },
-  ],
-  model: "gpt-4o-mini",
-  stream: false,
-})
+const models = await getModels()
 
-console.log(response)
+consola.info(
+  `Available models: ${models.data.map((model) => model.id).join("\n")}`,
+)
 
-await Bun.write("response.json", JSON.stringify(response, null, 2))
+export default server

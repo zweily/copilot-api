@@ -1,3 +1,4 @@
+import consola from "consola"
 import { ofetch } from "ofetch"
 
 import { TOKENS } from "~/lib/tokens"
@@ -10,6 +11,12 @@ export const copilotVSCode = ofetch.create({
 
   onRequest({ options }) {
     options.headers.set("authorization", `Bearer ${TOKENS.COPILOT_TOKEN}`)
+  },
+  onRequestError({ error }) {
+    consola.error("request error", error)
+  },
+  onResponseError({ error, response }) {
+    consola.error("response error", error, response)
   },
 })
 
