@@ -1,7 +1,10 @@
 {
   "name": "copilot-api",
+  "type": "module",
+  "module": "index.ts",
   "scripts": {
     "dev": "bun run --hot ./src/main.ts",
+    "lint": "eslint . --cache",
     "start": "bun run ./src/main.ts"
   },
   "dependencies": {
@@ -19,8 +22,6 @@
     "@types/bun": "latest",
     "eslint": "^9.18.0"
   },
-  "module": "index.ts",
-  "type": "module",
   "peerDependencies": {
     "typescript": "^5.0.0"
   }
