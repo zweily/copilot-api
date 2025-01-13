@@ -1,73 +1,48 @@
-# Project Name
+# Copilot API Integration
+
+⚠️ **EDUCATIONAL PURPOSE ONLY** ⚠️
+This project is a reverse-engineered implementation of the GitHub Copilot API created for educational purposes only. It is not officially supported by GitHub and should not be used in production environments.
 
 ## Project Overview
-A brief description of the project and its purpose.
+
+A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.
 
 ## Prerequisites
-- Node.js (version X.X.X or higher)
-- Bun (version X.X.X or higher)
+
+- Node.js (version 18 or higher)
+- Bun (version 1.0.0 or higher)
+- GitHub account with Copilot access
 
 ## Installation
+
 To install dependencies, run:
+
 ```sh
 bun install
 ```
 
 ## Running the Project
-To run the project, execute:
+
+To run the project:
+
 ```sh
 bun run dev
 ```
-Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Directory Structure
-```
-/home/erick/Documents/sides/copilot-api
-├── .gitignore
-├── bun.lockb
-├── eslint.config.js
-├── package.json
-├── payload.json
-├── README.md
-├── response.json
-├── tsconfig.json
-├── src/
-│   ├── main.ts
-│   ├── server.ts
-│   ├── lib/
-│   │   ├── cache.ts
-│   │   ├── env.ts
-│   │   ├── paths.ts
-│   │   └── tokens.ts
-│   ├── routes/
-│   │   └── chat-completions/
-│   │       └── route.ts
-│   ├── services/
-│   │   ├── copilot-vscode/
-│   │   │   ├── api-instance.ts
-│   │   │   ├── chat-completions/
-│   │   │   │   ├── service.ts
-│   │   │   │   ├── types.streaming.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── get-models/
-│   │   │   │   ├── service.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── get-token/
-│   │   │   │   ├── copilot-token.ts
-│   │   │   │   ├── github-token.ts
-│   │   │   │   └── types.ts
-│   │   ├── copilot-web/
-│   │   │   ├── api-instance.ts
-│   │   │   ├── create-message/
-│   │   │   │   ├── service.ts
-│   │   │   │   └── types.ts
-│   │   │   ├── create-thread/
-│   │   │   │   ├── service.ts
-│   │   │   │   └── types.ts
-```
+The server will start and listen for API requests.
+
+## Tested Tools Compatibility
+
+The following AI tools have been tested with this API:
+
+### Cline
+- Works with GPT-4o
+- Not compatible with Claude 3.5 Sonnet (prompts too long)
+
+### Aider
+- Works with GPT-4o
+- Works with Claude 3.5 Sonnet
 
 ## Contributing
-Guidelines for contributing to the project.
 
-## License
-Information about the project's license.
+Contributions are welcome! Please feel free to submit a Pull Request.
