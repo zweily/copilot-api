@@ -13,39 +13,78 @@ chatCompletionsRoutes.post("/chat/completions", async (c) => {
 
   payload.stream = false
 
-  await Bun.write("payload.json", JSON.stringify(payload))
-
   const response = await chatCompletions(payload)
-  await Bun.write("response.json", JSON.stringify(response))
 
-  const chunks: Array<ChatCompletionsChunk> = [
-    {
+  const segmenter = new Intl.Segmenter("en", { granularity: "word" })
+
+  const segmentedMessages = segmenter.segment(
+    response.choices[0].message.content,
+  )
+
+  let chunks: Array<ChatCompletionsChunk> = Array.from(segmentedMessages).map(
+    (segment) => ({
       data: {
         choices: [
           {
             delta: {
-              content: response.choices[0].message.content,
+              content: segment.segment,
               role: response.choices[0].message.role,
             },
-            finish_reason: response.choices[0].finish_reason,
             index: 0,
           },
         ],
         created: response.created,
         id: response.id,
         model: response.model,
+        usage: response.usage,
+      },
+    }),
+  )
+
+  const usagePerChunk: ChatCompletionsChunk["data"]["usage"] = {
+    completion_tokens: Math.round(
+      response.usage.completion_tokens / chunks.length,
+    ),
+    prompt_tokens: Math.round(response.usage.prompt_tokens / chunks.length),
+    total_tokens: Math.round(response.usage.total_tokens / chunks.length),
+  }
+
+  chunks = chunks.map((chunk) => ({
+    ...chunk,
+    data: {
+      ...chunk.data,
+      usage: usagePerChunk,
+    },
+  }))
+
+  chunks.push({
+    data: {
+      choices: [
+        {
+          delta: {},
+          finish_reason: response.choices[0].finish_reason,
+          index: 0,
+        },
+      ],
+      created: response.created,
+      id: response.id,
+      model: response.model,
+      usage: {
+        completion_tokens: 0,
+        prompt_tokens: 0,
+        total_tokens: 0,
       },
     },
-    {
-      data: "[DONE]",
-    },
-  ]
+  })
 
   return streamSSE(c, async (stream) => {
     for (const chunk of chunks) {
       await stream.writeSSE({
         data: JSON.stringify(chunk.data),
       })
+
+      // Fake latency lol
+      await stream.sleep(1)
     }
   })
 })

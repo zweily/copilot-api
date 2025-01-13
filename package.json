@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "bun run --hot ./src/main.ts",
     "start": "bun run ./src/main.ts"
-  },
+  },  
   "dependencies": {
     "@echristian/env": "^0.0.6",
     "consola": "^3.3.3",

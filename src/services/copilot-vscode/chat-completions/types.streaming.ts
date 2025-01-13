@@ -28,7 +28,7 @@ interface ContentFilterOffsets {
 }
 
 interface Delta {
-  content: string | null
+  content?: string
   role?: string
 }
 
@@ -61,6 +61,6 @@ interface ChatCompletionResponse {
   usage?: Usage
 }
 
-export type ChatCompletionsChunk =
-  | { data: ChatCompletionResponse }
-  | { data: "[DONE]" }
+export interface ChatCompletionsChunk {
+  data: ChatCompletionResponse
+}
