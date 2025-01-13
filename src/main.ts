@@ -18,8 +18,13 @@ let githubToken: string
 
 const cachedGithubToken = await CACHE.get("github-token")
 
-// If exists and at most 4 hours old
-if (cachedGithubToken) {
+const EIGHT_HOURS = 8 * 60 * 60 * 1000
+
+// If exists and at most 8 hours old
+if (
+  cachedGithubToken &&
+  Date.now() - cachedGithubToken.createdAt < EIGHT_HOURS
+) {
   githubToken = cachedGithubToken.value
 } else {
   githubToken = await getGitHubToken()
