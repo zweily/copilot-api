@@ -10,7 +10,7 @@ const args = {
   stream: {
     alias: "s",
     type: "boolean",
-    default: false,
+    default: true,
     description: "Enable streaming response for chat completions",
   },
   port: {
