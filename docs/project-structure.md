@@ -25,9 +25,10 @@ This document outlines the structure and organization of the Copilot API project
 │   ├── api-instance.ts  # API client configurations
 │   └── copilot/
 │       ├── chat-completions/
-│       │   ├── service.ts        # Chat completion service
-│       │   ├── types.ts          # Chat completion types
-│       │   └── types.streaming.ts # Streaming response types
+│       │   ├── service.ts           # Chat completion service
+│       │   ├── service-streaming.ts # Streaming chat completion service
+│       │   ├── types.ts            # Chat completion types
+│       │   └── types-streaming.ts  # Streaming response types
 │       └── get-models/
 │           ├── service.ts        # Model retrieval service
 │           └── types.ts          # Model-related types
