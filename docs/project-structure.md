@@ -18,6 +18,9 @@ This document outlines the structure and organization of the Copilot API project
 │   │   └── utils.ts     # Utility functions for chat completions
 │   └── models/
 │       └── route.ts     # Model list endpoint handlers
+├── scripts/
+│   ├── build.ts         # Production build script
+│   └── build-debug.ts   # Debug build with sourcemaps
 ├── services/
 │   ├── api-instance.ts  # API client configurations
 │   └── copilot/
@@ -28,7 +31,8 @@ This document outlines the structure and organization of the Copilot API project
 │       └── get-models/
 │           ├── service.ts        # Model retrieval service
 │           └── types.ts          # Model-related types
-├── main.ts              # Application entry point
+├── dist/                # Build output directory
+├── main.ts             # Application entry point
 └── server.ts           # Server configuration and routing
 ```
 

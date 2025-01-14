@@ -8,9 +8,13 @@
 - [x] Compatible with common coding tools and IDE plugins
 
 ## Phase 2: Distribution
-- [ ] Package as standalone binary
-  - [ ] Cross-platform support (Windows, macOS, Linux)
-  - [ ] Self-contained runtime
+- [x] Package as standalone binary
+  - [x] Production build with minification
+  - [x] Debug build with sourcemaps
+- [ ] Cross-platform support
+  - [ ] Windows compatibility
+  - [ ] macOS compatibility
+  - [x] Linux compatibility
 
 ## Phase 3: Vision and Streaming
 - [ ] Add support for image/vision capabilities
@@ -21,4 +25,18 @@
   - [ ] Server-sent events (SSE) support
   - [ ] Streaming chat completions
   - [ ] Proper error handling for streams
+
+## Build Instructions
+
+### Production Build
+```bash
+bun run scripts/build.ts
+```
+Creates minified executable at `dist/copilot-api`
+
+### Debug Build
+```bash
+bun run scripts/build-debug.ts
+```
+Creates executable with sourcemaps at `dist/copilot-api-debug`
 
