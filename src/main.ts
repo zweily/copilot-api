@@ -32,9 +32,9 @@ async function initializeCopilotToken() {
   const { token, refresh_in } = await getCopilotToken()
   TOKENS.COPILOT_TOKEN = token
 
-  // refresh_in is in minutes
-  // we're refreshing 100 minutes early
-  const refreshInterval = (refresh_in - 100) * 60 * 1000
+  // refresh_in is in seconds
+  // we're refreshing 10 minutes (600 seconds) early
+  const refreshInterval = (refresh_in - 600) * 1000
 
   setInterval(async () => {
     consola.start("Refreshing copilot token")
