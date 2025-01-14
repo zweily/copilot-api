@@ -1,5 +1,5 @@
 import type { ChatCompletionResponse } from "~/services/copilot/chat-completions/types"
-import type { ChatCompletionsChunk } from "~/services/copilot/chat-completions/types.streaming"
+import type { ChatCompletionsChunk } from "~/services/copilot/chat-completions/types-streaming"
 
 export function createContentChunk(
   segment: string,
