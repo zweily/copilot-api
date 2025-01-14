@@ -12,7 +12,13 @@ This application acts as a proxy between users and GitHub Copilot's internal API
 
 ## Core Components
 
-1. **Configuration Layer**
+1. **Command Line Interface**
+   - Configurable startup options via CLI flags
+   - Support for streaming mode toggle
+   - Custom port configuration
+   - Built-in help system
+
+2. **Configuration Layer**
    - Centralized API endpoint configurations
    - Environment and OAuth settings
    - File system paths management 

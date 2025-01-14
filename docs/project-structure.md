@@ -50,6 +50,7 @@ This document outlines the structure and organization of the Copilot API project
 
 - **cache.ts**: Implements file-based caching system
 - **initialization.ts**: Handles application startup, token initialization, and model discovery
+- **cli.ts**: Command-line interface and argument parsing
 
 ### API Routes
 
