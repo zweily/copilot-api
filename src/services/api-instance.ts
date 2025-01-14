@@ -1,13 +1,12 @@
 import consola from "consola"
 import { FetchError, ofetch } from "ofetch"
 
+import { COPILOT_CONFIG, GITHUB_CONFIG, GITHUB_WEB_CONFIG } from "~/config/api"
 import { TOKENS } from "~/config/tokens"
 
 export const copilot = ofetch.create({
-  baseURL: "https://api.individual.githubcopilot.com",
-  headers: {
-    "copilot-integration-id": "vscode-chat",
-  },
+  baseURL: COPILOT_CONFIG.baseURL,
+  headers: COPILOT_CONFIG.headers,
 
   onRequest({ options }) {
     options.headers.set("authorization", `Bearer ${TOKENS.COPILOT_TOKEN}`)
@@ -33,7 +32,7 @@ export const copilot = ofetch.create({
 })
 
 export const github = ofetch.create({
-  baseURL: "https://api.github.com",
+  baseURL: GITHUB_CONFIG.baseURL,
 
   onRequest({ options }) {
     options.headers.set("authorization", `token ${TOKENS.GITHUB_TOKEN}`)
@@ -42,5 +41,5 @@ export const github = ofetch.create({
 
 // Only used for device flow auth
 export const _github = ofetch.create({
-  baseURL: "https://github.com",
+  baseURL: GITHUB_WEB_CONFIG.baseURL,
 })
