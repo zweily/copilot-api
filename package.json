@@ -3,8 +3,8 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build": "bun build ./src/main.ts --outfile ./dist/app-manager --compile --minify",
-    "build:debug": "bun build ./src/main.ts --outfile ./dist/debug_app-manager --compile --sourcemap",
+    "build": "bun run ./scripts/build.ts",
+    "build:debug": "bun run ./scripts/build-debug.ts",
     "dev": "bun run --hot ./src/main.ts",
     "knip": "knip-bun",
     "lint": "eslint . --cache",
@@ -14,6 +14,7 @@
     "citty": "^0.1.6",
     "consola": "^3.4.0",
     "hono": "^4.6.16",
+    "nano-spawn": "^0.2.0",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.1"
   },
