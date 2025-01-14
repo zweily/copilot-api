@@ -41,6 +41,7 @@ The following AI tools have been tested with this API:
 ### Aider
 - Works with GPT-4o
 - Works with Claude 3.5 Sonnet
+- Aider can't use weak models [#2867](https://github.com/Aider-AI/aider/issues/2867)
 
 ## Contributing
 
