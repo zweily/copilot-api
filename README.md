@@ -10,7 +10,7 @@ A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usab
 ## Prerequisites
 
 - Bun (version 1.0.0 or higher)
-- GitHub account with Copilot access
+- GitHub account with Copilot Individual subscription
 
 ## Installation
 
@@ -42,17 +42,17 @@ In both cases, the server will start and listen for API requests.
 
 The following AI tools have been tested with this API:
 
-### Cline
+### [Cline](https://github.com/cline/cline)
 - Works with GPT-4o
 - Not compatible with Claude 3.5 Sonnet (prompts too long)
 
-### Aider
+### [Aider](https://github.com/Aider-AI/aider)
 - Works with GPT-4o
 - Works with Claude 3.5 Sonnet
 - Aider can't use weak models [#2867](https://github.com/Aider-AI/aider/issues/2867)
 - Using o1 as the main model will also result in the same error [#2867](https://github.com/Aider-AI/aider/issues/2867)
 
-### bolt.diy
+### [bolt.diy](https://github.com/stackblitz-labs/bolt.diy)
 - Does not work - models fail to load
 
 ## Contributing
