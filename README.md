@@ -53,7 +53,9 @@ The following AI tools have been tested with this API:
 - Using o1 as the main model will also result in the same error [#2867](https://github.com/Aider-AI/aider/issues/2867)
 
 ### [bolt.diy](https://github.com/stackblitz-labs/bolt.diy)
-- Does not work - models fail to load
+- Works with some caveats:
+  - Sometimes models fail to load - you can set any random API key in the UI to refresh the models list
+  - May encounter "The operation is insecure." issue [#362](https://github.com/stackblitz-labs/bolt.diy/issues/362)
 
 ## Contributing
 
