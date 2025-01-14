@@ -52,6 +52,9 @@ The following AI tools have been tested with this API:
 - Aider can't use weak models [#2867](https://github.com/Aider-AI/aider/issues/2867)
 - Using o1 as the main model will also result in the same error [#2867](https://github.com/Aider-AI/aider/issues/2867)
 
+### bolt.diy
+- Does not work - models fail to load
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
