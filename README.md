@@ -22,7 +22,7 @@ bun install
 
 ## Running the Project
 
-There are two ways to run the project:
+The project can be run in several ways:
 
 ### Development Mode
 ```sh
@@ -36,7 +36,23 @@ bun run start
 ```
 Runs the server in production mode with optimizations enabled and hot reloading disabled. Use this for deployment or production environments.
 
-In both cases, the server will start and listen for API requests.
+### Command Line Options
+
+The server accepts several command line options:
+
+| Option      | Description                                     | Default |
+|-------------|-------------------------------------------------|---------|
+| --help, -h  | Show help message                               | false   |
+| --stream    | Enable streaming response (default)              | true    |
+| --no-stream | Disable streaming response                       |         |
+| --port, -p  | Port to listen on                               | 4141    |
+
+Example with options:
+```sh
+bun run start --port 8080 --no-stream
+```
+
+In all cases, the server will start and listen for API requests on the specified port.
 
 ## Tested Tools Compatibility
 
