@@ -1,4 +1,4 @@
-import { PATHS } from "./paths"
+import { PATHS } from "../config/paths"
 
 interface CacheEntry {
   value: string

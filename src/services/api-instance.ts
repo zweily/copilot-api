@@ -1,7 +1,7 @@
 import consola from "consola"
 import { FetchError, ofetch } from "ofetch"
 
-import { TOKENS } from "~/lib/tokens"
+import { TOKENS } from "~/config/tokens"
 
 export const copilot = ofetch.create({
   baseURL: "https://api.individual.githubcopilot.com",
