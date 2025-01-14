@@ -3,14 +3,16 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
+    "build": "bun build ./src/main.ts --outfile ./dist/app-manager --compile --minify",
+    "build:debug": "bun build ./src/main.ts --outfile ./dist/debug_app-manager --compile --sourcemap",
     "dev": "bun run --hot ./src/main.ts",
+    "knip": "knip-bun",
     "lint": "eslint . --cache",
-    "start": "NODE_ENV=production bun run ./src/main.ts",
-    "knip": "knip-bun"
+    "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "dependencies": {
     "citty": "^0.1.6",
-    "consola": "^3.3.3",
+    "consola": "^3.4.0",
     "hono": "^4.6.16",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.1"
