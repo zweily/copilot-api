@@ -11,4 +11,5 @@ const GITHUB_OAUTH_SCOPES = [
 export const ENV = {
   GITHUB_CLIENT_ID,
   GITHUB_OAUTH_SCOPES,
+  ENABLE_STREAMING: false,
 }
