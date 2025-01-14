@@ -40,9 +40,10 @@ This document outlines the structure and organization of the Copilot API project
 
 ### Configuration Layer
 
-- **env.ts**: Manages environment variables and constants
-- **paths.ts**: Defines filesystem paths for cache and other resources
-- **tokens.ts**: Handles GitHub and Copilot authentication tokens
+- **api.ts**: API endpoint configurations and common headers
+- **env.ts**: Environment variables and OAuth configurations
+- **paths.ts**: Filesystem paths for cache and resources
+- **tokens.ts**: GitHub and Copilot authentication token management
 
 ### Core Library
 

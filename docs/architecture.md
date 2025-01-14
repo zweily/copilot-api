@@ -12,8 +12,13 @@ This application acts as a proxy between users and GitHub Copilot's internal API
 
 ## Core Components
 
-1. **API Proxy Layer**
+1. **Configuration Layer**
+   - Centralized API endpoint configurations
+   - Environment and OAuth settings
+   - File system paths management 
+   - Token handling for authentication
 
+2. **API Proxy Layer**
    - Translates requests between OpenAI-compatible format and Copilot's internal API format
    - Handles authentication and token management
    - Manages API rate limits and error handling
