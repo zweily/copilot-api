@@ -42,7 +42,12 @@ The following AI tools have been tested with this API:
 - Works with GPT-4o
 - Works with Claude 3.5 Sonnet
 - Aider can't use weak models [#2867](https://github.com/Aider-AI/aider/issues/2867)
+- Using o1 as the main model will also result in the same error [#2867](https://github.com/Aider-AI/aider/issues/2867)
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
