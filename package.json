@@ -5,22 +5,21 @@
   "scripts": {
     "dev": "bun run --hot ./src/main.ts",
     "lint": "eslint . --cache",
-    "start": "NODE_ENV=production bun run ./src/main.ts"
+    "start": "NODE_ENV=production bun run ./src/main.ts",
+    "knip": "knip-bun"
   },
   "dependencies": {
-    "@echristian/env": "^0.0.6",
+    "citty": "^0.1.6",
     "consola": "^3.3.3",
-    "defu": "^6.1.4",
-    "execa": "^9.5.2",
     "hono": "^4.6.16",
     "ofetch": "^1.4.1",
-    "pathe": "^2.0.1",
-    "std-env": "^3.8.0"
+    "pathe": "^2.0.1"
   },
   "devDependencies": {
     "@echristian/eslint-config": "^0.0.14",
     "@types/bun": "latest",
-    "eslint": "^9.18.0"
+    "eslint": "^9.18.0",
+    "knip": "^5.42.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
