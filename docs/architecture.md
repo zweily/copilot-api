@@ -14,9 +14,9 @@ This application acts as a proxy between users and GitHub Copilot's internal API
 
 1. **Command Line Interface**
    - Configurable startup options via CLI flags
-   - Support for streaming mode toggle
-   - Custom port configuration
-   - Built-in help system
+   - Streaming enabled by default with --no-stream option
+   - Custom port configuration via --port flag
+   - Built-in help system with -h/--help
 
 2. **Configuration Layer**
    - Centralized API endpoint configurations

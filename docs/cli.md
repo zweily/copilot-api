@@ -13,7 +13,8 @@ copilot-api [options]
 | Option      | Alias | Description                                     | Default |
 |-------------|-------|-------------------------------------------------|---------|
 | --help      | -h    | Show help message                               | false   |
-| --stream    | -s    | Enable streaming response for chat completions   | false   |
+| --stream    | -s    | Enable streaming response for chat completions   | true   |
+| --no-stream |       | Disable streaming response                       |         |
 | --port      | -p    | Port to listen on                               | 4141    |
 
 ## Examples

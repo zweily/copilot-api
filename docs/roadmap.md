@@ -16,15 +16,18 @@
   - [ ] macOS compatibility
   - [x] Linux compatibility
 
-## Phase 3: Vision and Streaming
+## Phase 3: Vision Support
 - [ ] Add support for image/vision capabilities
   - [ ] Implement vision API endpoints
   - [ ] Handle image uploads and processing
   - [ ] Convert between Copilot and OpenAI vision formats
-- [x] Implement true streaming responses
-  - [x] Server-sent events (SSE) support
+
+## Completed Features
+- [x] Streaming Support
+  - [x] Server-sent events (SSE) implementation
   - [x] Streaming chat completions
   - [x] Proper error handling for streams
+  - [x] Configurable via CLI flags
 
 ## Build Instructions
 
