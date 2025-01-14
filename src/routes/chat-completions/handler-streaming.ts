@@ -1,7 +1,7 @@
 import type { Context } from "hono"
 
 import consola from "consola"
-import { streamSSE } from "hono/streaming"
+import { streamSSE, type SSEMessage } from "hono/streaming"
 
 import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
 
@@ -25,9 +25,7 @@ export async function handlerStreaming(c: Context) {
 
       index++
 
-      await stream.writeSSE({
-        data: JSON.stringify(chunk.data),
-      })
+      await stream.writeSSE(chunk as SSEMessage)
     }
   })
 }
