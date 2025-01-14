@@ -1,3 +1,5 @@
+import type { Serve } from "bun"
+
 import consola from "consola"
 import fs from "node:fs"
 
@@ -71,4 +73,7 @@ async function initialize() {
 // Initialize the application
 await initialize()
 
-export default server
+export default {
+  fetch: server.fetch,
+  port: 4141,
+} satisfies Serve
