@@ -1,12 +1,12 @@
 import consola from "consola"
 import fs from "node:fs"
 
-import { PATHS } from "../../config/paths"
-import { TOKENS } from "../../config/tokens"
-import { getModels } from "../../services/copilot/get-models/service"
-import { getCopilotToken } from "../../services/copilot/get-token/copilot-token"
-import { getGitHubToken } from "../../services/copilot/get-token/github-token"
-import { CACHE } from "../cache"
+import { PATHS } from "../config/paths"
+import { TOKENS } from "../config/tokens"
+import { getModels } from "../services/copilot/get-models/service"
+import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
+import { getGitHubToken } from "../services/copilot/get-token/github-token"
+import { CACHE } from "./cache"
 
 async function initializeGithubToken() {
   const EIGHT_HOURS = 8 * 60 * 60 * 1000
