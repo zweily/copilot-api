@@ -11,7 +11,8 @@ const args = {
     alias: "s",
     type: "boolean",
     default: true,
-    description: "Enable streaming response for chat completions",
+    // citty will automatically convert this to --no-stream
+    description: "Disable streaming response for chat completions",
   },
   port: {
     alias: "p",
