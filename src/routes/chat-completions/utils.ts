@@ -8,21 +8,22 @@ export function createContentChunk(
 ): ChatCompletionsChunk {
   return {
     data: {
+      id: response.id,
       object: "chat.completion.chunk",
+      created: response.created,
+      model,
+      system_fingerprint: response.system_fingerprint,
       choices: [
         {
-          delta: {
-            content: segment,
-            role: response.choices[0].message.role,
-          },
           index: 0,
+          delta: {
+            role: response.choices[0].message.role,
+            content: segment,
+          },
+          finish_reason: null,
         },
       ],
-      created: response.created,
-      id: response.id,
-      model,
       usage: null,
-      system_fingerprint: "fp_44709d6fcb",
     },
   }
 }
@@ -33,19 +34,19 @@ export function createFinalChunk(
 ): ChatCompletionsChunk {
   return {
     data: {
+      id: response.id,
       object: "chat.completion.chunk",
+      created: response.created,
+      model,
+      system_fingerprint: response.system_fingerprint,
       choices: [
         {
+          index: 0,
           delta: {},
           finish_reason: response.choices[0].finish_reason,
-          index: 0,
         },
       ],
-      created: response.created,
-      id: response.id,
-      model,
       usage: response.usage,
-      system_fingerprint: "fp_44709d6fcb",
     },
   }
 }

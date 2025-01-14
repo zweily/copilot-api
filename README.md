@@ -22,13 +22,21 @@ bun install
 
 ## Running the Project
 
-To run the project:
+There are two ways to run the project:
 
+### Development Mode
 ```sh
 bun run dev
 ```
+Starts the server with hot reloading enabled, which automatically restarts the server when code changes are detected. This is ideal for development.
 
-The server will start and listen for API requests.
+### Production Mode
+```sh
+bun run start
+```
+Runs the server in production mode with optimizations enabled and hot reloading disabled. Use this for deployment or production environments.
+
+In both cases, the server will start and listen for API requests.
 
 ## Tested Tools Compatibility
 
