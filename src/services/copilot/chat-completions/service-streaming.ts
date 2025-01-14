@@ -1,7 +1,5 @@
-import type {
-  ChatCompletionsChunk,
-  ChatCompletionsPayload,
-} from "./types-streaming"
+import type { ChatCompletionsPayload } from "./types"
+import type { ChatCompletionsChunk } from "./types-streaming"
 
 import { copilot } from "../../api-instance"
 
