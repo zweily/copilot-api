@@ -16,11 +16,10 @@
   - [ ] macOS compatibility
   - [x] Linux compatibility
 
-## Phase 3: Vision Support
-- [ ] Add support for image/vision capabilities
-  - [ ] Implement vision API endpoints
-  - [ ] Handle image uploads and processing
-  - [ ] Convert between Copilot and OpenAI vision formats
+## Phase 3: Feature Support Notes
+- ❌ Image/Vision Support
+  - Not planned as GitHub Copilot API does not support image input
+  - This limitation is inherent to Copilot's API capabilities
 
 ## Completed Features
 - [x] Streaming Support

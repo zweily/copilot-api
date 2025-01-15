@@ -7,6 +7,8 @@ This project is a reverse-engineered implementation of the GitHub Copilot API cr
 
 A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.
 
+**Note:** Image/vision capabilities are not supported as GitHub Copilot's API does not support image input.
+
 ## Prerequisites
 
 - Bun (version 1.0.0 or higher)
