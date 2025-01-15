@@ -9,18 +9,19 @@ import { handlerStreaming } from "./handler-streaming"
 
 export const completionRoutes = new Hono()
 
-completionRoutes.post("/chat/completions", (c) => {
+completionRoutes.post("/chat/completions", async (c) => {
   try {
     if (ENV.EMULATE_STREAMING) {
-      return handler(c)
-    } else {
-      return handlerStreaming(c)
+      return await handler(c)
     }
+
+    return await handlerStreaming(c)
   } catch (error) {
     if (error instanceof FetchError) {
       consola.error(`Request failed: ${error.message}`, error.response?._data)
+    } else {
+      consola.error("Error:", error)
     }
-    consola.error(error)
 
     throw error
   }
