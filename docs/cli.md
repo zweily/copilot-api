@@ -1,40 +1,63 @@
 # Command Line Interface
 
-The Copilot API provides a command-line interface with various configuration options.
+The Copilot API provides a command-line interface powered by `citty`.
 
-## Usage
+## Name and Description
 
-```bash
-copilot-api [options]
+```
+Name: copilot-api
+Description: A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.
 ```
 
 ## Options
 
-| Option      | Alias | Description                                     | Default |
-|-------------|-------|-------------------------------------------------|---------|
-| --help      | -h    | Show help message                               | false   |
-| --stream    | -s    | Enable streaming response for chat completions   | true   |
-| --no-stream |       | Disable streaming response                       |         |
-| --port      | -p    | Port to listen on                               | 4141    |
+| Option              | Description                                      | Type      | Default |
+|--------------------|--------------------------------------------------|-----------|---------|
+| --help, -h         | Display help information                         | boolean   | false   |
+| --emulate-streaming| Emulate streaming response for chat completions   | boolean   | false   |
+| --port, -p         | Port number to listen on                         | string    | "4141"  |
+
+## Environment Variables
+
+The following environment variables are required:
+
+- `GITHUB_CLIENT_ID`: GitHub OAuth client ID
+- `GITHUB_OAUTH_SCOPES`: Required OAuth scopes for GitHub
+
+Optional environment variables:
+- `EMULATE_STREAMING`: Alternative way to enable streaming emulation
 
 ## Examples
 
-Start server on default port:
+Start server with default settings:
 ```bash
-copilot-api
+bun run start
 ```
 
-Start server with streaming enabled:
+Start with streaming emulation:
 ```bash
-copilot-api --stream
+bun run start --emulate-streaming
 ```
 
-Start server on custom port:
+Start on a custom port:
 ```bash
-copilot-api --port 8080
+bun run start --port 8080
 ```
 
-Show help message:
+Display help:
 ```bash
-copilot-api --help
+bun run start --help
 ```
+
+## Development Mode
+
+Run in development mode with hot reloading:
+```bash
+bun run dev
+```
+
+## Notes
+
+- The server will print available models on startup
+- Authentication tokens are automatically refreshed (every 8 hours for GitHub token)
+- Streaming emulation can be enabled via CLI flag or environment variable

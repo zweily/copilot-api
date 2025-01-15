@@ -40,16 +40,15 @@ Runs the server in production mode with optimizations enabled and hot reloading 
 
 The server accepts several command line options:
 
-| Option      | Description                                     | Default |
-|-------------|-------------------------------------------------|---------|
-| --help, -h  | Show help message                               | false   |
-| --stream    | Enable streaming response (default)              | true    |
-| --no-stream | Disable streaming response                       |         |
-| --port, -p  | Port to listen on                               | 4141    |
+| Option              | Description                                     | Default |
+|--------------------|-------------------------------------------------|---------|
+| --help, -h         | Show help message                               | false   |
+| --emulate-streaming| Enable streaming response emulation             | false   |
+| --port, -p         | Port to listen on                               | 4141    |
 
 Example with options:
 ```sh
-bun run start --port 8080 --no-stream
+bun run start --port 8080 --emulate-streaming
 ```
 
 In all cases, the server will start and listen for API requests on the specified port.
