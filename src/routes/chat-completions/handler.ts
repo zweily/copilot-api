@@ -12,7 +12,16 @@ import { createContentChunk, createFinalChunk, segmentResponse } from "./utils"
 export async function handler(c: Context) {
   const payload = await c.req.json<ChatCompletionsPayload>()
 
-  consola.info(`Received request: ${JSON.stringify(payload).slice(0, 500)}`)
+  const loggedPayload = structuredClone(payload)
+  loggedPayload.messages = loggedPayload.messages.map((message) => ({
+    ...message,
+    content:
+      message.content.length > 100 ?
+        message.content.slice(0, 100 - 3) + "..."
+      : message.content,
+  }))
+
+  consola.info("Received request:", loggedPayload)
 
   const response = await chatCompletions(payload)
 
