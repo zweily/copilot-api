@@ -1,6 +1,8 @@
 import consola from "consola"
 import fs from "node:fs"
 
+import { ENV } from "~/config/env"
+
 import { PATHS } from "../config/paths"
 import { TOKENS } from "../config/tokens"
 import { getModels } from "../services/copilot/get-models/service"
@@ -52,11 +54,13 @@ async function initializeCache() {
 async function logAvailableModels() {
   const models = await getModels()
   consola.info(
-    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
+    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
   )
 }
 
 export async function initialize() {
+  if (ENV.EMULATE_STREAMING) consola.box("Streaming emulation is enabled.")
+
   await initializeCache()
 
   // Initialize tokens
