@@ -11,15 +11,17 @@ export const completionRoutes = new Hono()
 
 completionRoutes.post("/chat/completions", (c) => {
   try {
-    if (ENV.ENABLE_STREAMING) {
-      return handlerStreaming(c)
-    } else {
+    if (ENV.EMULATE_STREAMING) {
       return handler(c)
+    } else {
+      return handlerStreaming(c)
     }
   } catch (error) {
     if (error instanceof FetchError) {
       consola.error(`Request failed: ${error.message}`, error.response?._data)
     }
+    consola.error(error)
+
     throw error
   }
 })

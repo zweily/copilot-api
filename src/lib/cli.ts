@@ -7,12 +7,10 @@ const args = {
     default: false,
     description: "Show this help message",
   },
-  stream: {
-    alias: "s",
+  "emulate-streaming": {
     type: "boolean",
-    default: true,
-    // citty will automatically convert this to --no-stream
-    description: "Disable streaming response for chat completions",
+    default: false,
+    description: "Emulate streaming response for chat completions",
   },
   port: {
     alias: "p",
@@ -29,7 +27,14 @@ export interface CliOptions {
 }
 
 export async function parseCli() {
-  const command = defineCommand({ args })
+  const command = defineCommand({
+    args,
+    meta: {
+      name: "copilot-api",
+      description:
+        "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+    },
+  })
   const options = parseArgs<typeof args>(Bun.argv, args)
 
   if (options.help) {

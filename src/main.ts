@@ -6,7 +6,7 @@ import { initialize } from "./lib/initialization"
 import { server } from "./server"
 
 const options = await parseCli()
-ENV.ENABLE_STREAMING = options.stream
+ENV.EMULATE_STREAMING = options["emulate-streaming"]
 
 await initialize()
 
