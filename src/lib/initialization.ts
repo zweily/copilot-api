@@ -12,6 +12,80 @@ import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
 import { getGitHubToken } from "../services/github/get-token/service"
 import { CACHE } from "./cache"
 
+interface InitStep {
+  name: string
+  run: () => Promise<void> | void
+}
+
+const initSteps: Array<InitStep> = [
+  {
+    name: "Emulation check",
+    run: () => {
+      if (ENV.EMULATE_STREAMING) {
+        consola.box("Streaming emulation is enabled.")
+      }
+    },
+  },
+  {
+    name: "Cache",
+    run: async () => {
+      if (!fs.existsSync(PATHS.PATH_CACHE_FILE)) {
+        fs.mkdirSync(PATHS.DIR_CACHE, { recursive: true })
+        await CACHE._write({})
+      }
+    },
+  },
+  {
+    name: "GitHub authentication",
+    run: async () => {
+      TOKENS.GITHUB_TOKEN = await getCachedGithubToken()
+
+      try {
+        await logUser()
+      } catch (error) {
+        if (!(error instanceof FetchError)) throw error
+        if (error.statusCode !== 401) {
+          consola.error("Authentication error:", {
+            error,
+            request: error.request,
+            options: error.options,
+            response: error.response,
+            data: error.response?._data as Record<string, unknown>,
+          })
+          throw error
+        }
+
+        consola.info("Not logged in, getting new access token")
+        TOKENS.GITHUB_TOKEN = await initializeGithubToken()
+        await logUser()
+      }
+    },
+  },
+  {
+    name: "Copilot token",
+    run: async () => {
+      const { token, refresh_in } = await getCopilotToken()
+      TOKENS.COPILOT_TOKEN = token
+
+      const refreshInterval = (refresh_in - 60) * 1000
+      setInterval(async () => {
+        consola.start("Refreshing copilot token")
+        const { token: newToken } = await getCopilotToken()
+        TOKENS.COPILOT_TOKEN = newToken
+      }, refreshInterval)
+    },
+  },
+  {
+    name: "Model information",
+    run: async () => {
+      const models = await getModels()
+      consola.info(
+        `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
+      )
+    },
+  },
+]
+
 async function getCachedGithubToken() {
   const cachedToken = await CACHE.get("github-token")
   return cachedToken?.value
@@ -20,40 +94,8 @@ async function getCachedGithubToken() {
 async function initializeGithubToken() {
   consola.start("Getting GitHub device code")
   const token = await getGitHubToken()
-
   await CACHE.set("github-token", token.access_token)
   return token.access_token
-}
-
-async function initializeCopilotToken() {
-  const { token, refresh_in } = await getCopilotToken()
-  TOKENS.COPILOT_TOKEN = token
-
-  // refresh_in is in seconds
-  // we're refreshing 1 minute (60 seconds) early
-  const refreshInterval = (refresh_in - 60) * 1000
-
-  setInterval(async () => {
-    consola.start("Refreshing copilot token")
-    const { token: newToken } = await getCopilotToken()
-    TOKENS.COPILOT_TOKEN = newToken
-  }, refreshInterval)
-
-  return token
-}
-
-async function initializeCache() {
-  if (!fs.existsSync(PATHS.PATH_CACHE_FILE)) {
-    fs.mkdirSync(PATHS.DIR_CACHE, { recursive: true })
-    await CACHE._write({})
-  }
-}
-
-async function logAvailableModels() {
-  const models = await getModels()
-  consola.info(
-    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
-  )
 }
 
 async function logUser() {
@@ -62,32 +104,14 @@ async function logUser() {
 }
 
 export async function initialize() {
-  if (ENV.EMULATE_STREAMING) consola.box("Streaming emulation is enabled.")
-
-  await initializeCache()
-
-  TOKENS.GITHUB_TOKEN = await getCachedGithubToken()
-
-  try {
-    await logUser()
-  } catch (error) {
-    if (!(error instanceof FetchError)) throw error
-    consola.log(
-      error,
-      error.request,
-      error.options,
-      error.response,
-      error.response?._data,
-    )
-    if (error.statusCode !== 401) throw error
-
-    consola.info("Not logged in, getting new access token")
-    TOKENS.GITHUB_TOKEN = await initializeGithubToken()
-    await logUser()
+  for (const step of initSteps) {
+    try {
+      consola.start(`Initializing ${step.name}...`)
+      await step.run()
+      consola.success(`${step.name} initialized`)
+    } catch (error) {
+      consola.error(`Failed to initialize ${step.name}:`, error)
+      throw error
+    }
   }
-
-  await initializeCopilotToken()
-
-  // Log available models
-  await logAvailableModels()
 }
