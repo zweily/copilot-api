@@ -5,6 +5,8 @@ import { FetchError } from "ofetch"
 import { ENV } from "~/config/env"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
+import type { parseCli } from "./cli"
+
 import { PATHS } from "../config/paths"
 import { TOKENS } from "../config/tokens"
 import { getModels } from "../services/copilot/get-models/service"
@@ -101,6 +103,18 @@ async function initializeGithubToken() {
 async function logUser() {
   const user = await getGitHubUser()
   consola.info(`Logged in as ${JSON.stringify(user.login)}`)
+}
+
+export async function initializeApp(
+  options: Awaited<ReturnType<typeof parseCli>>,
+) {
+  ENV.EMULATE_STREAMING = options["emulate-streaming"]
+
+  await initialize()
+
+  return {
+    port: parseInt(options.port, 10),
+  }
 }
 
 export async function initialize() {

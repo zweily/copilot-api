@@ -1,16 +1,14 @@
 import type { Serve } from "bun"
 
-import { ENV } from "./config/env"
 import { parseCli } from "./lib/cli"
-import { initialize } from "./lib/initialization"
+import { initializeApp } from "./lib/initialization"
 import { server } from "./server"
 
 const options = await parseCli()
-ENV.EMULATE_STREAMING = options["emulate-streaming"]
 
-await initialize()
+const { port } = await initializeApp(options)
 
 export default {
   fetch: server.fetch,
-  port: parseInt(options.port, 10),
+  port,
 } satisfies Serve
