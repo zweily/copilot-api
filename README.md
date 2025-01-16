@@ -64,10 +64,7 @@ The following AI tools have been tested with this API:
 - Not compatible with Claude 3.5 Sonnet (prompts too long)
 
 ### [Aider](https://github.com/Aider-AI/aider)
-- Works with GPT-4o
-- Works with Claude 3.5 Sonnet
-- Aider can't use weak models [#2867](https://github.com/Aider-AI/aider/issues/2867)
-- Using o1 as the main model will also result in the same error [#2867](https://github.com/Aider-AI/aider/issues/2867)
+- Fully compatible
 
 ### [bolt.diy](https://github.com/stackblitz-labs/bolt.diy)
 - Works with some caveats:
