@@ -117,7 +117,7 @@ export async function initializeApp(
   }
 }
 
-export async function initialize() {
+async function initialize() {
   for (const step of initSteps) {
     try {
       consola.start(`Initializing ${step.name}...`)

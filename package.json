@@ -15,7 +15,6 @@
     "consola": "^3.4.0",
     "fetch-event-stream": "^0.1.5",
     "hono": "^4.6.16",
-    "nano-spawn": "^0.2.0",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.1"
   },

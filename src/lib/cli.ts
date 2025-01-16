@@ -20,12 +20,6 @@ const args = {
   },
 } satisfies ArgsDef
 
-export interface CliOptions {
-  help: boolean
-  stream: boolean
-  port: string
-}
-
 export async function parseCli() {
   const command = defineCommand({
     args,
