@@ -82,7 +82,7 @@ const initSteps: Array<InitStep> = [
     run: async () => {
       const models = await getModels()
       consola.info(
-        `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
+        `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
       )
     },
   },
