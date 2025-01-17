@@ -31,8 +31,8 @@ const initSteps: Array<InitStep> = [
   {
     name: "Cache",
     run: async () => {
-      if (!fs.existsSync(PATHS.PATH_CACHE_FILE)) {
-        fs.mkdirSync(PATHS.DIR_CACHE, { recursive: true })
+      if (!fs.existsSync(PATHS.CACHE_PATH)) {
+        fs.mkdirSync(PATHS.APP_DIR, { recursive: true })
         await CACHE._write({})
       }
     },

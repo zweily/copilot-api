@@ -8,12 +8,12 @@ interface CacheEntry {
 type Cache = Record<string, CacheEntry>
 
 const readCache = async () => {
-  const content = await Bun.file(PATHS.PATH_CACHE_FILE).text()
+  const content = await Bun.file(PATHS.CACHE_PATH).text()
   return JSON.parse(content) as Cache
 }
 
 const writeCache = (cache: Cache) =>
-  Bun.write(PATHS.PATH_CACHE_FILE, JSON.stringify(cache))
+  Bun.write(PATHS.CACHE_PATH, JSON.stringify(cache))
 
 const setCache = async (key: string, value: string) => {
   const cache = await readCache()

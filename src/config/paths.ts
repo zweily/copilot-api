@@ -1,11 +1,11 @@
 import os from "node:os"
 import path from "pathe"
 
-const DIR_CACHE = path.join(os.homedir(), ".cache", "copilot-api")
+const APP_DIR = path.join(os.homedir(), ".local", "share", "copilot-api")
 
-const PATH_CACHE_FILE = path.join(DIR_CACHE, "cache.json")
+const CACHE_PATH = path.join(APP_DIR, "cache.json")
 
 export const PATHS = {
-  DIR_CACHE,
-  PATH_CACHE_FILE,
+  APP_DIR,
+  CACHE_PATH,
 }
