@@ -21,7 +21,8 @@ const args = {
   logs: {
     type: "boolean",
     default: false,
-    description: "Write logs to the app directory",
+    description:
+      "Write logs to the app directory. Only works with emulate-streaming",
   },
 } satisfies ArgsDef
 

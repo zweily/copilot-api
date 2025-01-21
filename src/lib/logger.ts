@@ -1,4 +1,4 @@
-import fs from "node:fs"
+import fs from "node:fs/promises"
 
 import { CONFIG } from "~/config/config"
 import { PATHS } from "~/config/paths"
@@ -6,12 +6,12 @@ import { PATHS } from "~/config/paths"
 export function initializeLogger() {
   if (!CONFIG.LOGGING_ENABLED) return
 
-  fs.mkdirSync(PATHS.LOG_PATH, { recursive: true })
+  return fs.mkdir(PATHS.LOG_PATH, { recursive: true })
 }
 
-export function logToFile(type: string, message: string) {
+export async function logToFile(type: string, message: string) {
   if (!CONFIG.LOGGING_ENABLED) return
 
   const timestamp = new Date().toISOString()
-  fs.appendFileSync(PATHS.LOG_FILE, `${timestamp} ${type}: ${message}\n`)
+  await fs.appendFile(PATHS.LOG_FILE, `${timestamp} ${type}: ${message}\n`)
 }

@@ -5,6 +5,7 @@ import { streamSSE } from "hono/streaming"
 
 import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
 
+import { logToFile } from "~/lib/logger"
 import { chatCompletions } from "~/services/copilot/chat-completions/service"
 
 import { createContentChunk, createFinalChunk, segmentResponse } from "./utils"
@@ -22,8 +23,10 @@ export async function handler(c: Context) {
   }))
 
   consola.info("Received request:", loggedPayload)
+  await logToFile("REQUEST", JSON.stringify(payload, null, 2))
 
   const response = await chatCompletions(payload)
+  await logToFile("RESPONSE", JSON.stringify(response, null, 2))
 
   if (payload.stream) {
     consola.info(`Response from Copilot: ${JSON.stringify(response)}`)
