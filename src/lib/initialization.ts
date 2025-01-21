@@ -113,7 +113,7 @@ export async function initializeApp(
   CONFIG.LOGGING_ENABLED = options.logs
 
   // Initialize logger if enabled
-  initializeLogger()
+  await initializeLogger()
 
   await initialize()
 
