@@ -18,6 +18,11 @@ const args = {
     default: "4141",
     description: "Port to listen on",
   },
+  logs: {
+    type: "boolean",
+    default: false,
+    description: "Write logs to the app directory",
+  },
 } satisfies ArgsDef
 
 export async function parseCli() {

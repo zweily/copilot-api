@@ -2,17 +2,18 @@ import consola from "consola"
 import fs from "node:fs"
 import { FetchError } from "ofetch"
 
-import { ENV } from "~/config/env"
+import { CONFIG } from "~/config/config"
+import { PATHS } from "~/config/paths"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
 import type { parseCli } from "./cli"
 
-import { PATHS } from "../config/paths"
 import { TOKENS } from "../config/tokens"
 import { getModels } from "../services/copilot/get-models/service"
 import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
 import { getGitHubToken } from "../services/github/get-token/service"
 import { CACHE } from "./cache"
+import { initializeLogger } from "./logger"
 
 interface InitStep {
   name: string
@@ -23,7 +24,7 @@ const initSteps: Array<InitStep> = [
   {
     name: "Emulation check",
     run: () => {
-      if (ENV.EMULATE_STREAMING) {
+      if (CONFIG.EMULATE_STREAMING) {
         consola.box("Streaming emulation is enabled.")
       }
     },
@@ -108,7 +109,11 @@ async function logUser() {
 export async function initializeApp(
   options: Awaited<ReturnType<typeof parseCli>>,
 ) {
-  ENV.EMULATE_STREAMING = options["emulate-streaming"]
+  CONFIG.EMULATE_STREAMING = options["emulate-streaming"]
+  CONFIG.LOGGING_ENABLED = options.logs
+
+  // Initialize logger if enabled
+  initializeLogger()
 
   await initialize()
 
