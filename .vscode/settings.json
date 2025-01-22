@@ -3,5 +3,6 @@
     "echristian",
     "mitmdump",
     "ofetch"
-  ]
+  ],
+  "deno.enable": false
 }
