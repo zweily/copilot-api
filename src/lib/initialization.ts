@@ -2,7 +2,7 @@ import consola from "consola"
 import fs from "node:fs"
 import { FetchError } from "ofetch"
 
-import { PATHS } from "~/config/paths"
+import { PATHS } from "~/lib/paths"
 import { CONFIG } from "~/lib/config"
 import { getGitHubUser } from "~/services/github/get-user/service"
 

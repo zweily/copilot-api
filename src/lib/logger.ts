@@ -1,7 +1,7 @@
 import fs from "node:fs/promises"
 
 import { CONFIG } from "~/lib/config"
-import { PATHS } from "~/config/paths"
+import { PATHS } from "~/lib/paths"
 
 export function initializeLogger() {
   if (!CONFIG.LOGGING_ENABLED) return
