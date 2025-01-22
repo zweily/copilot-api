@@ -8,12 +8,12 @@ import { getGitHubUser } from "~/services/github/get-user/service"
 
 import type { parseCli } from "./cli"
 
-import { TOKENS } from "../config/tokens"
 import { getModels } from "../services/copilot/get-models/service"
 import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
 import { getGitHubToken } from "../services/github/get-token/service"
 import { CACHE } from "./cache"
 import { initializeLogger } from "./logger"
+import { TOKENS } from "./tokens"
 
 interface InitStep {
   name: string

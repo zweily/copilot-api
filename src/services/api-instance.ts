@@ -2,7 +2,7 @@ import consola from "consola"
 import { FetchError, ofetch } from "ofetch"
 
 import { COPILOT_CONFIG, GITHUB_CONFIG, GITHUB_WEB_CONFIG } from "~/config/api"
-import { TOKENS } from "~/config/tokens"
+import { TOKENS } from "~/lib/tokens"
 
 export const copilot = ofetch.create({
   baseURL: COPILOT_CONFIG.baseURL,
