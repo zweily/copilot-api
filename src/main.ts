@@ -1,10 +1,10 @@
 import { serve, type ServerHandler } from "srvx"
 
-import { parseCli } from "./lib/cli"
+import { getOptions } from "./lib/cli"
 import { initializeApp } from "./lib/initialization"
 import { server } from "./server"
 
-const options = await parseCli()
+const options = await getOptions()
 
 const { port } = await initializeApp(options)
 

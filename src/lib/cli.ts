@@ -26,7 +26,7 @@ const args = {
   },
 } satisfies ArgsDef
 
-export async function parseCli() {
+export async function getOptions() {
   const command = defineCommand({
     args,
     meta: {

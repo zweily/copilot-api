@@ -6,7 +6,7 @@ import { APP_CONFIG } from "~/lib/config"
 import { PATHS } from "~/lib/paths"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
-import type { parseCli } from "./cli"
+import type { getOptions } from "./cli"
 
 import { getModels } from "../services/copilot/get-models/service"
 import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
@@ -92,7 +92,7 @@ async function logUser() {
 }
 
 export async function initializeApp(
-  options: Awaited<ReturnType<typeof parseCli>>,
+  options: Awaited<ReturnType<typeof getOptions>>,
 ) {
   APP_CONFIG.EMULATE_STREAMING = options["emulate-streaming"]
   APP_CONFIG.LOGGING_ENABLED = options.logs
