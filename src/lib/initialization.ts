@@ -2,8 +2,8 @@ import consola from "consola"
 import fs from "node:fs"
 import { FetchError } from "ofetch"
 
-import { PATHS } from "~/lib/paths"
 import { CONFIG } from "~/lib/config"
+import { PATHS } from "~/lib/paths"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
 import type { parseCli } from "./cli"
@@ -11,8 +11,8 @@ import type { parseCli } from "./cli"
 import { getModels } from "../services/copilot/get-models/service"
 import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
 import { getGitHubToken } from "../services/github/get-token/service"
-import { CACHE } from "./cache"
 import { initializeLogger } from "./logger"
+import { getGithubToken, saveGithubToken } from "./token-storage"
 import { TOKENS } from "./tokens"
 
 interface InitStep {
@@ -22,26 +22,17 @@ interface InitStep {
 
 const initSteps: Array<InitStep> = [
   {
-    name: "Emulation check",
+    name: "App directory",
     run: () => {
-      if (CONFIG.EMULATE_STREAMING) {
-        consola.box("Streaming emulation is enabled.")
-      }
-    },
-  },
-  {
-    name: "Cache",
-    run: async () => {
-      if (!fs.existsSync(PATHS.CACHE_PATH)) {
+      if (!fs.existsSync(PATHS.APP_DIR)) {
         fs.mkdirSync(PATHS.APP_DIR, { recursive: true })
-        await CACHE._write({})
       }
     },
   },
   {
     name: "GitHub authentication",
     run: async () => {
-      TOKENS.GITHUB_TOKEN = await getCachedGithubToken()
+      TOKENS.GITHUB_TOKEN = await getGithubToken()
 
       try {
         await logUser()
@@ -89,15 +80,10 @@ const initSteps: Array<InitStep> = [
   },
 ]
 
-async function getCachedGithubToken() {
-  const cachedToken = await CACHE.get("github-token")
-  return cachedToken?.value
-}
-
 async function initializeGithubToken() {
   consola.start("Getting GitHub device code")
   const token = await getGitHubToken()
-  await CACHE.set("github-token", token.access_token)
+  await saveGithubToken(token.access_token)
   return token.access_token
 }
 
