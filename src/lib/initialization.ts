@@ -1,5 +1,5 @@
 import consola from "consola"
-import fs from "node:fs"
+import fs from "node:fs/promises"
 import { FetchError } from "ofetch"
 
 import { APP_CONFIG } from "~/lib/config"
@@ -22,10 +22,10 @@ interface InitStep {
 const initSteps: Array<InitStep> = [
   {
     name: "App directory",
-    run: () => {
-      if (!fs.existsSync(PATHS.APP_DIR)) {
-        fs.mkdirSync(PATHS.APP_DIR, { recursive: true })
-      }
+    run: async () => {
+      await fs.mkdir(PATHS.APP_DIR, { recursive: true })
+      const handle = await fs.open(PATHS.GITHUB_TOKEN_PATH, "a")
+      await handle.close()
     },
   },
   {
