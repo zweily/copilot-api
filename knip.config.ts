@@ -1,6 +1,6 @@
-import type { KnipConfig } from "knip";
+import type { KnipConfig } from "knip"
 
 export default {
   entry: ["./src/main.ts"],
-  ignore: ["scripts/*.ts"]
-} satisfies KnipConfig;
+  ignore: ["scripts/*.ts"],
+} satisfies KnipConfig

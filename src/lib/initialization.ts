@@ -24,7 +24,7 @@ const initSteps: Array<InitStep> = [
     name: "App directory",
     run: async () => {
       await fs.mkdir(PATHS.APP_DIR, { recursive: true })
-      await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, '', { flag: 'a' })
+      await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, "", { flag: "a" })
     },
   },
   {

@@ -3,8 +3,6 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build": "bun run ./scripts/build.ts",
-    "build:debug": "bun run ./scripts/build-debug.ts",
     "dev": "bun run --hot ./src/main.ts",
     "knip": "knip-bun",
     "lint": "eslint . --cache",
