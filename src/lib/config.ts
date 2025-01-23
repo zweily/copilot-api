@@ -1,4 +1,4 @@
-export const CONFIG = {
+export const APP_CONFIG = {
   EMULATE_STREAMING: false,
   LOGGING_ENABLED: false,
 }

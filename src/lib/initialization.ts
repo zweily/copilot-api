@@ -2,7 +2,7 @@ import consola from "consola"
 import fs from "node:fs"
 import { FetchError } from "ofetch"
 
-import { CONFIG } from "~/lib/config"
+import { APP_CONFIG } from "~/lib/config"
 import { PATHS } from "~/lib/paths"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
@@ -95,8 +95,8 @@ async function logUser() {
 export async function initializeApp(
   options: Awaited<ReturnType<typeof parseCli>>,
 ) {
-  CONFIG.EMULATE_STREAMING = options["emulate-streaming"]
-  CONFIG.LOGGING_ENABLED = options.logs
+  APP_CONFIG.EMULATE_STREAMING = options["emulate-streaming"]
+  APP_CONFIG.LOGGING_ENABLED = options.logs
 
   // Initialize logger if enabled
   await initializeLogger()

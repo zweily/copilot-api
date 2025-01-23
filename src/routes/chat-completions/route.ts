@@ -2,7 +2,7 @@ import consola from "consola"
 import { Hono } from "hono"
 import { FetchError } from "ofetch"
 
-import { CONFIG } from "~/lib/config"
+import { APP_CONFIG } from "~/lib/config"
 
 import { handler } from "./handler"
 import { handlerStreaming } from "./handler-streaming"
@@ -11,7 +11,7 @@ export const completionRoutes = new Hono()
 
 completionRoutes.post("/chat/completions", async (c) => {
   try {
-    if (CONFIG.EMULATE_STREAMING) {
+    if (APP_CONFIG.EMULATE_STREAMING) {
       return await handler(c)
     }
 
