@@ -12,8 +12,7 @@ import { getModels } from "../services/copilot/get-models/service"
 import { getCopilotToken } from "../services/copilot/get-token/copilot-token"
 import { getGitHubToken } from "../services/github/get-token/service"
 import { initializeLogger } from "./logger"
-import { getGithubToken, saveGithubToken } from "./token-storage"
-import { TOKENS } from "./tokens"
+import { getGithubToken, saveGithubToken, TOKENS } from "./tokens"
 
 interface InitStep {
   name: string
