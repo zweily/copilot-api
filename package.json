@@ -12,7 +12,7 @@
     "citty": "^0.1.6",
     "consola": "^3.4.0",
     "fetch-event-stream": "^0.1.5",
-    "hono": "^4.6.17",
+    "hono": "^4.6.18",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.2",
     "srvx": "^0.1.4"
@@ -21,7 +21,7 @@
     "@echristian/eslint-config": "^0.0.16",
     "@types/bun": "latest",
     "eslint": "^9.18.0",
-    "knip": "^5.42.2"
+    "knip": "^5.43.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
