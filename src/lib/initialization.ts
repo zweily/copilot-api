@@ -101,8 +101,12 @@ export async function initializeApp(
 
   await initialize()
 
+  const port = parseInt(options.port, 10)
+  const serverUrl = `http://localhost:${port}`
+  consola.success(`Server started at ${serverUrl}`)
+
   return {
-    port: parseInt(options.port, 10),
+    port,
   }
 }
 
