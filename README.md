@@ -27,28 +27,33 @@ bun install
 The project can be run in several ways:
 
 ### Development Mode
+
 ```sh
 bun run dev
 ```
+
 Starts the server with hot reloading enabled, which automatically restarts the server when code changes are detected. This is ideal for development.
 
 ### Production Mode
+
 ```sh
 bun run start
 ```
+
 Runs the server in production mode with optimizations enabled and hot reloading disabled. Use this for deployment or production environments.
 
 ### Command Line Options
 
 The server accepts several command line options:
 
-| Option              | Description                                     | Default |
-|--------------------|-------------------------------------------------|---------|
-| --help, -h         | Show help message                               | false   |
-| --emulate-streaming| Enable streaming response emulation             | false   |
-| --port, -p         | Port to listen on                               | 4141    |
+| Option              | Description                         | Default |
+| ------------------- | ----------------------------------- | ------- |
+| --help, -h          | Show help message                   | false   |
+| --emulate-streaming | Enable streaming response emulation | false   |
+| --port, -p          | Port to listen on                   | 4141    |
 
 Example with options:
+
 ```sh
 bun run start --port 8080 --emulate-streaming
 ```
@@ -60,16 +65,17 @@ In all cases, the server will start and listen for API requests on the specified
 The following AI tools have been tested with this API:
 
 ### [Cline](https://github.com/cline/cline)
+
 - Works with GPT-4o
-- Not compatible with Claude 3.5 Sonnet (prompts too long)
+- Not compatible with Claude 3.5 Sonnet (Cline prompts are too long)
 
 ### [Aider](https://github.com/Aider-AI/aider)
+
 - Fully compatible
 
 ### [bolt.diy](https://github.com/stackblitz-labs/bolt.diy)
-- Works with some caveats:
-  - Sometimes models fail to load - you can set any random API key in the UI to refresh the models list
-  - May encounter "The operation is insecure." issue [#362](https://github.com/stackblitz-labs/bolt.diy/issues/362)
+
+- Sometimes models fail to load - you can set any random API key in the UI to refresh the models list
 
 ## Contributing
 
