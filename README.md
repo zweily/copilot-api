@@ -22,9 +22,23 @@ To install dependencies, run:
 bun install
 ```
 
-## Running the Project
+## Using with npx
 
-The project can be run in several ways:
+You can run the project directly using npx:
+
+```sh
+npx copilot-api
+```
+
+With options:
+
+```sh
+npx copilot-api --port 8080 --emulate-streaming
+```
+
+## Running from Source
+
+The project can be run from source in several ways:
 
 ### Development Mode
 
@@ -46,11 +60,12 @@ Runs the server in production mode with optimizations enabled and hot reloading 
 
 The server accepts several command line options:
 
-| Option              | Description                         | Default |
-| ------------------- | ----------------------------------- | ------- |
-| --help, -h          | Show help message                   | false   |
-| --emulate-streaming | Enable streaming response emulation | false   |
-| --port, -p          | Port to listen on                   | 4141    |
+| Option              | Description                                                    | Default |
+| ------------------- | -------------------------------------------------------------- | ------- |
+| --help, -h          | Show help message                                              | false   |
+| --emulate-streaming | Enable streaming response emulation                            | false   |
+| --port, -p          | Port to listen on                                              | 4141    |
+| --logs              | Write logs to the app directory (requires --emulate-streaming) | false   |
 
 Example with options:
 
