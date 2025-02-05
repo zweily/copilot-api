@@ -35,7 +35,7 @@ export async function getOptions() {
         "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
     },
   })
-  const options = parseArgs<typeof args>(Bun.argv, args)
+  const options = parseArgs<typeof args>(process.argv, args)
 
   if (options.help) {
     await showUsage(command)
