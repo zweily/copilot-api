@@ -1,11 +1,33 @@
 {
   "name": "copilot-api",
+  "version": "0.0.0",
+  "description": "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+  "keywords": [
+    "proxy",
+    "github-copilot",
+    "openai-compatible"
+  ],
+  "homepage": "https://github.com/ericc-ch/copilot-api",
+  "bugs": "https://github.com/ericc-ch/copilot-api/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericc-ch/copilot-api.git"
+  },
+  "author": "Erick Christian <erickchristian48@gmail.com>",
   "type": "module",
-  "module": "index.ts",
+  "bin": {
+    "copilot-api": "./dist/main.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsup",
     "dev": "bun run --hot ./src/main.ts",
     "knip": "knip-bun",
     "lint": "eslint . --cache",
+    "prepublishOnly": "bun run build",
+    "release": "bumpp && bun publish --access public",
     "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "dependencies": {
@@ -20,10 +42,13 @@
   "devDependencies": {
     "@echristian/eslint-config": "^0.0.16",
     "@types/bun": "latest",
+    "bumpp": "^10.0.1",
     "eslint": "^9.18.0",
-    "knip": "^5.43.1"
+    "knip": "^5.43.1",
+    "tsup": "^8.3.6"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "packageManager": "pnpm@9.15.5+sha512.845196026aab1cc3f098a0474b64dfbab2afe7a1b4e91dd86895d8e4aa32a7a6d03049e2d0ad770bbe4de023a7122fb68c1a1d6e0d033c7076085f9d5d4800d4"
 }
