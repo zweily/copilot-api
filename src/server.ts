@@ -11,5 +11,10 @@ server.use(logger())
 server.use(cors())
 
 server.get("/", (c) => c.text("Server running"))
-server.route("/", completionRoutes)
-server.route("/", modelRoutes)
+
+server.route("/chat/completions", completionRoutes)
+server.route("/models", modelRoutes)
+
+// Compatibility with tools that expect v1/ prefix
+server.route("/v1/chat/completions", completionRoutes)
+server.route("/v1/models", modelRoutes)

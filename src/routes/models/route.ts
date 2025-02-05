@@ -6,7 +6,7 @@ import { getModels } from "~/services/copilot/get-models/service"
 
 export const modelRoutes = new Hono()
 
-modelRoutes.get("/models", async (c) => {
+modelRoutes.get("/", async (c) => {
   try {
     const models = await getModels()
     return c.json(models)

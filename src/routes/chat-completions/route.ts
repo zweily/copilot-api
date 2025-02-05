@@ -9,7 +9,7 @@ import { handlerStreaming } from "./handler-streaming"
 
 export const completionRoutes = new Hono()
 
-completionRoutes.post("/chat/completions", async (c) => {
+completionRoutes.post("/", async (c) => {
   try {
     if (APP_CONFIG.EMULATE_STREAMING) {
       return await handler(c)
