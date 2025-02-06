@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { serve, type ServerHandler } from "srvx"
 
 import { getOptions } from "./lib/cli"
