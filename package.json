@@ -34,15 +34,15 @@
     "citty": "^0.1.6",
     "consola": "^3.4.0",
     "fetch-event-stream": "^0.1.5",
-    "hono": "^4.6.20",
+    "hono": "^4.7.0",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.2",
     "srvx": "^0.1.4"
   },
   "devDependencies": {
-    "@echristian/eslint-config": "^0.0.16",
+    "@echristian/eslint-config": "^0.0.18",
     "@types/bun": "latest",
-    "bumpp": "^10.0.1",
+    "bumpp": "^10.0.2",
     "eslint": "^9.19.0",
     "knip": "^5.43.6",
     "tsup": "^8.3.6"
@@ -50,5 +50,5 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "packageManager": "pnpm@10.2.0"
+  "packageManager": "pnpm@10.2.1"
 }
