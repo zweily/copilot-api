@@ -24,10 +24,10 @@ completionRoutes.post("/", async (c) => {
       consola.error(
         `Request failed: ${error.status} ${error.statusText}: ${await error.text()}`,
       )
+    } else if (error instanceof Error) {
+      consola.error("Error:", error.message)
     } else {
       consola.error("Error:", error)
     }
-
-    throw error
   }
 })

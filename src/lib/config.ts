@@ -22,7 +22,7 @@ export const COPILOT_API_CONFIG = {
   baseURL: "https://api.individual.githubcopilot.com",
   headers: {
     "copilot-integration-id": "vscode-chat",
-    // "copilot-vision-request": "true",
+    "copilot-vision-request": "true",
   },
 } as const
 
