@@ -19,6 +19,11 @@ completionRoutes.post("/", async (c) => {
   } catch (error) {
     if (error instanceof FetchError) {
       consola.error(`Request failed: ${error.message}`, error.response?._data)
+    }
+    if (error instanceof Response) {
+      consola.error(
+        `Request failed: ${error.status} ${error.statusText}: ${await error.text()}`,
+      )
     } else {
       consola.error("Error:", error)
     }
