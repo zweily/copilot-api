@@ -38,10 +38,6 @@ export async function handler(c: Context) {
 
     chunks.push(createFinalChunk(response, payload.model))
 
-    consola.info(
-      `Streaming response, first chunk: ${JSON.stringify(chunks.at(0))}`,
-    )
-
     return streamSSE(c, async (stream) => {
       for (const chunk of chunks) {
         await stream.writeSSE({
