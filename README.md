@@ -11,7 +11,7 @@ A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usab
 
 ## Prerequisites
 
-- Bun (version 1.0.0 or higher)
+- Bun (>= 1.2.x)
 - GitHub account with Copilot Individual subscription
 
 ## Installation
