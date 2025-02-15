@@ -27,7 +27,7 @@ bun install
 You can run the project directly using npx:
 
 ```sh
-npx copilot-api
+npx copilot-api@latest
 ```
 
 With options:
@@ -54,7 +54,7 @@ Starts the server with hot reloading enabled, which automatically restarts the s
 bun run start
 ```
 
-Runs the server in production mode with optimizations enabled and hot reloading disabled. Use this for deployment or production environments.
+Runs the server in production mode with hot reloading disabled. Use this for deployment or production environments.
 
 ### Command Line Options
 
@@ -77,25 +77,11 @@ In all cases, the server will start and listen for API requests on the specified
 
 ## Tested Tools Compatibility
 
-The following AI tools have been tested with this API:
+| Tool | Status | Notes |
+|------|--------|-------|
+| [Cline](https://github.com/cline/cline) | Partial | Works with GPT-4o. Not compatible with Claude 3.5 Sonnet (Cline prompts are too long) |
+| [Aider](https://github.com/Aider-AI/aider) | Full | Fully compatible |
+| [bolt.diy](https://github.com/stackblitz-labs/bolt.diy) | Partial | Sometimes models fail to load - you can set any random API key in the UI to refresh the models list |
+| [Page Assist](https://github.com/n4ze3m/page-assist) | Full | Fully compatible |
+| [Kobold AI Lite](https://github.com/LostRuins/lite.koboldai.net) | Partial | Won't work if the prompt is too long, because GitHub limits the context length (see models endpoint for more details) |
 
-### [Cline](https://github.com/cline/cline)
-
-- Works with GPT-4o
-- Not compatible with Claude 3.5 Sonnet (Cline prompts are too long)
-
-### [Aider](https://github.com/Aider-AI/aider)
-
-- Fully compatible
-
-### [bolt.diy](https://github.com/stackblitz-labs/bolt.diy)
-
-- Sometimes models fail to load - you can set any random API key in the UI to refresh the models list
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the [GNU General Public License v3.0](LICENSE).
