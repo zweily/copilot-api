@@ -85,3 +85,5 @@ In all cases, the server will start and listen for API requests on the specified
 | [Page Assist](https://github.com/n4ze3m/page-assist) | Full | Fully compatible |
 | [Kobold AI Lite](https://github.com/LostRuins/lite.koboldai.net) | Partial | Won't work if the prompt is too long, because GitHub limits the context length (see models endpoint for more details) |
 
+**Note:** In general, any application that uses the `/chat/completions` and `/models` endpoints should work with this API. The main limitation is the context length imposed by GitHub - if prompts are too long, they may fail.
+
