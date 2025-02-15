@@ -79,7 +79,7 @@ In all cases, the server will start and listen for API requests on the specified
 
 | Tool | Status | Notes |
 |------|--------|-------|
-| [Cline](https://github.com/cline/cline) | Partial | Works with GPT-4o. Not compatible with Claude 3.5 Sonnet (Cline prompts are too long) |
+| [Cline](https://github.com/cline/cline) | Partial | Works with GPT-4o. Not compatible with Claude 3.5 Sonnet (prompts are too long - GitHub limits context length to 90K tokens, see `/models` endpoint for details) |
 | [Aider](https://github.com/Aider-AI/aider) | Full | Fully compatible |
 | [bolt.diy](https://github.com/stackblitz-labs/bolt.diy) | Partial | Sometimes models fail to load - you can set any random API key in the UI to refresh the models list |
 | [Page Assist](https://github.com/n4ze3m/page-assist) | Full | Fully compatible |
