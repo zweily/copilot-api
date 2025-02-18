@@ -1,8 +1,8 @@
 {
-  "cSpell.words": [
-    "echristian",
-    "mitmdump",
-    "ofetch"
-  ],
-  "deno.enable": false
+  "cSpell.words": ["echristian", "mitmdump", "ofetch"],
+  "deno.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  }
 }

@@ -34,17 +34,17 @@
     "citty": "^0.1.6",
     "consola": "^3.4.0",
     "fetch-event-stream": "^0.1.5",
-    "hono": "^4.7.0",
+    "hono": "^4.7.1",
     "ofetch": "^1.4.1",
-    "pathe": "^2.0.2",
+    "pathe": "^2.0.3",
     "srvx": "^0.1.4"
   },
   "devDependencies": {
-    "@echristian/eslint-config": "^0.0.18",
+    "@echristian/eslint-config": "^0.0.22",
     "@types/bun": "latest",
-    "bumpp": "^10.0.2",
-    "eslint": "^9.20.0",
-    "knip": "^5.43.6",
+    "bumpp": "^10.0.3",
+    "eslint": "^9.20.1",
+    "knip": "^5.44.1",
     "tsup": "^8.3.6"
   },
   "peerDependencies": {

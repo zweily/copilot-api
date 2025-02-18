@@ -23,6 +23,7 @@ export const COPILOT_API_CONFIG = {
   headers: {
     "copilot-integration-id": "vscode-chat",
     "copilot-vision-request": "true",
+    "editor-version": "vscode/1.98.0-insider",
   },
 } as const
 
