@@ -9,6 +9,10 @@ A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usab
 
 **Note:** Image/vision capabilities are now supported (experimental) but only work with the gpt-4o model, despite other models showing vision support in their metadata. See [Vision, agent mode, next edit suggestions, and more for GitHub Copilot in VS Code January release (v0.24)](https://github.blog/changelog/2025-02-06-next-edit-suggestions-agent-mode-and-prompts-files-for-github-copilot-in-vs-code-january-release-v0-24/)
 
+## Demo
+
+https://raw.githubusercontent.com/ericc-ch/static/refs/heads/main/copilot-api-demo.mp4
+
 ## Prerequisites
 
 - Bun (>= 1.2.x)
