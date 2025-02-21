@@ -11,7 +11,7 @@ A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usab
 
 ## Demo
 
-https://github.com/user-attachments/assets/93157eab-8b6a-4b83-b032-f13f63ad07fb
+https://github.com/user-attachments/assets/7654b383-669d-4eb9-b23c-06d7aefee8c5
 
 ## Prerequisites
 
