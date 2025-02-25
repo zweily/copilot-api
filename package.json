@@ -25,10 +25,17 @@
     "build": "tsup",
     "dev": "bun run --hot ./src/main.ts",
     "knip": "knip-bun",
-    "lint": "eslint . --cache",
-    "prepublishOnly": "bun run build",
+    "lint": "eslint .",
+    "prepack": "bun run build",
+    "prepare": "simple-git-hooks",
     "release": "bumpp && bun publish --access public",
     "start": "NODE_ENV=production bun run ./src/main.ts"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
   },
   "dependencies": {
     "citty": "^0.1.6",
@@ -40,14 +47,14 @@
     "srvx": "^0.1.4"
   },
   "devDependencies": {
-    "@echristian/eslint-config": "^0.0.22",
-    "@types/bun": "latest",
+    "@echristian/eslint-config": "^0.0.23",
+    "@types/bun": "^1.2.3",
     "bumpp": "^10.0.3",
     "eslint": "^9.21.0",
-    "knip": "^5.44.4",
-    "tsup": "^8.3.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+    "knip": "^5.45.0",
+    "lint-staged": "^15.4.3",
+    "simple-git-hooks": "^2.11.1",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3"
   }
 }
