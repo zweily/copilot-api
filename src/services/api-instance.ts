@@ -5,7 +5,7 @@ import {
   COPILOT_API_CONFIG,
   GITHUB_API_CONFIG,
   GITHUB_WEB_API_CONFIG,
-} from "~/lib/config"
+} from "~/lib/constants"
 import { TOKENS } from "~/lib/tokens"
 
 export const copilot = ofetch.create({

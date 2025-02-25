@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 
-import { APP_CONFIG } from "~/lib/config"
+import { APP_CONFIG } from "~/lib/constants"
 import { PATHS } from "~/lib/paths"
 
 export function initializeLogger() {

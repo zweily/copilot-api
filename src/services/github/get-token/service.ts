@@ -1,6 +1,6 @@
 import consola from "consola"
 
-import { ENV } from "~/lib/config"
+import { ENV } from "~/lib/constants"
 import { _github } from "~/services/api-instance"
 
 interface DeviceCodeResponse {

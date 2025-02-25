@@ -2,7 +2,7 @@ import consola from "consola"
 import { Hono } from "hono"
 import { FetchError } from "ofetch"
 
-import { APP_CONFIG } from "~/lib/config"
+import { APP_CONFIG } from "~/lib/constants"
 
 import { handler } from "./handler"
 import { handlerStreaming } from "./handler-streaming"
