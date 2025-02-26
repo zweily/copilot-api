@@ -5,6 +5,7 @@ import consola from "consola"
 import { Hono, type Context } from "hono"
 import { FetchError } from "ofetch"
 
+import { logger } from "../../lib/logger"
 import { handlerStreaming } from "./handler"
 
 export const completionRoutes = new Hono()
@@ -36,6 +37,13 @@ async function handleError(
   }
 
   // Fallback for unknown error types
+  void logger.logResponse("/v1/chat/completions", {
+    error: {
+      message: "An unknown error occurred",
+      type: "unknown_error",
+    },
+  })
+
   return c.json(
     {
       error: {
@@ -52,18 +60,35 @@ function handleFetchError(
   error: FetchError,
 ) {
   const status = error.response?.status ?? 500
+  const responseData = error.response?._data as unknown
+  const headers: Record<string, string> = {}
 
   // Forward all headers from the error response
   error.response?.headers.forEach((value, key) => {
     c.header(key, value)
+    headers[key] = value
   })
+
+  // Log the error response
+  void logger.logResponse(
+    "/v1/chat/completions",
+    {
+      error: {
+        message: error.message,
+        type: "fetch_error",
+        data: responseData,
+        status,
+      },
+    },
+    headers,
+  )
 
   return c.json(
     {
       error: {
         message: error.message,
         type: "fetch_error",
-        data: error.response?._data as unknown,
+        data: responseData,
       },
     },
     status as ContentfulStatusCode,
@@ -79,10 +104,27 @@ async function handleResponseError(
     `Request failed: ${error.status} ${error.statusText}: ${errorText}`,
   )
 
+  const headers: Record<string, string> = {}
+
   // Forward all headers from the error response
   error.headers.forEach((value, key) => {
     c.header(key, value)
+    headers[key] = value
   })
+
+  // Log the error response
+  void logger.logResponse(
+    "/v1/chat/completions",
+    {
+      error: {
+        message: error.statusText || "Request failed",
+        type: "response_error",
+        status: error.status,
+        details: errorText,
+      },
+    },
+    headers,
+  )
 
   return c.json(
     {
@@ -101,6 +143,14 @@ function handleGenericError(
   c: Context<BlankEnv, "/", BlankInput>,
   error: Error,
 ) {
+  // Log the error response
+  void logger.logResponse("/v1/chat/completions", {
+    error: {
+      message: error.message,
+      type: "error",
+    },
+  })
+
   return c.json(
     {
       error: {
