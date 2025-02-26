@@ -1,6 +1,6 @@
 {
   "name": "copilot-api",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
   "keywords": [
     "proxy",
