@@ -35,7 +35,7 @@
     "pre-commit": "bunx lint-staged"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*": "bunx eslint --fix"
   },
   "dependencies": {
     "citty": "^0.1.6",

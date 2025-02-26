@@ -23,7 +23,7 @@ const main = defineCommand({
       default: false,
       description: "Enable verbose logging",
     },
-    logFile: {
+    "log-file": {
       type: "string",
       description: "File to log request/response details",
     },
@@ -37,7 +37,7 @@ const main = defineCommand({
     const portInt = parseInt(args.port, 10)
 
     const port = await initializePort(portInt)
-    await logger.initialize(args.logFile)
+    await logger.initialize(args["log-file"])
 
     await initializeApp()
 
