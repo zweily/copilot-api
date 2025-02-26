@@ -51,7 +51,7 @@ interface Usage {
   total_tokens: number
 }
 
-interface ChatCompletionResponse {
+export interface ChatCompletionChunk {
   choices: [Choice]
   created: number
   object: "chat.completion.chunk"
@@ -60,8 +60,4 @@ interface ChatCompletionResponse {
   system_fingerprint?: string
   prompt_filter_results?: Array<PromptFilterResult>
   usage?: Usage | null
-}
-
-export interface ChatCompletionsChunk {
-  data: ChatCompletionResponse
 }
