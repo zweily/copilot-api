@@ -32,7 +32,7 @@
     "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged"
+    "pre-commit": "bunx lint-staged"
   },
   "lint-staged": {
     "*": "eslint --fix"
