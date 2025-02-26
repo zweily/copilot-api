@@ -16,8 +16,19 @@ const main = defineCommand({
       default: "4141",
       description: "Port to listen on",
     },
+    verbose: {
+      alias: "v",
+      type: "boolean",
+      default: false,
+      description: "Enable verbose logging",
+    },
   },
   async run({ args }) {
+    if (args.verbose) {
+      consola.level = 5
+      consola.info("Verbose logging enabled")
+    }
+
     const portInt = parseInt(args.port, 10)
 
     const port = await initializePort(portInt)

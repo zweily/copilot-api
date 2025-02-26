@@ -1,13 +1,9 @@
 interface Config {
-  EMULATE_STREAMING: boolean
-  LOGGING_ENABLED: boolean
   PORT: number
   PORT_RANGE: [number, number]
 }
 
 const DEFAULT_CONFIG: Config = {
-  EMULATE_STREAMING: false,
-  LOGGING_ENABLED: false,
   PORT: 4141,
   PORT_RANGE: [4142, 4200],
 }
