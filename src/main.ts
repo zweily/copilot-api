@@ -5,6 +5,7 @@ import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
 
 import { initializeApp } from "./lib/initialization"
+import { logger } from "./lib/logger"
 import { initializePort } from "./lib/port"
 import { server } from "./server"
 
@@ -22,6 +23,10 @@ const main = defineCommand({
       default: false,
       description: "Enable verbose logging",
     },
+    logFile: {
+      type: "string",
+      description: "File to log request/response details",
+    },
   },
   async run({ args }) {
     if (args.verbose) {
@@ -32,6 +37,8 @@ const main = defineCommand({
     const portInt = parseInt(args.port, 10)
 
     const port = await initializePort(portInt)
+
+    await logger.initialize(args.logFile)
 
     await initializeApp()
 
