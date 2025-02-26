@@ -2,19 +2,12 @@ import consola from "consola"
 import { Hono } from "hono"
 import { FetchError } from "ofetch"
 
-import { APP_CONFIG } from "~/lib/constants"
-
-import { handler } from "./handler"
-import { handlerStreaming } from "./handler-streaming"
+import { handlerStreaming } from "./handler"
 
 export const completionRoutes = new Hono()
 
 completionRoutes.post("/", async (c) => {
   try {
-    if (APP_CONFIG.EMULATE_STREAMING) {
-      return await handler(c)
-    }
-
     return await handlerStreaming(c)
   } catch (error) {
     if (error instanceof FetchError) {

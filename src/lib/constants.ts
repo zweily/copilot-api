@@ -1,7 +1,3 @@
-export const APP_CONFIG = {
-  EMULATE_STREAMING: false,
-  LOGGING_ENABLED: false,
-}
 
 // VSCode client ID
 const GITHUB_CLIENT_ID = "01ab8ac9400c4e429b23"

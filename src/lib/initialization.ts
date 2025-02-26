@@ -2,7 +2,6 @@ import consola from "consola"
 import fs from "node:fs/promises"
 import { FetchError } from "ofetch"
 
-import { APP_CONFIG } from "~/lib/constants"
 import { PATHS } from "~/lib/paths"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
@@ -90,18 +89,25 @@ async function logUser() {
   consola.info(`Logged in as ${JSON.stringify(user.login)}`)
 }
 
+import { configManager } from "./config"
+import { initializePort } from "./port"
+
 export async function initializeApp(
   options: Awaited<ReturnType<typeof getOptions>>,
 ) {
-  APP_CONFIG.EMULATE_STREAMING = options["emulate-streaming"]
-  APP_CONFIG.LOGGING_ENABLED = options.logs
+  configManager.setConfig({
+    EMULATE_STREAMING: options["emulate-streaming"],
+    LOGGING_ENABLED: options.logs,
+  })
+
+  // Get available port, trying the CLI option first
+  const port = await initializePort()
 
   // Initialize logger if enabled
   await initializeLogger()
 
   await initialize()
 
-  const port = parseInt(options.port, 10)
   const serverUrl = `http://localhost:${port}`
   consola.success(`Server started at ${serverUrl}`)
 
