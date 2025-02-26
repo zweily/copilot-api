@@ -6,14 +6,17 @@ import {
   GITHUB_API_CONFIG,
   GITHUB_WEB_API_CONFIG,
 } from "~/lib/constants"
-import { TOKENS } from "~/lib/tokens"
+import { tokenService } from "~/services/token-service"
 
 export const copilot = ofetch.create({
   baseURL: COPILOT_API_CONFIG.baseURL,
   headers: COPILOT_API_CONFIG.headers,
 
   onRequest({ options }) {
-    options.headers.set("authorization", `Bearer ${TOKENS.COPILOT_TOKEN}`)
+    options.headers.set(
+      "authorization",
+      `Bearer ${tokenService.getCopilotToken()}`,
+    )
   },
 
   onRequestError({ error, options }) {
@@ -38,8 +41,9 @@ export const copilot = ofetch.create({
 export const github = ofetch.create({
   baseURL: GITHUB_API_CONFIG.baseURL,
 
-  onRequest({ options }) {
-    options.headers.set("authorization", `token ${TOKENS.GITHUB_TOKEN}`)
+  async onRequest({ options }) {
+    const token = await tokenService.getGithubToken()
+    options.headers.set("authorization", `token ${token}`)
   },
 })
 

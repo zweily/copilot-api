@@ -1,16 +1,37 @@
 #!/usr/bin/env node
 
+import { defineCommand, runMain } from "citty"
+import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
 
-import { getOptions } from "./lib/cli"
 import { initializeApp } from "./lib/initialization"
+import { initializePort } from "./lib/port"
 import { server } from "./server"
 
-const options = await getOptions()
+const main = defineCommand({
+  args: {
+    port: {
+      alias: "p",
+      type: "string",
+      default: "4141",
+      description: "Port to listen on",
+    },
+  },
+  async run({ args }) {
+    const portInt = parseInt(args.port, 10)
 
-const { port } = await initializeApp(options)
+    const port = await initializePort(portInt)
 
-serve({
-  fetch: server.fetch as ServerHandler,
-  port,
+    await initializeApp()
+
+    const serverUrl = `http://localhost:${port}`
+    consola.success(`Server started at ${serverUrl}`)
+
+    serve({
+      fetch: server.fetch as ServerHandler,
+      port,
+    })
+  },
 })
+
+await runMain(main)

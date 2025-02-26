@@ -3,13 +3,12 @@ import { getPort } from "get-port-please"
 
 import { configManager } from "./config"
 
-export async function initializePort(): Promise<number> {
+export async function initializePort(requestedPort?: number): Promise<number> {
   const config = configManager.getConfig()
-  const requestedPort = config.PORT
 
   const port = await getPort({
     name: "copilot-api",
-    port: config.PORT,
+    port: requestedPort ?? config.PORT,
     portRange: config.PORT_RANGE,
     random: false,
   })

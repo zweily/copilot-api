@@ -7,22 +7,11 @@ const args = {
     default: false,
     description: "Show this help message",
   },
-  "emulate-streaming": {
-    type: "boolean",
-    default: false,
-    description: "Emulate streaming response for chat completions",
-  },
   port: {
     alias: "p",
     type: "string",
     default: "4141",
     description: "Port to listen on",
-  },
-  logs: {
-    type: "boolean",
-    default: false,
-    description:
-      "Write logs to the app directory. Only works with emulate-streaming",
   },
 } satisfies ArgsDef
 
