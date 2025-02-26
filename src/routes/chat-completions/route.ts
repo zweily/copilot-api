@@ -51,6 +51,13 @@ function handleFetchError(
   c: Context<BlankEnv, "/", BlankInput>,
   error: FetchError,
 ) {
+  const status = error.response?.status ?? 500
+
+  // Forward all headers from the error response
+  error.response?.headers.forEach((value, key) => {
+    c.header(key, value)
+  })
+
   return c.json(
     {
       error: {
@@ -59,7 +66,7 @@ function handleFetchError(
         data: error.response?._data as unknown,
       },
     },
-    (error.response?.status ?? 500) as ContentfulStatusCode,
+    status as ContentfulStatusCode,
   )
 }
 
@@ -71,6 +78,11 @@ async function handleResponseError(
   consola.error(
     `Request failed: ${error.status} ${error.statusText}: ${errorText}`,
   )
+
+  // Forward all headers from the error response
+  error.headers.forEach((value, key) => {
+    c.header(key, value)
+  })
 
   return c.json(
     {
