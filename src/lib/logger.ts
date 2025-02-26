@@ -44,6 +44,7 @@ export const logger = {
     endpoint: string,
     method: string,
     payload: unknown,
+    headers?: Record<string, string>,
   ): Promise<void> {
     if (!this.options.enabled || !this.options.filePath) return
 
@@ -52,6 +53,9 @@ export const logger = {
       `## Request - ${timestamp}`,
       `Endpoint: ${endpoint}`,
       `Method: ${method}`,
+      headers ?
+        `Headers:\n\`\`\`json\n${JSON.stringify(headers, null, 2)}\n\`\`\``
+      : "",
       `Payload:`,
       `\`\`\`json`,
       JSON.stringify(payload, null, 2),
@@ -66,13 +70,20 @@ export const logger = {
     }
   },
 
-  async logResponse(endpoint: string, response: unknown): Promise<void> {
+  async logResponse(
+    endpoint: string,
+    response: unknown,
+    headers?: Record<string, string>,
+  ): Promise<void> {
     if (!this.options.enabled || !this.options.filePath) return
 
     const timestamp = new Date().toISOString()
     const logEntry = [
       `## Response - ${timestamp}`,
       `Endpoint: ${endpoint}`,
+      headers ?
+        `Headers:\n\`\`\`json\n${JSON.stringify(headers, null, 2)}\n\`\`\``
+      : "",
       `Response:`,
       `\`\`\`json`,
       JSON.stringify(response, null, 2),

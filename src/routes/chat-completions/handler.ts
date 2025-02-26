@@ -38,8 +38,11 @@ function createCondensedStreamingResponse(
 export async function handlerStreaming(c: Context) {
   const payload = await c.req.json<ChatCompletionsPayload>()
 
+  // Convert request headers to a regular object from Headers
+  const requestHeaders = c.req.header()
+
   // Log the request at the beginning for both streaming and non-streaming cases
-  await logger.logRequest("/chat/completions", "POST", payload)
+  await logger.logRequest("/chat/completions", "POST", payload, requestHeaders)
 
   if (payload.stream) {
     const response = await chatCompletionsStream(payload)
@@ -52,7 +55,7 @@ export async function handlerStreaming(c: Context) {
       for await (const chunk of response) {
         await stream.writeSSE(chunk as SSEMessage)
 
-        if (!logger.options.enabled) continue // Changed from return to continue
+        if (!logger.options.enabled) continue
 
         // Check if chunk data is "DONE" or not a valid JSON string
         if (!chunk.data || chunk.data === "[DONE]") {
@@ -83,15 +86,18 @@ export async function handlerStreaming(c: Context) {
           collectedContent,
         )
 
-        await logger.logResponse("/chat/completions", condensedResponse)
+        await logger.logResponse("/chat/completions", condensedResponse, {})
       }
     })
   }
 
   const response = await chatCompletions(payload)
 
-  // Log the non-streaming response
-  await logger.logResponse("/chat/completions", response)
+  // Get response headers if any
+  const responseHeaders = {} // Empty placeholder for response headers
+
+  // Log the non-streaming response with headers
+  await logger.logResponse("/chat/completions", response, responseHeaders)
 
   return c.json(response)
 }
