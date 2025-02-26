@@ -6,7 +6,7 @@ import {
   GITHUB_API_CONFIG,
   GITHUB_WEB_API_CONFIG,
 } from "~/lib/constants"
-import { tokenService } from "~/services/token-service"
+import { tokenService } from "~/lib/token"
 
 export const copilot = ofetch.create({
   baseURL: COPILOT_API_CONFIG.baseURL,

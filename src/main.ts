@@ -25,7 +25,7 @@ const main = defineCommand({
     await initializeApp()
 
     const serverUrl = `http://localhost:${port}`
-    consola.success(`Server started at ${serverUrl}`)
+    consola.box(`Server started at ${serverUrl}`)
 
     serve({
       fetch: server.fetch as ServerHandler,

@@ -1,4 +1,3 @@
-
 // VSCode client ID
 const GITHUB_CLIENT_ID = "01ab8ac9400c4e429b23"
 const GITHUB_OAUTH_SCOPES = [

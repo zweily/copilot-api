@@ -3,8 +3,8 @@ import fs from "node:fs/promises"
 import { FetchError } from "ofetch"
 
 import { PATHS } from "~/lib/paths"
+import { tokenService } from "~/lib/token"
 import { getGitHubUser } from "~/services/github/get-user/service"
-import { tokenService } from "~/services/token-service"
 
 import { getModels } from "../services/copilot/get-models/service"
 import { getGitHubToken } from "../services/github/get-token/service"
@@ -49,10 +49,10 @@ async function initializeCopilotToken(): Promise<void> {
   await tokenService.initCopilotToken()
 }
 
-async function initializeModelInformation(): Promise<void> {
+async function logModelInformation(): Promise<void> {
   const models = await getModels()
   consola.info(
-    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
+    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
   )
 }
 
@@ -71,5 +71,5 @@ export async function initializeApp() {
   await initializeAppDirectory()
   await initializeGithubAuthentication()
   await initializeCopilotToken()
-  await initializeModelInformation()
+  await logModelInformation()
 }
