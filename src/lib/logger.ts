@@ -33,7 +33,7 @@ export const logger = {
 
       this.options.enabled = true
       this.options.filePath = filePath
-      consola.success(`Request logging enabled to: ${filePath}`)
+      consola.info(`Logging enabled to: ${filePath}`)
     } catch (error) {
       consola.error(`Failed to initialize log file`, error)
       this.options.enabled = false

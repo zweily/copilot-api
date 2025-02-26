@@ -37,7 +37,6 @@ const main = defineCommand({
     const portInt = parseInt(args.port, 10)
 
     const port = await initializePort(portInt)
-
     await logger.initialize(args.logFile)
 
     await initializeApp()

@@ -1,5 +1,6 @@
 import type { Context } from "hono"
 
+import consola from "consola"
 import { streamSSE, type SSEMessage } from "hono/streaming"
 
 import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
@@ -49,17 +50,30 @@ export async function handlerStreaming(c: Context) {
 
     return streamSSE(c, async (stream) => {
       for await (const chunk of response) {
-        const data = JSON.parse(chunk.data ?? "{}") as ChatCompletionChunk
+        await stream.writeSSE(chunk as SSEMessage)
 
-        // Keep track of the latest chunk for metadata
-        finalChunk = data
+        if (!logger.options.enabled) continue // Changed from return to continue
 
-        // Accumulate content from each delta
-        if (data.choices[0].delta.content) {
-          collectedContent += data.choices[0].delta.content
+        // Check if chunk data is "DONE" or not a valid JSON string
+        if (!chunk.data || chunk.data === "[DONE]") {
+          continue // Skip processing this chunk for logging
         }
 
-        await stream.writeSSE(chunk as SSEMessage)
+        try {
+          const data = JSON.parse(chunk.data) as ChatCompletionChunk
+
+          // Keep track of the latest chunk for metadata
+          finalChunk = data
+
+          // Accumulate content from each delta
+          if (typeof data.choices[0].delta.content === "string") {
+            collectedContent += data.choices[0].delta.content
+          }
+        } catch (error) {
+          // Handle JSON parsing errors gracefully
+          consola.error(`Error parsing SSE chunk data`, error)
+          // Continue processing other chunks
+        }
       }
 
       // After streaming completes, log the condensed response
