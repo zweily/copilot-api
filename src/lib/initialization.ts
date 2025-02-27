@@ -52,7 +52,7 @@ async function initializeCopilotToken(): Promise<void> {
 async function logModelInformation(): Promise<void> {
   const models = await getModels()
   consola.info(
-    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}\n`,
+    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
   )
 }
 
@@ -64,7 +64,7 @@ async function initializeGithubToken() {
 
 async function logUser() {
   const user = await getGitHubUser()
-  consola.info(`Logged in as ${JSON.stringify(user.login)}`)
+  consola.info(`Logged in as ${JSON.stringify(user.login)}\n`)
 }
 
 export async function initializeApp() {
