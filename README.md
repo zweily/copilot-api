@@ -35,7 +35,7 @@ npx copilot-api@latest
 With options:
 
 ```sh
-npx copilot-api --port 8080 --emulate-streaming
+npx copilot-api --port 8080
 ```
 
 ## Running from Source
@@ -62,17 +62,18 @@ Runs the server in production mode with hot reloading disabled. Use this for dep
 
 The server accepts several command line options:
 
-| Option        | Description            | Default |
-| ------------- | ---------------------- | ------- |
-| --help, -h    | Show help message      | false   |
-| --port, -p    | Port to listen on      | 4141    |
-| --verbose, -v | Enable verbose logging | false   |
-| --log-file    | File path for logging  | -       |
+| Option        | Description                           | Default |
+| ------------- | ------------------------------------- | ------- |
+| --port, -p    | Port to listen on                     | 4141    |
+| --verbose, -v | Enable verbose logging                | false   |
+| --log-file    | File to log request/response details  | -       |
+
+Note: The `--help, -h` option is automatically available through the underlying command-line framework.
 
 Example with options:
 
 ```sh
-bun run start --port 8080 --emulate-streaming
+bun run start --port 8080 --verbose
 ```
 
 In all cases, the server will start and listen for API requests on the specified port.
