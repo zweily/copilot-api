@@ -6,6 +6,7 @@ import {
   GITHUB_API_CONFIG,
   GITHUB_WEB_API_CONFIG,
 } from "~/lib/constants"
+import { modelsCache } from "~/lib/models"
 import { tokenService } from "~/lib/token"
 
 export const copilot = ofetch.create({
@@ -25,6 +26,13 @@ export const copilot = ofetch.create({
         // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
         `Request failed: ${options.body} \n ${error}`,
       )
+    }
+  },
+
+  onResponse({ response }) {
+    if (response.url.endsWith("/models") && response._data) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      modelsCache.setModels(response._data)
     }
   },
 

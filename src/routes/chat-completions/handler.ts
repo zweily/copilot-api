@@ -6,7 +6,9 @@ import { streamSSE, type SSEMessage } from "hono/streaming"
 import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
 import type { ChatCompletionChunk } from "~/services/copilot/chat-completions/types-streaming"
 
+import { isNullish } from "~/lib/is-nullish"
 import { logger } from "~/lib/logger"
+import { modelsCache } from "~/lib/models"
 import { chatCompletions } from "~/services/copilot/chat-completions/service"
 import { chatCompletionsStream } from "~/services/copilot/chat-completions/service-streaming"
 
@@ -36,7 +38,19 @@ function createCondensedStreamingResponse(
 }
 
 export async function handlerStreaming(c: Context) {
-  const payload = await c.req.json<ChatCompletionsPayload>()
+  const models = modelsCache.getModels()
+  let payload = await c.req.json<ChatCompletionsPayload>()
+
+  if (isNullish(payload.max_tokens)) {
+    const selectedModel = models?.data.find(
+      (model) => model.id === payload.model,
+    )
+
+    payload = {
+      ...payload,
+      max_tokens: selectedModel?.capabilities.limits.max_output_tokens,
+    }
+  }
 
   // Convert request headers to a regular object from Headers
   const requestHeaders = c.req.header()
