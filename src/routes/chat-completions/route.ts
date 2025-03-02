@@ -6,13 +6,13 @@ import { Hono, type Context } from "hono"
 import { FetchError } from "ofetch"
 
 import { logger } from "../../lib/logger"
-import { handlerStreaming } from "./handler"
+import { handleCompletion } from "./handler"
 
 export const completionRoutes = new Hono()
 
 completionRoutes.post("/", async (c) => {
   try {
-    return await handlerStreaming(c)
+    return await handleCompletion(c)
   } catch (error) {
     consola.error("Error occurred:", error)
     return handleError(c, error)

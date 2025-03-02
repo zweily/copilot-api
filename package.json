@@ -7,8 +7,8 @@
     "github-copilot",
     "openai-compatible"
   ],
-  "homepage": "https://github.com/ericc-ch/copilot-api",
   "bugs": "https://github.com/ericc-ch/copilot-api/issues",
+  "homepage": "https://github.com/ericc-ch/copilot-api",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ericc-ch/copilot-api.git"
@@ -29,7 +29,8 @@
     "prepack": "bun run build",
     "prepare": "simple-git-hooks",
     "release": "bumpp && bun publish --access public",
-    "start": "NODE_ENV=production bun run ./src/main.ts"
+    "start": "NODE_ENV=production bun run ./src/main.ts",
+    "test": "vitest"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
@@ -45,17 +46,20 @@
     "hono": "^4.7.2",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.3",
-    "srvx": "^0.1.4"
+    "srvx": "^0.1.4",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@echristian/eslint-config": "^0.0.23",
-    "@types/bun": "^1.2.3",
+    "@types/bun": "^1.2.4",
     "bumpp": "^10.0.3",
     "eslint": "^9.21.0",
     "knip": "^5.45.0",
     "lint-staged": "^15.4.3",
     "simple-git-hooks": "^2.11.1",
+    "tinyexec": "^0.3.2",
     "tsup": "^8.4.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
   }
 }

@@ -1,63 +1,73 @@
-interface ContentFilterResults {
-  error: {
-    code: string
-    message: string
-  }
-  hate: {
-    filtered: boolean
-    severity: string
-  }
-  self_harm: {
-    filtered: boolean
-    severity: string
-  }
-  sexual: {
-    filtered: boolean
-    severity: string
-  }
-  violence: {
-    filtered: boolean
-    severity: string
-  }
-}
+import * as z from "zod"
 
-interface ContentFilterOffsets {
-  check_offset: number
-  start_offset: number
-  end_offset: number
-}
+const ContentFilterResultsSchema = z.object({
+  error: z.object({
+    code: z.string(),
+    message: z.string(),
+  }),
+  hate: z.object({
+    filtered: z.boolean(),
+    severity: z.string(),
+  }),
+  self_harm: z.object({
+    filtered: z.boolean(),
+    severity: z.string(),
+  }),
+  sexual: z.object({
+    filtered: z.boolean(),
+    severity: z.string(),
+  }),
+  violence: z.object({
+    filtered: z.boolean(),
+    severity: z.string(),
+  }),
+})
 
-interface Delta {
-  content?: string
-  role?: string
-}
+const ContentFilterOffsetsSchema = z.object({
+  check_offset: z.number(),
+  start_offset: z.number(),
+  end_offset: z.number(),
+})
 
-interface Choice {
-  index: number
-  content_filter_offsets?: ContentFilterOffsets
-  content_filter_results?: ContentFilterResults
-  delta: Delta
-  finish_reason?: string | null
-}
+const DeltaSchema = z.object({
+  content: z.string().optional(),
+  role: z.string().optional(),
+})
 
-interface PromptFilterResult {
-  content_filter_results: ContentFilterResults
-  prompt_index: number
-}
+const ChoiceSchema = z.object({
+  index: z.number(),
+  content_filter_offsets: ContentFilterOffsetsSchema.optional(),
+  content_filter_results: ContentFilterResultsSchema.optional(),
+  delta: DeltaSchema,
+  finish_reason: z.string().nullable().optional(),
+})
 
-interface Usage {
-  completion_tokens: number
-  prompt_tokens: number
-  total_tokens: number
-}
+const PromptFilterResultSchema = z.object({
+  content_filter_results: ContentFilterResultsSchema,
+  prompt_index: z.number(),
+})
 
-export interface ChatCompletionChunk {
-  choices: [Choice]
-  created: number
-  object: "chat.completion.chunk"
-  id: string
-  model: string
-  system_fingerprint?: string
-  prompt_filter_results?: Array<PromptFilterResult>
-  usage?: Usage | null
-}
+const UsageSchema = z.object({
+  completion_tokens: z.number(),
+  prompt_tokens: z.number(),
+  total_tokens: z.number(),
+})
+
+export const ChatCompletionChunkSchema = z.object({
+  choices: z.array(ChoiceSchema),
+  created: z.number(),
+  object: z.literal("chat.completion.chunk"),
+  id: z.string(),
+  model: z.string(),
+  system_fingerprint: z.string().optional(),
+  prompt_filter_results: z.array(PromptFilterResultSchema).optional(),
+  usage: UsageSchema.nullable().optional(),
+})
+
+export type ContentFilterResults = z.infer<typeof ContentFilterResultsSchema>
+export type ContentFilterOffsets = z.infer<typeof ContentFilterOffsetsSchema>
+export type Delta = z.infer<typeof DeltaSchema>
+export type Choice = z.infer<typeof ChoiceSchema>
+export type PromptFilterResult = z.infer<typeof PromptFilterResultSchema>
+export type Usage = z.infer<typeof UsageSchema>
+export type ChatCompletionChunk = z.infer<typeof ChatCompletionChunkSchema>

@@ -9,11 +9,11 @@ import { logger } from "./lib/logger"
 import { initializePort } from "./lib/port"
 import { server } from "./server"
 
-async function runServer(options: {
+export async function runServer(options: {
   port: number
   verbose: boolean
   logFile?: string
-}) {
+}): Promise<void> {
   if (options.verbose) {
     consola.level = 5
     consola.info("Verbose logging enabled")
