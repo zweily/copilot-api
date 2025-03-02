@@ -9,6 +9,30 @@ import { logger } from "./lib/logger"
 import { initializePort } from "./lib/port"
 import { server } from "./server"
 
+async function runServer(options: {
+  port: number
+  verbose: boolean
+  logFile?: string
+}) {
+  if (options.verbose) {
+    consola.level = 5
+    consola.info("Verbose logging enabled")
+  }
+
+  const port = await initializePort(options.port)
+  await logger.initialize(options.logFile)
+
+  await initializeApp()
+
+  const serverUrl = `http://localhost:${port}`
+  consola.box(`Server started at ${serverUrl}`)
+
+  serve({
+    fetch: server.fetch as ServerHandler,
+    port,
+  })
+}
+
 const main = defineCommand({
   args: {
     port: {
@@ -28,25 +52,13 @@ const main = defineCommand({
       description: "File to log request/response details",
     },
   },
-  async run({ args }) {
-    if (args.verbose) {
-      consola.level = 5
-      consola.info("Verbose logging enabled")
-    }
+  run({ args }) {
+    const port = parseInt(args.port, 10)
 
-    const portInt = parseInt(args.port, 10)
-
-    const port = await initializePort(portInt)
-    await logger.initialize(args["log-file"])
-
-    await initializeApp()
-
-    const serverUrl = `http://localhost:${port}`
-    consola.box(`Server started at ${serverUrl}`)
-
-    serve({
-      fetch: server.fetch as ServerHandler,
+    return runServer({
       port,
+      verbose: args.verbose,
+      logFile: args["log-file"],
     })
   },
 })
