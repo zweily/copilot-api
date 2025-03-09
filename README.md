@@ -76,3 +76,9 @@ bun run start
 - Rarely use architect mode
 - Do not enable automatic yes in aider config
 - Claude 3.7 thinking mode uses more tokens. Use it sparingly
+
+## Roadmap
+
+- Manual approval for every request
+- Rate limiting (only allow request every X seconds)
+- Token counting
