@@ -9,10 +9,14 @@ import { getGitHubUser } from "~/services/github/get-user/service"
 import { getModels } from "../services/copilot/get-models/service"
 import { getGitHubToken } from "../services/github/get-token/service"
 
-// Extract to individual functions for each initialization step
 async function initializeAppDirectory(): Promise<void> {
   await fs.mkdir(PATHS.APP_DIR, { recursive: true })
-  await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, "", { flag: "a" })
+  try {
+    await fs.access(PATHS.GITHUB_TOKEN_PATH, fs.constants.W_OK)
+  } catch {
+    await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, "")
+    await fs.chmod(PATHS.GITHUB_TOKEN_PATH, 0o600)
+  }
 }
 
 async function initializeGithubAuthentication(): Promise<void> {
