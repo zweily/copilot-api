@@ -1,10 +1,9 @@
-import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types.ts"
-import type { GetModelsResponse } from "~/services/copilot/get-models/types.ts"
+import type { EmbeddingRequest, EmbeddingResponse } from "./types"
 
 import { copilot } from "../../api-instance"
 
-export const embedding = (payload: ChatCompletionsPayload) =>
-  copilot<GetModelsResponse>("/embeddings", {
+export const embedding = (payload: EmbeddingRequest) =>
+  copilot<EmbeddingResponse>("/embeddings", {
     method: "POST",
     body: {
       ...payload,
