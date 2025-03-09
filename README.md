@@ -69,3 +69,10 @@ bun run dev
 ```sh
 bun run start
 ```
+
+## Tips to not hit the rate limit
+
+- Use a free model from free provider like Gemini/Mistral/Openrouter for the weak model
+- Rarely use architect mode
+- Do not enable automatic yes in aider config
+- Claude 3.7 thinking mode uses more tokens. Use it sparingly
