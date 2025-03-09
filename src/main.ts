@@ -53,7 +53,7 @@ const main = defineCommand({
     },
   },
   run({ args }) {
-    const port = parseInt(args.port, 10)
+    const port = Number.parseInt(args.port, 10)
 
     return runServer({
       port,

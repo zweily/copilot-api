@@ -64,10 +64,10 @@ function handleFetchError(
   const headers: Record<string, string> = {}
 
   // Forward all headers from the error response
-  error.response?.headers.forEach((value, key) => {
+  for (const [key, value] of error.response?.headers.entries()) {
     c.header(key, value)
     headers[key] = value
-  })
+  }
 
   // Log the error response
   void logger.logResponse(
@@ -107,10 +107,10 @@ async function handleResponseError(
   const headers: Record<string, string> = {}
 
   // Forward all headers from the error response
-  error.headers.forEach((value, key) => {
+  for (const [key, value] of error.headers.entries()) {
     c.header(key, value)
     headers[key] = value
-  })
+  }
 
   // Log the error response
   void logger.logResponse(

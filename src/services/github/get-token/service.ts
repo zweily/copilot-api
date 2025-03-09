@@ -44,7 +44,9 @@ export async function getGitHubToken() {
     )
 
     if (pollResponse.access_token) {
-      consola.info(`Got token ${pollResponse.access_token.replace(/./g, "*")}`)
+      consola.info(
+        `Got token ${pollResponse.access_token.replaceAll(/./g, "*")}`,
+      )
       return pollResponse
     } else {
       // Interval is in seconds, we need to multiply by 1000 to get milliseconds

@@ -16,10 +16,7 @@ export const tokenService = {
   async getGithubToken(): Promise<string | undefined> {
     if (!this._tokens.github) {
       try {
-        this._tokens.github = await fs.readFile(
-          PATHS.GITHUB_TOKEN_PATH,
-          "utf-8",
-        )
+        this._tokens.github = await fs.readFile(PATHS.GITHUB_TOKEN_PATH, "utf8")
       } catch (error) {
         consola.warn("Failed to load GitHub token", error)
       }
