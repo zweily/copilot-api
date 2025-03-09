@@ -22,16 +22,12 @@ export const copilot = ofetch.create({
 
   onRequestError({ error, options }) {
     if (error instanceof FetchError) {
-      consola.error(
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-        `Request failed: ${options.body} \n ${error}`,
-      )
+      consola.error(`Request failed: ${options.body} \n ${error}`)
     }
   },
 
   onResponse({ response }) {
     if (response.url.endsWith("/models") && response._data) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       modelsCache.setModels(response._data)
     }
   },
