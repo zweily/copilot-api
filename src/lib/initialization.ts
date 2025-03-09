@@ -62,8 +62,7 @@ async function logModelInformation(): Promise<void> {
 
 async function initializeGithubToken() {
   consola.start("Getting GitHub device code")
-  const tokenResponse = await getGitHubToken()
-  return tokenResponse.access_token
+  return await getGitHubToken()
 }
 
 async function logUser() {
