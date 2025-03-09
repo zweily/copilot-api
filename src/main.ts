@@ -6,30 +6,30 @@ import { serve, type ServerHandler } from "srvx"
 
 import { initializeApp } from "./lib/initialization"
 import { logger } from "./lib/logger"
-import { initializePort } from "./lib/port"
 import { server } from "./server"
 
-export async function runServer(options: {
+interface RunServerOptions {
   port: number
   verbose: boolean
   logFile?: string
-}): Promise<void> {
+}
+
+export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.verbose) {
     consola.level = 5
     consola.info("Verbose logging enabled")
   }
 
-  const port = await initializePort(options.port)
   await logger.initialize(options.logFile)
 
   await initializeApp()
 
-  const serverUrl = `http://localhost:${port}`
+  const serverUrl = `http://localhost:${options.port}`
   consola.box(`Server started at ${serverUrl}`)
 
   serve({
     fetch: server.fetch as ServerHandler,
-    port,
+    port: options.port,
   })
 }
 
