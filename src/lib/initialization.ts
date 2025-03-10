@@ -1,23 +1,12 @@
 import consola from "consola"
-import fs from "node:fs/promises"
 import { FetchError } from "ofetch"
 
-import { PATHS } from "~/lib/paths"
+import { ensurePaths } from "~/lib/paths"
 import { tokenService } from "~/lib/token"
 import { getGitHubUser } from "~/services/github/get-user/service"
 
 import { getModels } from "../services/copilot/get-models/service"
 import { getGitHubToken } from "../services/github/get-token/service"
-
-async function initializeAppDirectory(): Promise<void> {
-  await fs.mkdir(PATHS.APP_DIR, { recursive: true })
-  try {
-    await fs.access(PATHS.GITHUB_TOKEN_PATH, fs.constants.W_OK)
-  } catch {
-    await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, "")
-    await fs.chmod(PATHS.GITHUB_TOKEN_PATH, 0o600)
-  }
-}
 
 async function initializeGithubAuthentication(): Promise<void> {
   const githubToken = await tokenService.getGithubToken()
@@ -71,7 +60,7 @@ async function logUser() {
 }
 
 export async function initializeApp() {
-  await initializeAppDirectory()
+  await ensurePaths()
   await initializeGithubAuthentication()
   await initializeCopilotToken()
   await logModelInformation()
