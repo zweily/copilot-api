@@ -2,7 +2,7 @@ import consola from "consola"
 import { Hono } from "hono"
 import { FetchError } from "ofetch"
 
-import { getModels } from "~/services/copilot/get-models/service"
+import { getModels } from "~/services/copilot/get-models"
 
 export const modelRoutes = new Hono()
 

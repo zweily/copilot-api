@@ -1,3 +1,27 @@
+import { COPILOT_API_BASE_URL } from "~/lib/constants"
+import { state } from "~/lib/state"
+
+export const getModels = async () => {
+  const response = await fetch(`${COPILOT_API_BASE_URL}/models`, {
+    headers: {
+      authorization: `Bearer ${state.copilotToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to get models", {
+      cause: await response.json(),
+    })
+  }
+
+  return (await response.json()) as ModelsResponse
+}
+
+export interface ModelsResponse {
+  data: Array<Model>
+  object: string
+}
+
 interface ModelLimits {
   max_context_window_tokens?: number
   max_output_tokens?: number
@@ -33,9 +57,4 @@ interface Model {
     state: string
     terms: string
   }
-}
-
-export interface GetModelsResponse {
-  data: Array<Model>
-  object: string
 }

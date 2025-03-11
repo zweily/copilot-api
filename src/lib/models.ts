@@ -2,7 +2,7 @@ import consola from "consola"
 
 import type { GetModelsResponse } from "~/services/copilot/get-models/types"
 
-import { getModels } from "~/services/copilot/get-models/service"
+import { getModels } from "~/services/copilot/get-models"
 
 import { state } from "./state"
 
