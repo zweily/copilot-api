@@ -42,10 +42,10 @@ npx copilot-api --port 8080
 
 The following command line options are available:
 
-| Option        | Description              | Default |
-| ------------- | ------------------------ | ------- |
-| --port, -p    | Port to listen on        | 4141    |
-| --verbose, -v | Enable verbose logging   | false   |
+| Option        | Description            | Default |
+| ------------- | ---------------------- | ------- |
+| --port, -p    | Port to listen on      | 4141    |
+| --verbose, -v | Enable verbose logging | false   |
 
 Example usage:
 
@@ -80,6 +80,7 @@ To avoid rate limiting and optimize your experience:
 
 ## Roadmap
 
+- [ ] Manual authentication flow
 - [ ] Manual request approval system
 - [ ] Rate limiting implementation
 - [ ] Token usage tracking and monitoring
