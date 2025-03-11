@@ -1,11 +1,7 @@
 import consola from "consola"
 import { FetchError, ofetch } from "ofetch"
 
-import {
-  COPILOT_API_CONFIG,
-  GITHUB_API_CONFIG,
-  GITHUB_WEB_API_CONFIG,
-} from "~/lib/constants"
+import { COPILOT_API_CONFIG } from "~/lib/constants"
 import { modelsCache } from "~/lib/models"
 import { tokenService } from "~/lib/token"
 
@@ -40,18 +36,4 @@ export const copilot = ofetch.create({
       )
     }
   },
-})
-
-export const github = ofetch.create({
-  baseURL: GITHUB_API_CONFIG.baseURL,
-
-  async onRequest({ options }) {
-    const token = await tokenService.getGithubToken()
-    options.headers.set("authorization", `token ${token}`)
-  },
-})
-
-// Only used for device flow auth
-export const _github = ofetch.create({
-  baseURL: GITHUB_WEB_API_CONFIG.baseURL,
 })

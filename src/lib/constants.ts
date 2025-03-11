@@ -29,6 +29,8 @@ export const GITHUB_WEB_API_CONFIG = {
   baseURL: "https://github.com",
 } as const
 
+export const GITHUB_API_BASE_URL = "https://api.github.com"
+
 export const GITHUB_BASE_URL = "https://github.com"
 export const GITHUB_CLIENT_ID = "01ab8ac9400c4e429b23"
 export const GITHUB_APP_SCOPES = [
