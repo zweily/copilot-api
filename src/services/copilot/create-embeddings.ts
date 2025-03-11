@@ -1,4 +1,5 @@
 import { copilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { HTTPError } from "~/lib/http-error"
 import { state } from "~/lib/state"
 
 export const createEmbeddings = async (payload: EmbeddingRequest) => {
@@ -10,11 +11,7 @@ export const createEmbeddings = async (payload: EmbeddingRequest) => {
     body: JSON.stringify(payload),
   })
 
-  if (!response.ok) {
-    throw new Error("Failed to create embeddings", {
-      cause: await response.json(),
-    })
-  }
+  if (!response.ok) throw new HTTPError("Failed to create embeddings", response)
 
   return (await response.json()) as EmbeddingResponse
 }

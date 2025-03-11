@@ -12,7 +12,14 @@ export const COPILOT_API_CONFIG = {
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
 export const copilotHeaders = (state: State) => ({
   Authorization: `Bearer ${state.copilotToken}`,
+  "content-type": "application/json",
   "copilot-integration-id": "vscode-chat",
+  "editor-version": `vscode/${state.vsCodeVersion}`,
+  "editor-plugin-version": "copilot-chat/0.24.1",
+  "openai-intent": "conversation-panel",
+  "x-github-api-version": "2024-12-15",
+  "x-request-id": globalThis.crypto.randomUUID(),
+  "x-vscode-user-agent-library-version": "electron-fetch",
 })
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"

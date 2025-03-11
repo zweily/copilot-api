@@ -2,27 +2,14 @@ import type { Context } from "hono"
 
 import { streamSSE, type SSEMessage } from "hono/streaming"
 
-import type { ChatCompletionsPayload } from "~/services/copilot/chat-completions/types"
+import type {
+  ChatCompletionResponse,
+  ChatCompletionsPayload,
+} from "~/services/copilot/chat-completions/types"
 
 import { isNullish } from "~/lib/is-nullish"
 import { state } from "~/lib/state"
-import { createChatCompletions } from "~/services/copilot/chat-completions/service"
-import { chatCompletionsStream } from "~/services/copilot/chat-completions/service-streaming"
-
-function handleStreaming(c: Context, payload: ChatCompletionsPayload) {
-  return streamSSE(c, async (stream) => {
-    const response = await chatCompletionsStream(payload)
-
-    for await (const chunk of response) {
-      await stream.writeSSE(chunk as SSEMessage)
-    }
-  })
-}
-
-async function handleNonStreaming(c: Context, payload: ChatCompletionsPayload) {
-  const response = await createChatCompletions(payload)
-  return c.json(response)
-}
+import { createChatCompletions } from "~/services/copilot/create-chat-completions"
 
 export async function handleCompletion(c: Context) {
   let payload = await c.req.json<ChatCompletionsPayload>()
@@ -38,9 +25,19 @@ export async function handleCompletion(c: Context) {
     }
   }
 
-  if (payload.stream) {
-    return handleStreaming(c, payload)
+  const response = await createChatCompletions(payload)
+
+  if (isNonStreaming(response)) {
+    return c.json(response)
   }
 
-  return handleNonStreaming(c, payload)
+  return streamSSE(c, async (stream) => {
+    for await (const chunk of response) {
+      await stream.writeSSE(chunk as SSEMessage)
+    }
+  })
 }
+
+const isNonStreaming = (
+  response: Awaited<ReturnType<typeof createChatCompletions>>,
+): response is ChatCompletionResponse => Object.hasOwn(response, "choices")

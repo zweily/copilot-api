@@ -1,9 +1,13 @@
 import { events } from "fetch-event-stream"
 
 import { copilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { HTTPError } from "~/lib/http-error"
 import { state } from "~/lib/state"
 
-import type { ChatCompletionResponse, ChatCompletionsPayload } from "./types"
+import type {
+  ChatCompletionResponse,
+  ChatCompletionsPayload,
+} from "./chat-completions/types"
 
 export const createChatCompletions = async (
   payload: ChatCompletionsPayload,
@@ -16,11 +20,8 @@ export const createChatCompletions = async (
     body: JSON.stringify(payload),
   })
 
-  if (!response.ok) {
-    throw new Error("Failed to create chat completions", {
-      cause: await response.json(),
-    })
-  }
+  if (!response.ok)
+    throw new HTTPError("Failed to create chat completions", response)
 
   if (payload.stream) {
     return events(response)

@@ -1,4 +1,5 @@
 import { COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { HTTPError } from "~/lib/http-error"
 import { state } from "~/lib/state"
 
 export const getModels = async () => {
@@ -8,11 +9,7 @@ export const getModels = async () => {
     },
   })
 
-  if (!response.ok) {
-    throw new Error("Failed to get models", {
-      cause: await response.json(),
-    })
-  }
+  if (!response.ok) throw new HTTPError("Failed to get models", response)
 
   return (await response.json()) as ModelsResponse
 }

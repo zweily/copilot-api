@@ -1,4 +1,5 @@
 import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/api-config"
+import { HTTPError } from "~/lib/http-error"
 
 export async function getDeviceCode(): Promise<DeviceCodeResponse> {
   const response = await fetch(`${GITHUB_BASE_URL}/login/device/code`, {
@@ -8,11 +9,7 @@ export async function getDeviceCode(): Promise<DeviceCodeResponse> {
     }),
   })
 
-  if (!response.ok) {
-    throw new Error("Failed to get device code", {
-      cause: await response.json(),
-    })
-  }
+  if (!response.ok) throw new HTTPError("Failed to get device code", response)
 
   return (await response.json()) as DeviceCodeResponse
 }

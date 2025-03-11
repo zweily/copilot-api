@@ -1,5 +1,6 @@
-import consola from "consola"
 import { Hono } from "hono"
+
+import { forwardError } from "~/lib/forward-error"
 
 import { handleCompletion } from "./handler"
 
@@ -9,28 +10,6 @@ completionRoutes.post("/", async (c) => {
   try {
     return await handleCompletion(c)
   } catch (error) {
-    consola.error("Error occurred:", error)
-
-    if (error instanceof Response) {
-      return c.json(
-        {
-          error: {
-            message: error.message,
-            type: "error",
-          },
-        },
-        500,
-      )
-    }
-
-    return c.json(
-      {
-        error: {
-          message: error.message,
-          type: "error",
-        },
-      },
-      500,
-    )
+    return forwardError(c, error)
   }
 })
