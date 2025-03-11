@@ -2,7 +2,7 @@ import consola from "consola"
 import fs from "node:fs/promises"
 
 import { PATHS } from "~/lib/paths"
-import { getCopilotToken } from "~/services/copilot/get-copilot-token"
+import { getCopilotToken } from "~/services/github/get-copilot-token"
 import { getDeviceCode } from "~/services/github/get-device-code"
 import { getGitHubUser } from "~/services/github/get-user"
 import { pollAccessToken } from "~/services/github/poll-access-token"

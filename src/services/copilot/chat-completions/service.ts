@@ -1,6 +1,7 @@
-import { buildCopilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { events } from "fetch-event-stream"
+
+import { copilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
 import { state } from "~/lib/state"
-import { copilot } from "~/services/api-instance"
 
 import type { ChatCompletionResponse, ChatCompletionsPayload } from "./types"
 
@@ -11,7 +12,7 @@ export const createChatCompletions = async (
 
   const response = await fetch(`${COPILOT_API_BASE_URL}/chat/completions`, {
     method: "POST",
-    headers: buildCopilotHeaders(state.copilotToken),
+    headers: copilotHeaders(state),
     body: JSON.stringify(payload),
   })
 
@@ -22,13 +23,8 @@ export const createChatCompletions = async (
   }
 
   if (payload.stream) {
+    return events(response)
   }
-}
 
-copilot<ChatCompletionResponse>("/chat/completions", {
-  method: "POST",
-  body: {
-    ...payload,
-    stream: false,
-  },
-})
+  return (await response.json()) as ChatCompletionResponse
+}

@@ -1,4 +1,4 @@
-import { buildCopilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { copilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
 import { state } from "~/lib/state"
 
 export const createEmbeddings = async (payload: EmbeddingRequest) => {
@@ -6,7 +6,7 @@ export const createEmbeddings = async (payload: EmbeddingRequest) => {
 
   const response = await fetch(`${COPILOT_API_BASE_URL}/embeddings`, {
     method: "POST",
-    headers: buildCopilotHeaders(state.copilotToken),
+    headers: copilotHeaders(state),
     body: JSON.stringify(payload),
   })
 

@@ -1,3 +1,5 @@
+import type { State } from "./state"
+
 export const COPILOT_API_CONFIG = {
   baseURL: "https://api.individual.githubcopilot.com",
   headers: {
@@ -8,16 +10,20 @@ export const COPILOT_API_CONFIG = {
 } as const
 
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
-const COPILOT_API_SPOOF_HEADERS = {
+export const copilotHeaders = (state: State) => ({
+  Authorization: `token ${state.copilotToken}`,
   "copilot-integration-id": "vscode-chat",
-}
-
-export const buildCopilotHeaders = (token: string) => ({
-  Authorization: `token ${token}`,
-  ...COPILOT_API_SPOOF_HEADERS,
 })
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"
+export const githubHeaders = (state: State) => ({
+  authorization: `token ${state.githubToken}`,
+  "editor-version": `vscode/${state.vsCodeVersion}`,
+  "editor-plugin-version": "copilot-chat/0.24.1",
+  "user-agent": "GitHubCopilotChat/0.24.1",
+  "x-github-api-version": "2024-12-15",
+  "x-vscode-user-agent-library-version": "electron-fetch",
+})
 
 export const GITHUB_BASE_URL = "https://github.com"
 export const GITHUB_CLIENT_ID = "01ab8ac9400c4e429b23"
