@@ -4,8 +4,11 @@ export interface State {
   githubToken?: string
   copilotToken?: string
 
+  accountType: string
   models?: ModelsResponse
   vsCodeVersion?: string
 }
 
-export const state: State = {}
+export const state: State = {
+  accountType: "individual",
+}

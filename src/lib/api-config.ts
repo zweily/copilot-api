@@ -5,7 +5,8 @@ export const standardHeaders = () => ({
   accept: "application/json",
 })
 
-export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
+export const copilotBaseUrl = (state: State) =>
+  `https://api.${state.accountType}.githubcopilot.com`
 export const copilotHeaders = (state: State) => ({
   Authorization: `Bearer ${state.copilotToken}`,
   "content-type": standardHeaders()["content-type"],

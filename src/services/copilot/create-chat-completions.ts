@@ -1,6 +1,6 @@
 import { events } from "fetch-event-stream"
 
-import { copilotHeaders, COPILOT_API_BASE_URL } from "~/lib/api-config"
+import { copilotHeaders, copilotBaseUrl } from "~/lib/api-config"
 import { HTTPError } from "~/lib/http-error"
 import { state } from "~/lib/state"
 
@@ -9,7 +9,7 @@ export const createChatCompletions = async (
 ) => {
   if (!state.copilotToken) throw new Error("Copilot token not found")
 
-  const response = await fetch(`${COPILOT_API_BASE_URL}/chat/completions`, {
+  const response = await fetch(`${copilotBaseUrl(state)}/chat/completions`, {
     method: "POST",
     headers: copilotHeaders(state),
     body: JSON.stringify(payload),
