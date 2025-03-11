@@ -29,8 +29,7 @@
     "prepack": "bun run build",
     "prepare": "simple-git-hooks",
     "release": "bumpp && bun publish --access public",
-    "start": "NODE_ENV=production bun run ./src/main.ts",
-    "test": "vitest"
+    "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
