@@ -1,3 +1,22 @@
+import { COPILOT_API_BASE_URL, copilotHeaders } from "~/lib/api-config"
+import { HTTPError } from "~/lib/http-error"
+import { state } from "~/lib/state"
+
+export const getModels = async () => {
+  const response = await fetch(`${COPILOT_API_BASE_URL}/models`, {
+    headers: copilotHeaders(state),
+  })
+
+  if (!response.ok) throw new HTTPError("Failed to get models", response)
+
+  return (await response.json()) as ModelsResponse
+}
+
+export interface ModelsResponse {
+  data: Array<Model>
+  object: string
+}
+
 interface ModelLimits {
   max_context_window_tokens?: number
   max_output_tokens?: number
@@ -33,9 +52,4 @@ interface Model {
     state: string
     terms: string
   }
-}
-
-export interface GetModelsResponse {
-  data: Array<Model>
-  object: string
 }

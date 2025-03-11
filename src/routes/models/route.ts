@@ -1,8 +1,7 @@
-import consola from "consola"
 import { Hono } from "hono"
-import { FetchError } from "ofetch"
 
-import { getModels } from "~/services/copilot/get-models/service"
+import { forwardError } from "~/lib/forward-error"
+import { getModels } from "~/services/copilot/get-models"
 
 export const modelRoutes = new Hono()
 
@@ -11,9 +10,6 @@ modelRoutes.get("/", async (c) => {
     const models = await getModels()
     return c.json(models)
   } catch (error) {
-    if (error instanceof FetchError) {
-      consola.error(`Request failed: ${error.message}`, error.response?._data)
-    }
-    throw error
+    return await forwardError(c, error)
   }
 })

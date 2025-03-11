@@ -29,8 +29,7 @@
     "prepack": "bun run build",
     "prepare": "simple-git-hooks",
     "release": "bumpp && bun publish --access public",
-    "start": "NODE_ENV=production bun run ./src/main.ts",
-    "test": "vitest"
+    "start": "NODE_ENV=production bun run ./src/main.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
@@ -42,24 +41,20 @@
     "citty": "^0.1.6",
     "consola": "^3.4.0",
     "fetch-event-stream": "^0.1.5",
-    "get-port-please": "^3.1.2",
     "hono": "^4.7.4",
-    "ofetch": "^1.4.1",
-    "pathe": "^2.0.3",
-    "srvx": "^0.1.4",
-    "zod": "^3.24.2"
+    "srvx": "^0.2.5"
   },
   "devDependencies": {
     "@echristian/eslint-config": "^0.0.32",
     "@types/bun": "^1.2.4",
     "bumpp": "^10.0.3",
     "eslint": "^9.22.0",
+    "jiti": "^2.4.2",
     "knip": "^5.45.0",
     "lint-staged": "^15.4.3",
+    "prettier-plugin-packagejson": "^2.5.10",
     "simple-git-hooks": "^2.11.1",
-    "tinyexec": "^0.3.2",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "typescript": "^5.8.2"
   }
 }

@@ -1,13 +1,14 @@
-import type { GetModelsResponse } from "~/services/copilot/get-models/types"
+import consola from "consola"
 
-export const modelsCache = {
-  _models: null as GetModelsResponse | null,
+import { getModels } from "~/services/copilot/get-models"
 
-  setModels(models: GetModelsResponse) {
-    this._models = models
-  },
+import { state } from "./state"
 
-  getModels() {
-    return this._models
-  },
+export async function cacheModels(): Promise<void> {
+  const models = await getModels()
+  state.models = models
+
+  consola.info(
+    `Available models: \n${models.data.map((model) => `- ${model.id}`).join("\n")}`,
+  )
 }

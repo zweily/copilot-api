@@ -4,14 +4,12 @@ export default defineConfig({
   entry: ["src/main.ts"],
 
   format: ["esm"],
-  target: "esnext",
+  target: "es2022",
   platform: "node",
 
-  dts: true,
-  removeNodeProtocol: false,
-  sourcemap: true,
-  shims: true,
+  minify: true,
   clean: true,
+  removeNodeProtocol: false,
 
   env: {
     NODE_ENV: "production",
