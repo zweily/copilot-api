@@ -1,4 +1,4 @@
-import { COPILOT_API_BASE_URL } from "~/lib/constants"
+import { COPILOT_API_BASE_URL } from "~/lib/api-config"
 import { state } from "~/lib/state"
 
 export const getModels = async () => {

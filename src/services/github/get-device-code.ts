@@ -1,4 +1,4 @@
-import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/constants"
+import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/api-config"
 
 export async function getDeviceCode(): Promise<DeviceCodeResponse> {
   const response = await fetch(`${GITHUB_BASE_URL}/login/device/code`, {

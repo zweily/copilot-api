@@ -1,6 +1,6 @@
 import { stream } from "fetch-event-stream"
 
-import { COPILOT_API_CONFIG } from "~/lib/constants"
+import { COPILOT_API_CONFIG } from "~/lib/api-config"
 import { tokenService } from "~/lib/token"
 
 import type { ChatCompletionsPayload } from "./types"

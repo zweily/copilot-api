@@ -1,4 +1,4 @@
-import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/constants"
+import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/api-config"
 import { sleep } from "~/lib/sleep"
 
 import type { DeviceCodeResponse } from "./get-device-code"

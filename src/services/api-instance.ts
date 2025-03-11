@@ -1,7 +1,7 @@
 import consola from "consola"
 import { FetchError, ofetch } from "ofetch"
 
-import { COPILOT_API_CONFIG } from "~/lib/constants"
+import { COPILOT_API_CONFIG } from "~/lib/api-config"
 import { modelsCache } from "~/lib/models"
 import { tokenService } from "~/lib/token"
 

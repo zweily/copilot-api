@@ -8,10 +8,14 @@ export const COPILOT_API_CONFIG = {
 } as const
 
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
-export const COPILOT_API_HEADERS = {
+const COPILOT_API_SPOOF_HEADERS = {
   "copilot-integration-id": "vscode-chat",
-  "editor-version": "vscode/1.98.0-insider",
 }
+
+export const buildCopilotHeaders = (token: string) => ({
+  Authorization: `token ${token}`,
+  ...COPILOT_API_SPOOF_HEADERS,
+})
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"
 
