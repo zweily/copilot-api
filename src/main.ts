@@ -4,7 +4,6 @@ import { defineCommand, runMain } from "citty"
 import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
 
-import { logger } from "./lib/logger"
 import { cacheModels } from "./lib/models"
 import { ensurePaths } from "./lib/paths"
 import { setupCopilotToken, setupGitHubToken } from "./lib/token"
@@ -13,7 +12,6 @@ import { server } from "./server"
 interface RunServerOptions {
   port: number
   verbose: boolean
-  logFile?: string
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -21,8 +19,6 @@ export async function runServer(options: RunServerOptions): Promise<void> {
     consola.level = 5
     consola.info("Verbose logging enabled")
   }
-
-  await logger.initialize(options.logFile)
 
   await ensurePaths()
   await setupGitHubToken()
@@ -52,10 +48,6 @@ const main = defineCommand({
       default: false,
       description: "Enable verbose logging",
     },
-    "log-file": {
-      type: "string",
-      description: "File to log request/response details",
-    },
   },
   run({ args }) {
     const port = Number.parseInt(args.port, 10)
@@ -63,7 +55,6 @@ const main = defineCommand({
     return runServer({
       port,
       verbose: args.verbose,
-      logFile: args["log-file"],
     })
   },
 })

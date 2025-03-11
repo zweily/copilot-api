@@ -11,7 +11,7 @@ export const COPILOT_API_CONFIG = {
 
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
 export const copilotHeaders = (state: State) => ({
-  Authorization: `token ${state.copilotToken}`,
+  Authorization: `Bearer ${state.copilotToken}`,
   "copilot-integration-id": "vscode-chat",
 })
 
