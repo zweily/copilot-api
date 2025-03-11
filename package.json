@@ -46,7 +46,7 @@
     "hono": "^4.7.4",
     "ofetch": "^1.4.1",
     "pathe": "^2.0.3",
-    "srvx": "^0.1.4",
+    "srvx": "^0.2.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -57,9 +57,7 @@
     "knip": "^5.45.0",
     "lint-staged": "^15.4.3",
     "simple-git-hooks": "^2.11.1",
-    "tinyexec": "^0.3.2",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "typescript": "^5.8.2"
   }
 }
