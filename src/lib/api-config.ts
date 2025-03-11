@@ -1,14 +1,5 @@
 import type { State } from "./state"
 
-export const COPILOT_API_CONFIG = {
-  baseURL: "https://api.individual.githubcopilot.com",
-  headers: {
-    "copilot-integration-id": "vscode-chat",
-    "copilot-vision-request": "true",
-    "editor-version": "vscode/1.98.0-insider",
-  },
-} as const
-
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
 export const copilotHeaders = (state: State) => ({
   Authorization: `Bearer ${state.copilotToken}`,

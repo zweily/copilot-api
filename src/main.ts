@@ -7,6 +7,7 @@ import { serve, type ServerHandler } from "srvx"
 import { cacheModels } from "./lib/models"
 import { ensurePaths } from "./lib/paths"
 import { setupCopilotToken, setupGitHubToken } from "./lib/token"
+import { cacheVSCodeVersion } from "./lib/vscode-version"
 import { server } from "./server"
 
 interface RunServerOptions {
@@ -21,6 +22,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   }
 
   await ensurePaths()
+  await cacheVSCodeVersion()
   await setupGitHubToken()
   await setupCopilotToken()
   await cacheModels()
