@@ -2,14 +2,13 @@ import type { Context } from "hono"
 
 import { streamSSE, type SSEMessage } from "hono/streaming"
 
-import type {
-  ChatCompletionResponse,
-  ChatCompletionsPayload,
-} from "~/services/copilot/chat-completions/types"
-
 import { isNullish } from "~/lib/is-nullish"
 import { state } from "~/lib/state"
-import { createChatCompletions } from "~/services/copilot/create-chat-completions"
+import {
+  createChatCompletions,
+  type ChatCompletionResponse,
+  type ChatCompletionsPayload,
+} from "~/services/copilot/create-chat-completions"
 
 export async function handleCompletion(c: Context) {
   let payload = await c.req.json<ChatCompletionsPayload>()
