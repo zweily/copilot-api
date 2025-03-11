@@ -4,31 +4,38 @@ import fs from "node:fs/promises"
 import { PATHS } from "~/lib/paths"
 import { getCopilotToken } from "~/services/copilot/get-token/copilot-token"
 
+import { state } from "./state"
+
+export const readGithubToken = () =>
+  fs.readFile(PATHS.GITHUB_TOKEN_PATH, "utf8")
+
+export const writeGithubToken = (token: string) =>
+  fs.writeFile(PATHS.GITHUB_TOKEN_PATH, token)
+
+export const setupCopilotTokenRefresh = async () => {
+  const { token, refresh_in } = await getCopilotToken()
+  state.copilotToken = token
+
+  const refreshInterval = (refresh_in - 60) * 1000
+
+  setInterval(async () => {
+    consola.start("Refreshing Copilot token")
+    try {
+      const { token } = await getCopilotToken()
+      state.copilotToken = token
+    } catch (error) {
+      consola.error("Failed to refresh Copilot token:", error)
+      throw error
+    }
+  }, refreshInterval)
+}
+
 // Simple token manager with basic encapsulation
 export const tokenService = {
   // Private token storage
   _tokens: {
     github: undefined as string | undefined,
     copilot: undefined as string | undefined,
-  },
-
-  // Get GitHub token
-  async getGithubToken(): Promise<string | undefined> {
-    if (!this._tokens.github) {
-      try {
-        this._tokens.github = await fs.readFile(PATHS.GITHUB_TOKEN_PATH, "utf8")
-      } catch (error) {
-        consola.warn("Failed to load GitHub token", error)
-      }
-    }
-
-    return this._tokens.github
-  },
-
-  // Set GitHub token
-  async setGithubToken(token: string): Promise<void> {
-    this._tokens.github = token
-    await fs.writeFile(PATHS.GITHUB_TOKEN_PATH, token)
   },
 
   // Get Copilot token
