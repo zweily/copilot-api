@@ -9,10 +9,11 @@ export async function forwardError(c: Context, error: unknown) {
   consola.error("Error occurred:", error)
 
   if (error instanceof HTTPError) {
+    const errorText = await error.response.text()
     return c.json(
       {
         error: {
-          message: await error.response.text(),
+          message: errorText,
           type: "error",
         },
       },

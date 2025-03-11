@@ -15,6 +15,6 @@ embeddingRoutes.post("/", async (c) => {
 
     return c.json(response)
   } catch (error) {
-    return forwardError(c, error)
+    return await forwardError(c, error)
   }
 })
