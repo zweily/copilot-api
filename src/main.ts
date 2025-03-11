@@ -4,8 +4,10 @@ import { defineCommand, runMain } from "citty"
 import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
 
-import { initializeApp } from "./lib/initialization"
 import { logger } from "./lib/logger"
+import { cacheModels } from "./lib/models"
+import { ensurePaths } from "./lib/paths"
+import { setupCopilotToken, setupGitHubToken } from "./lib/token"
 import { server } from "./server"
 
 interface RunServerOptions {
@@ -22,7 +24,10 @@ export async function runServer(options: RunServerOptions): Promise<void> {
 
   await logger.initialize(options.logFile)
 
-  await initializeApp()
+  await ensurePaths()
+  await setupGitHubToken()
+  await setupCopilotToken()
+  await cacheModels()
 
   const serverUrl = `http://localhost:${options.port}`
   consola.box(`Server started at ${serverUrl}`)

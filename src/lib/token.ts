@@ -3,6 +3,9 @@ import fs from "node:fs/promises"
 
 import { PATHS } from "~/lib/paths"
 import { getCopilotToken } from "~/services/copilot/get-token/copilot-token"
+import { getDeviceCode } from "~/services/github/get-device-code"
+import { getGitHubUser } from "~/services/github/get-user/service"
+import { pollAccessToken } from "~/services/github/poll-access-token"
 
 import { state } from "./state"
 
@@ -12,7 +15,7 @@ export const readGithubToken = () =>
 export const writeGithubToken = (token: string) =>
   fs.writeFile(PATHS.GITHUB_TOKEN_PATH, token)
 
-export const setupCopilotTokenRefresh = async () => {
+export const setupCopilotToken = async () => {
   const { token, refresh_in } = await getCopilotToken()
   state.copilotToken = token
 
@@ -30,40 +33,31 @@ export const setupCopilotTokenRefresh = async () => {
   }, refreshInterval)
 }
 
-// Simple token manager with basic encapsulation
-export const tokenService = {
-  // Private token storage
-  _tokens: {
-    github: undefined as string | undefined,
-    copilot: undefined as string | undefined,
-  },
+export async function setupGitHubToken(): Promise<void> {
+  const githubToken = await readGithubToken()
 
-  // Get Copilot token
-  getCopilotToken(): string | undefined {
-    return this._tokens.copilot
-  },
+  if (githubToken) {
+    state.githubToken = githubToken
+    await logUser()
 
-  // Set Copilot token
-  setCopilotToken(token: string): void {
-    this._tokens.copilot = token
-  },
+    return
+  }
 
-  // Initialize Copilot token with auto-refresh
-  async initCopilotToken(): Promise<void> {
-    const { token, refresh_in } = await getCopilotToken()
-    this.setCopilotToken(token)
+  consola.info("Not logged in, getting new access token")
+  const response = await getDeviceCode()
 
-    // Set up refresh timer
-    const refreshInterval = (refresh_in - 60) * 1000
-    setInterval(async () => {
-      consola.start("Refreshing Copilot token")
-      try {
-        const { token: newToken } = await getCopilotToken()
-        this.setCopilotToken(newToken)
-        consola.success("Copilot token refreshed")
-      } catch (error) {
-        consola.error("Failed to refresh Copilot token:", error)
-      }
-    }, refreshInterval)
-  },
+  consola.info(
+    `Please enter the code "${response.user_code}" in ${response.verification_uri}`,
+  )
+
+  const token = await pollAccessToken(response)
+  await writeGithubToken(token)
+  state.githubToken = token
+
+  await logUser()
+}
+
+async function logUser() {
+  const user = await getGitHubUser()
+  consola.info(`Logged in as ${JSON.stringify(user.login)}\n`)
 }
