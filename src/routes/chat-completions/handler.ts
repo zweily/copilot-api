@@ -9,7 +9,7 @@ import type { ChatCompletionChunk } from "~/services/copilot/chat-completions/ty
 import { isNullish } from "~/lib/is-nullish"
 import { logger } from "~/lib/logger"
 import { modelsCache } from "~/lib/models"
-import { chatCompletions } from "~/services/copilot/chat-completions/service"
+import { createChatCompletions } from "~/services/copilot/chat-completions/service"
 import { chatCompletionsStream } from "~/services/copilot/chat-completions/service-streaming"
 
 function createCondensedStreamingResponse(
@@ -85,7 +85,7 @@ function handleStreaming(c: Context, payload: ChatCompletionsPayload) {
 }
 
 async function handleNonStreaming(c: Context, payload: ChatCompletionsPayload) {
-  const response = await chatCompletions(payload)
+  const response = await createChatCompletions(payload)
 
   // Get response headers if any
   const responseHeaders = {} // Empty placeholder for response headers

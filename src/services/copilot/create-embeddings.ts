@@ -6,9 +6,7 @@ export const createEmbeddings = async (payload: EmbeddingRequest) => {
 
   const response = await fetch(`${COPILOT_API_BASE_URL}/embeddings`, {
     method: "POST",
-    headers: {
-      ...buildCopilotHeaders(state.copilotToken),
-    },
+    headers: buildCopilotHeaders(state.copilotToken),
     body: JSON.stringify(payload),
   })
 
