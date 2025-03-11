@@ -1,9 +1,14 @@
 import type { State } from "./state"
 
+export const standardHeaders = () => ({
+  "content-type": "application/json",
+  accept: "application/json",
+})
+
 export const COPILOT_API_BASE_URL = "https://api.individual.githubcopilot.com"
 export const copilotHeaders = (state: State) => ({
   Authorization: `Bearer ${state.copilotToken}`,
-  "content-type": "application/json",
+  "content-type": standardHeaders()["content-type"],
   "copilot-integration-id": "vscode-chat",
   "editor-version": `vscode/${state.vsCodeVersion}`,
   "editor-plugin-version": "copilot-chat/0.24.1",
@@ -15,6 +20,7 @@ export const copilotHeaders = (state: State) => ({
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"
 export const githubHeaders = (state: State) => ({
+  ...standardHeaders(),
   authorization: `token ${state.githubToken}`,
   "editor-version": `vscode/${state.vsCodeVersion}`,
   "editor-plugin-version": "copilot-chat/0.24.1",

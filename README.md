@@ -40,18 +40,17 @@ npx copilot-api --port 8080
 
 ## Command Line Options
 
-The command accepts several command line options:
+The following command line options are available:
 
-| Option        | Description                          | Default |
-| ------------- | ------------------------------------ | ------- |
-| --port, -p    | Port to listen on                    | 4141    |
-| --verbose, -v | Enable verbose logging               | false   |
-| --log-file    | File to log request/response details | -       |
+| Option        | Description              | Default |
+| ------------- | ------------------------ | ------- |
+| --port, -p    | Port to listen on        | 4141    |
+| --verbose, -v | Enable verbose logging   | false   |
 
-Example with options:
+Example usage:
 
 ```sh
-npx copilot-api@latest --port 8080 --verbose --log-file copilot-api.txt
+npx copilot-api@latest --port 8080 --verbose
 ```
 
 ## Running from Source
@@ -70,15 +69,18 @@ bun run dev
 bun run start
 ```
 
-## Tips to not hit the rate limit
+## Usage Tips
 
-- Use a free model from free provider like Gemini/Mistral/Openrouter for the weak model
-- Rarely use architect mode
-- Do not enable automatic yes in aider config
-- Claude 3.7 thinking mode uses more tokens. Use it sparingly
+To avoid rate limiting and optimize your experience:
+
+- Consider using free models (e.g., Gemini, Mistral, Openrouter) as the `weak-model`
+- Use architect mode sparingly
+- Disable `yes-always` in your aider configuration
+- Be mindful that Claude 3.7 thinking mode consume more tokens
 
 ## Roadmap
 
-- Manual approval for every request
-- Rate limiting (only allow request every X seconds)
-- Token counting
+- [ ] Manual request approval system
+- [ ] Rate limiting implementation
+- [ ] Token usage tracking and monitoring
+- [ ] Enhanced error handling and recovery

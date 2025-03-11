@@ -1,4 +1,10 @@
-import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/api-config"
+import consola from "consola"
+
+import {
+  GITHUB_BASE_URL,
+  GITHUB_CLIENT_ID,
+  standardHeaders,
+} from "~/lib/api-config"
 import { sleep } from "~/lib/sleep"
 
 import type { DeviceCodeResponse } from "./get-device-code"
@@ -6,11 +12,17 @@ import type { DeviceCodeResponse } from "./get-device-code"
 export async function pollAccessToken(
   deviceCode: DeviceCodeResponse,
 ): Promise<string> {
+  // Interval is in seconds, we need to multiply by 1000 to get milliseconds
+  // I'm also adding another second, just to be safe
+  const sleepDuration = (deviceCode.interval + 1) * 1000
+  consola.debug(`Polling access token with interval of ${sleepDuration}ms`)
+
   while (true) {
     const response = await fetch(
       `${GITHUB_BASE_URL}/login/oauth/access_token`,
       {
         method: "POST",
+        headers: standardHeaders(),
         body: JSON.stringify({
           client_id: GITHUB_CLIENT_ID,
           device_code: deviceCode.device_code,
@@ -19,16 +31,17 @@ export async function pollAccessToken(
       },
     )
 
-    // Interval is in seconds, we need to multiply by 1000 to get milliseconds
-    // I'm also adding another second, just to be safe
-    const sleepDuration = (deviceCode.interval + 1) * 1000
-
     if (!response.ok) {
       await sleep(sleepDuration)
+      consola.error("Failed to poll access token:", await response.text())
+
       continue
     }
 
-    const { access_token } = (await response.json()) as AccessTokenResponse
+    const json = await response.json()
+    consola.debug("Polling access token response:", json)
+
+    const { access_token } = json as AccessTokenResponse
 
     if (access_token) {
       return access_token
