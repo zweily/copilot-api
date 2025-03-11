@@ -59,5 +59,5 @@ export async function setupGitHubToken(): Promise<void> {
 
 async function logUser() {
   const user = await getGitHubUser()
-  consola.info(`Logged in as ${JSON.stringify(user.login)}\n`)
+  consola.info(`Logged in as ${user.login}`)
 }
