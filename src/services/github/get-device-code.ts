@@ -1,4 +1,8 @@
-import { GITHUB_BASE_URL, GITHUB_CLIENT_ID } from "~/lib/api-config"
+import {
+  GITHUB_APP_SCOPES,
+  GITHUB_BASE_URL,
+  GITHUB_CLIENT_ID,
+} from "~/lib/api-config"
 import { HTTPError } from "~/lib/http-error"
 
 export async function getDeviceCode(): Promise<DeviceCodeResponse> {
@@ -6,6 +10,7 @@ export async function getDeviceCode(): Promise<DeviceCodeResponse> {
     method: "POST",
     body: JSON.stringify({
       client_id: GITHUB_CLIENT_ID,
+      scope: GITHUB_APP_SCOPES,
     }),
   })
 
