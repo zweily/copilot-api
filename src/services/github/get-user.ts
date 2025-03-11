@@ -14,10 +14,10 @@ export async function getGitHubUser() {
     })
   }
 
-  return (await response.json()) as GithubUser
+  return (await response.json()) as GithubUserResponse
 }
 
 // Trimmed for the sake of simplicity
-interface GithubUser {
+interface GithubUserResponse {
   login: string
 }
