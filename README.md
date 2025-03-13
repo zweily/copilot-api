@@ -24,6 +24,20 @@ To install dependencies, run:
 bun install
 ```
 
+## Using with docker
+
+Build image
+
+```sh
+docker build -t copilot-api .
+```
+
+Run the container
+
+```sh
+docker run -p 4141:4141 copilot-api
+```
+
 ## Using with npx
 
 You can run the project directly using npx:
