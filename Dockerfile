@@ -1,16 +1,23 @@
-FROM oven/bun:slim
+FROM oven/bun:1.2.5 AS base
+WORKDIR /usr/src/app
 
-WORKDIR /app
+FROM base AS install
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production
 
-COPY package*.json ./
 
-RUN bun install
-
-COPY src ./src
-COPY tsconfig.json ./
-
-EXPOSE 4141
+FROM base AS prerelease
+COPY --from=install /usr/src/app/node_modules node_modules
+COPY . .
 
 ENV NODE_ENV=production
+RUN bun test
+RUN bun run build
 
-CMD ["bun", "run", "start"]
+FROM base AS release
+COPY --from=install /usr/src/app/node_modules node_modules
+COPY --from=prerelease /usr/src/app/dist/ .
+
+USER bun
+EXPOSE 4141/tcp
+ENTRYPOINT [ "bun", "main.js"]
