@@ -15,6 +15,7 @@ interface RunServerOptions {
   port: number
   verbose: boolean
   business: boolean
+  manual: boolean
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -27,6 +28,8 @@ export async function runServer(options: RunServerOptions): Promise<void> {
     state.accountType = "business"
     consola.info("Using business plan GitHub account")
   }
+
+  state.manualApprove = options.manual
 
   await ensurePaths()
   await cacheVSCodeVersion()
@@ -62,6 +65,11 @@ const main = defineCommand({
       default: false,
       description: "Use a business plan GitHub Account",
     },
+    manual: {
+      type: "boolean",
+      default: false,
+      description: "Enable manual request approval",
+    },
   },
   run({ args }) {
     const port = Number.parseInt(args.port, 10)
@@ -70,6 +78,7 @@ const main = defineCommand({
       port,
       verbose: args.verbose,
       business: args.business,
+      manual: args.manual,
     })
   },
 })

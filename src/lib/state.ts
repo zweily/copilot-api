@@ -8,12 +8,10 @@ export interface State {
   models?: ModelsResponse
   vsCodeVersion?: string
 
-  estimateToken: boolean
   manualApprove: boolean
 }
 
 export const state: State = {
   accountType: "individual",
-  estimateToken: true,
   manualApprove: false,
 }

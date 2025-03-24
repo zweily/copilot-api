@@ -1,9 +1,11 @@
 import type { Context } from "hono"
 
+import consola from "consola"
 import { streamSSE, type SSEMessage } from "hono/streaming"
 
 import { isNullish } from "~/lib/is-nullish"
 import { state } from "~/lib/state"
+import { getTokenCount } from "~/lib/tokenizer"
 import {
   createChatCompletions,
   type ChatCompletionResponse,
@@ -12,6 +14,16 @@ import {
 
 export async function handleCompletion(c: Context) {
   let payload = await c.req.json<ChatCompletionsPayload>()
+
+  consola.info("Current token count:", getTokenCount(payload.messages))
+
+  if (state.manualApprove) {
+    const response = await consola.prompt(`Accept incoming request?`, {
+      type: "confirm",
+    })
+
+    if (!response) throw new Error("Request cancelled")
+  }
 
   if (isNullish(payload.max_tokens)) {
     const selectedModel = state.models?.data.find(
