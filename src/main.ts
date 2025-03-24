@@ -16,6 +16,7 @@ interface RunServerOptions {
   verbose: boolean
   business: boolean
   manual: boolean
+  rateLimit: number
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -30,6 +31,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   }
 
   state.manualApprove = options.manual
+  state.rateLimitSeconds = options.rateLimit
 
   await ensurePaths()
   await cacheVSCodeVersion()
@@ -70,15 +72,23 @@ const main = defineCommand({
       default: false,
       description: "Enable manual request approval",
     },
+    rateLimit: {
+      alias: "r",
+      type: "string",
+      default: "5",
+      description: "Rate limit in seconds between requests",
+    },
   },
   run({ args }) {
     const port = Number.parseInt(args.port, 10)
+    const rateLimit = Number.parseInt(args.rateLimit, 10)
 
     return runServer({
       port,
       verbose: args.verbose,
       business: args.business,
       manual: args.manual,
+      rateLimit,
     })
   },
 })

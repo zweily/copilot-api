@@ -9,6 +9,10 @@ export interface State {
   vsCodeVersion?: string
 
   manualApprove: boolean
+
+  // Rate limiting configuration
+  rateLimitSeconds?: number
+  lastRequestTimestamp?: number
 }
 
 export const state: State = {
