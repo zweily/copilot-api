@@ -17,6 +17,7 @@ interface RunServerOptions {
   business: boolean
   manual: boolean
   rateLimit: number | undefined
+  rateLimitWait: boolean
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -32,6 +33,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
 
   state.manualApprove = options.manual
   state.rateLimitSeconds = options.rateLimit
+  state.rateLimitWait = options.rateLimitWait
 
   await ensurePaths()
   await cacheVSCodeVersion()
@@ -77,6 +79,13 @@ const main = defineCommand({
       type: "string",
       description: "Rate limit in seconds between requests",
     },
+    wait: {
+      alias: "w",
+      type: "boolean",
+      default: false,
+      description:
+        "Wait instead of error when rate limit is hit. Has no effect if rate limit is not set",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -85,7 +94,6 @@ const main = defineCommand({
       rateLimitRaw === undefined ? undefined : Number.parseInt(rateLimitRaw, 10)
 
     const port = Number.parseInt(args.port, 10)
-    // const rateLimit = Number.parseInt(args["rate-limit"], 10)
 
     return runServer({
       port,
@@ -93,6 +101,7 @@ const main = defineCommand({
       business: args.business,
       manual: args.manual,
       rateLimit,
+      rateLimitWait: Boolean(args["rate-limit-wait"]),
     })
   },
 })

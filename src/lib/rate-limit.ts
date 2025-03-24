@@ -1,10 +1,11 @@
+import { sleep } from "bun"
 import consola from "consola"
 
 import type { State } from "./state"
 
 import { HTTPError } from "./http-error"
 
-export function checkRateLimit(state: State) {
+export async function checkRateLimit(state: State) {
   if (state.rateLimitSeconds === undefined) return
 
   const now = Date.now()
@@ -21,10 +22,22 @@ export function checkRateLimit(state: State) {
     return
   }
 
-  const waitTimeSeconds = Math.round(state.rateLimitSeconds - elapsedSeconds)
-  consola.warn(
-    `Rate limit exceeded. Need to wait ${waitTimeSeconds} more seconds.`,
-  )
+  const waitTimeSeconds = Math.ceil(state.rateLimitSeconds - elapsedSeconds)
 
-  throw new HTTPError("Rate limit exceeded", Response.json({ status: 429 }))
+  if (!state.rateLimitWait) {
+    consola.warn(
+      `Rate limit exceeded. Need to wait ${waitTimeSeconds} more seconds.`,
+    )
+    throw new HTTPError("Rate limit exceeded", Response.json({ status: 429 }))
+  }
+
+  const waitTimeMs = waitTimeSeconds * 1000
+  consola.warn(
+    `Rate limit reached. Waiting ${waitTimeSeconds} seconds before proceeding...`,
+  )
+  await sleep(waitTimeMs)
+  // eslint-disable-next-line require-atomic-updates
+  state.lastRequestTimestamp = now
+  consola.info("Rate limit wait completed, proceeding with request")
+  return
 }

@@ -9,6 +9,7 @@ export interface State {
   vsCodeVersion?: string
 
   manualApprove: boolean
+  rateLimitWait: boolean
 
   // Rate limiting configuration
   rateLimitSeconds?: number
@@ -18,4 +19,5 @@ export interface State {
 export const state: State = {
   accountType: "individual",
   manualApprove: false,
+  rateLimitWait: false,
 }
