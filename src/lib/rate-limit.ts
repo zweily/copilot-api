@@ -1,9 +1,9 @@
-import { sleep } from "bun"
 import consola from "consola"
 
 import type { State } from "./state"
 
 import { HTTPError } from "./http-error"
+import { sleep } from "./sleep"
 
 export async function checkRateLimit(state: State) {
   if (state.rateLimitSeconds === undefined) return
