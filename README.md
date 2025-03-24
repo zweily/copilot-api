@@ -56,12 +56,14 @@ npx copilot-api --port 8080
 
 The following command line options are available:
 
-| Option     | Description                        | Default | Alias |
-| ---------- | ---------------------------------- | ------- | ----- |
-| --port     | Port to listen on                  | 4141    | -p    |
-| --verbose  | Enable verbose logging             | false   | -v    |
-| --business | Use a business plan GitHub account | false   | none  |
-| --manual   | Enable manual request approval     | false   | none  |
+| Option       | Description                                   | Default | Alias |
+| ------------ | --------------------------------------------- | ------- | ----- |
+| --port       | Port to listen on                             | 4141    | -p    |
+| --verbose    | Enable verbose logging                        | false   | -v    |
+| --business   | Use a business plan GitHub account            | false   | none  |
+| --manual     | Enable manual request approval                | false   | none  |
+| --rate-limit | Rate limit in seconds between requests        | none    | -r    |
+| --wait       | Wait instead of error when rate limit is hit  | false   | -w    |
 
 Example usage:
 
@@ -74,6 +76,12 @@ npx copilot-api@latest --business
 
 # Enable manual approval for each request
 npx copilot-api@latest --manual
+
+# Set rate limit to 30 seconds between requests
+npx copilot-api@latest --rate-limit 30
+
+# Wait instead of error when rate limit is hit
+npx copilot-api@latest --rate-limit 30 --wait
 ```
 
 ## Running from Source
