@@ -5,7 +5,7 @@ This project is a reverse-engineered implementation of the GitHub Copilot API cr
 
 ## Project Overview
 
-A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.
+A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools like AI assistants, local interfaces, and development utilities.
 
 ## Demo
 
@@ -14,7 +14,7 @@ https://github.com/user-attachments/assets/7654b383-669d-4eb9-b23c-06d7aefee8c5
 ## Prerequisites
 
 - Bun (>= 1.2.x)
-- GitHub account with Copilot Individual subscription
+- GitHub account with Copilot subscription (Individual or Business)
 
 ## Installation
 
@@ -56,15 +56,24 @@ npx copilot-api --port 8080
 
 The following command line options are available:
 
-| Option        | Description            | Default |
-| ------------- | ---------------------- | ------- |
-| --port, -p    | Port to listen on      | 4141    |
-| --verbose, -v | Enable verbose logging | false   |
+| Option     | Description                        | Default | Alias |
+| ---------- | ---------------------------------- | ------- | ----- |
+| --port     | Port to listen on                  | 4141    | -p    |
+| --verbose  | Enable verbose logging             | false   | -v    |
+| --business | Use a business plan GitHub account | false   | none  |
+| --manual   | Enable manual request approval     | false   | none  |
 
 Example usage:
 
 ```sh
+# Run on custom port with verbose logging
 npx copilot-api@latest --port 8080 --verbose
+
+# Use with a Business GitHub account
+npx copilot-api@latest --business
+
+# Enable manual approval for each request
+npx copilot-api@latest --manual
 ```
 
 ## Running from Source
@@ -85,17 +94,27 @@ bun run start
 
 ## Usage Tips
 
-To avoid rate limiting and optimize your experience:
-
 - Consider using free models (e.g., Gemini, Mistral, Openrouter) as the `weak-model`
 - Use architect mode sparingly
 - Disable `yes-always` in your aider configuration
-- Be mindful that Claude 3.7 thinking mode consume more tokens
+- Be mindful that Claude 3.7 thinking mode consumes more tokens
+- Enable the `--manual` flag to review and approve each request before processing
+- If you have a GitHub Business account with Copilot, use the `--business` flag
+
+### Manual Request Approval
+
+When using the `--manual` flag, the server will prompt you to approve each incoming request:
+
+```
+? Accept incoming request? › (y/N)
+```
+
+This helps you control usage and monitor requests in real-time.
 
 ## Roadmap
 
 - [ ] Manual authentication flow
-- [ ] Manual request approval system
+- [x] Manual request approval system
 - [ ] Rate limiting implementation
-- [ ] Token usage tracking and monitoring
-- [ ] Enhanced error handling and recovery
+- [x] Token counting
+- [x] Enhanced error handling and recovery
