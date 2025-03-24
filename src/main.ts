@@ -16,7 +16,7 @@ interface RunServerOptions {
   verbose: boolean
   business: boolean
   manual: boolean
-  rateLimit: number
+  rateLimit: number | undefined
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -72,16 +72,20 @@ const main = defineCommand({
       default: false,
       description: "Enable manual request approval",
     },
-    rateLimit: {
+    "rate-limit": {
       alias: "r",
       type: "string",
-      default: "5",
       description: "Rate limit in seconds between requests",
     },
   },
   run({ args }) {
+    const rateLimitRaw = args["rate-limit"]
+    const rateLimit =
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      rateLimitRaw === undefined ? undefined : Number.parseInt(rateLimitRaw, 10)
+
     const port = Number.parseInt(args.port, 10)
-    const rateLimit = Number.parseInt(args.rateLimit, 10)
+    // const rateLimit = Number.parseInt(args["rate-limit"], 10)
 
     return runServer({
       port,
