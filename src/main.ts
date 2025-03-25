@@ -101,7 +101,7 @@ const main = defineCommand({
       business: args.business,
       manual: args.manual,
       rateLimit,
-      rateLimitWait: Boolean(args["rate-limit-wait"]),
+      rateLimitWait: Boolean(args.wait),
     })
   },
 })
