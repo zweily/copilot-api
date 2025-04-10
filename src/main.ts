@@ -19,6 +19,7 @@ interface RunServerOptions {
   manual: boolean
   rateLimit: number | undefined
   rateLimitWait: boolean
+  githubToken?: string
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -38,7 +39,14 @@ export async function runServer(options: RunServerOptions): Promise<void> {
 
   await ensurePaths()
   await cacheVSCodeVersion()
-  await setupGitHubToken()
+
+  if (options.githubToken) {
+    state.githubToken = options.githubToken
+    consola.info("Using provided GitHub token")
+  } else {
+    await setupGitHubToken()
+  }
+
   await setupCopilotToken()
   await cacheModels()
 
@@ -93,6 +101,12 @@ const main = defineCommand({
       description:
         "Wait instead of error when rate limit is hit. Has no effect if rate limit is not set",
     },
+    "github-token": {
+      alias: "g",
+      type: "string",
+      description:
+        "Provide GitHub token directly instead of using stored token",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -109,6 +123,7 @@ const main = defineCommand({
       manual: args.manual,
       rateLimit,
       rateLimitWait: Boolean(args.wait),
+      githubToken: args["github-token"],
     })
   },
 })
