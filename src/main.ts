@@ -4,6 +4,7 @@ import { defineCommand, runMain } from "citty"
 import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
 
+import { auth } from "./auth"
 import { cacheModels } from "./lib/models"
 import { ensurePaths } from "./lib/paths"
 import { state } from "./lib/state"
@@ -51,6 +52,12 @@ export async function runServer(options: RunServerOptions): Promise<void> {
 }
 
 const main = defineCommand({
+  meta: {
+    name: "copilot-api",
+    description:
+      "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+  },
+  subCommands: { auth },
   args: {
     port: {
       alias: "p",
