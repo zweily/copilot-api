@@ -123,7 +123,7 @@ This helps you control usage and monitor requests in real-time.
 
 ## Roadmap
 
-- [ ] Manual authentication flow
+- [x] Manual authentication flow
 - [x] Manual request approval system
 - [x] Rate limiting implementation
 - [x] Token counting
