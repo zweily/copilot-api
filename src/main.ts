@@ -59,13 +59,11 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   })
 }
 
-const main = defineCommand({
+const start = defineCommand({
   meta: {
-    name: "copilot-api",
-    description:
-      "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+    name: "start",
+    description: "Start the Copilot API server",
   },
-  subCommands: { auth },
   args: {
     port: {
       alias: "p",
@@ -126,6 +124,15 @@ const main = defineCommand({
       githubToken: args["github-token"],
     })
   },
+})
+
+const main = defineCommand({
+  meta: {
+    name: "copilot-api",
+    description:
+      "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+  },
+  subCommands: { auth, start },
 })
 
 await runMain(main)

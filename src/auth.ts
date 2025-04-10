@@ -16,10 +16,8 @@ export async function runAuth(options: RunAuthOptions): Promise<void> {
     consola.info("Verbose logging enabled")
   }
 
-  await setupGitHubToken()
+  await setupGitHubToken({ force: true })
   consola.success("GitHub token written to", PATHS.GITHUB_TOKEN_PATH)
-
-  process.exit(0)
 }
 
 export const auth = defineCommand({
