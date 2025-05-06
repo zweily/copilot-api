@@ -17,9 +17,10 @@ interface RunServerOptions {
   verbose: boolean
   business: boolean
   manual: boolean
-  rateLimit: number | undefined
+  rateLimit?: number
   rateLimitWait: boolean
   githubToken?: string
+  visionEnabled: boolean
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -36,6 +37,11 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   state.manualApprove = options.manual
   state.rateLimitSeconds = options.rateLimit
   state.rateLimitWait = options.rateLimitWait
+  state.visionEnabled = options.visionEnabled
+
+  if (options.visionEnabled) {
+    consola.info("Vision capability enabled")
+  }
 
   await ensurePaths()
   await cacheVSCodeVersion()
@@ -105,6 +111,12 @@ const start = defineCommand({
       description:
         "Provide GitHub token directly instead of using stored token",
     },
+    vision: {
+      type: "boolean",
+      default: false,
+      description: "Enable vision capabilities",
+      required: false,
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -122,6 +134,7 @@ const start = defineCommand({
       rateLimit,
       rateLimitWait: Boolean(args.wait),
       githubToken: args["github-token"],
+      visionEnabled: args.vision,
     })
   },
 })

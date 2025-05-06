@@ -10,6 +10,7 @@ export interface State {
 
   manualApprove: boolean
   rateLimitWait: boolean
+  visionEnabled: boolean
 
   // Rate limiting configuration
   rateLimitSeconds?: number
@@ -20,4 +21,5 @@ export const state: State = {
   accountType: "individual",
   manualApprove: false,
   rateLimitWait: false,
+  visionEnabled: false,
 }

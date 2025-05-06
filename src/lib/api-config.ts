@@ -26,6 +26,7 @@ export const copilotHeaders = (state: State) => ({
   "x-github-api-version": API_VERSION,
   "x-request-id": randomUUID(),
   "x-vscode-user-agent-library-version": "electron-fetch",
+  "copilot-vision-request": state.visionEnabled ? "true" : "false",
 })
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"
