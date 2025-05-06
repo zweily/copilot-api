@@ -7,6 +7,12 @@ export const standardHeaders = () => ({
   accept: "application/json",
 })
 
+const COPILOT_VERSION = "0.26.7"
+const EDITOR_PLUGIN_VERSION = `copilot-chat/${COPILOT_VERSION}`
+const USER_AGENT = `GitHubCopilotChat/${COPILOT_VERSION}`
+
+const API_VERSION = "2025-04-01"
+
 export const copilotBaseUrl = (state: State) =>
   `https://api.${state.accountType}.githubcopilot.com`
 export const copilotHeaders = (state: State) => ({
@@ -14,10 +20,10 @@ export const copilotHeaders = (state: State) => ({
   "content-type": standardHeaders()["content-type"],
   "copilot-integration-id": "vscode-chat",
   "editor-version": `vscode/${state.vsCodeVersion}`,
-  "editor-plugin-version": "copilot-chat/0.26.7",
-  "user-agent": "GitHubCopilotChat/0.26.7",
+  "editor-plugin-version": EDITOR_PLUGIN_VERSION,
+  "user-agent": USER_AGENT,
   "openai-intent": "conversation-panel",
-  "x-github-api-version": "2025-04-01",
+  "x-github-api-version": API_VERSION,
   "x-request-id": randomUUID(),
   "x-vscode-user-agent-library-version": "electron-fetch",
 })
@@ -27,9 +33,9 @@ export const githubHeaders = (state: State) => ({
   ...standardHeaders(),
   authorization: `token ${state.githubToken}`,
   "editor-version": `vscode/${state.vsCodeVersion}`,
-  "editor-plugin-version": "copilot-chat/0.26.7",
-  "user-agent": "GitHubCopilotChat/0.26.7",
-  "x-github-api-version": "2025-04-01",
+  "editor-plugin-version": EDITOR_PLUGIN_VERSION,
+  "user-agent": USER_AGENT,
+  "x-github-api-version": API_VERSION,
   "x-vscode-user-agent-library-version": "electron-fetch",
 })
 
