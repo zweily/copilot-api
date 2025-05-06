@@ -163,10 +163,3 @@ When using the `--manual` flag, the server will prompt you to approve each incom
 
 This helps you control usage and monitor requests in real-time.
 
-## Roadmap
-
-- [x] Manual authentication flow
-- [x] Manual request approval system
-- [x] Rate limiting implementation
-- [x] Token counting
-- [x] Enhanced error handling and recovery
