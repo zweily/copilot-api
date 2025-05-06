@@ -126,8 +126,6 @@ npx copilot-api@latest auth
 npx copilot-api@latest auth --verbose
 ```
 
-> **Note**: For backward compatibility, if no subcommand is provided, the `start` command will be used as default.
-
 ## Running from Source
 
 The project can be run from source in several ways:
