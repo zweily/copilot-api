@@ -15,19 +15,26 @@ const API_VERSION = "2025-04-01"
 
 export const copilotBaseUrl = (state: State) =>
   `https://api.${state.accountType}.githubcopilot.com`
-export const copilotHeaders = (state: State) => ({
-  Authorization: `Bearer ${state.copilotToken}`,
-  "content-type": standardHeaders()["content-type"],
-  "copilot-integration-id": "vscode-chat",
-  "editor-version": `vscode/${state.vsCodeVersion}`,
-  "editor-plugin-version": EDITOR_PLUGIN_VERSION,
-  "user-agent": USER_AGENT,
-  "openai-intent": "conversation-panel",
-  "x-github-api-version": API_VERSION,
-  "x-request-id": randomUUID(),
-  "x-vscode-user-agent-library-version": "electron-fetch",
-  "copilot-vision-request": state.visionEnabled ? "true" : "false",
-})
+export const copilotHeaders = (state: State) => {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${state.copilotToken}`,
+    "content-type": standardHeaders()["content-type"],
+    "copilot-integration-id": "vscode-chat",
+    "editor-version": `vscode/${state.vsCodeVersion}`,
+    "editor-plugin-version": EDITOR_PLUGIN_VERSION,
+    "user-agent": USER_AGENT,
+    "openai-intent": "conversation-panel",
+    "x-github-api-version": API_VERSION,
+    "x-request-id": randomUUID(),
+    "x-vscode-user-agent-library-version": "electron-fetch",
+  }
+
+  if (state.visionEnabled) {
+    headers["copilot-vision-request"] = "true"
+  }
+
+  return headers
+}
 
 export const GITHUB_API_BASE_URL = "https://api.github.com"
 export const githubHeaders = (state: State) => ({
