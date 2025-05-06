@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import type { State } from "./state"
 
 export const standardHeaders = () => ({
@@ -12,10 +14,11 @@ export const copilotHeaders = (state: State) => ({
   "content-type": standardHeaders()["content-type"],
   "copilot-integration-id": "vscode-chat",
   "editor-version": `vscode/${state.vsCodeVersion}`,
-  "editor-plugin-version": "copilot-chat/0.24.1",
+  "editor-plugin-version": "copilot-chat/0.26.7",
+  "user-agent": "GitHubCopilotChat/0.26.7",
   "openai-intent": "conversation-panel",
-  "x-github-api-version": "2024-12-15",
-  "x-request-id": globalThis.crypto.randomUUID(),
+  "x-github-api-version": "2025-04-01",
+  "x-request-id": randomUUID(),
   "x-vscode-user-agent-library-version": "electron-fetch",
 })
 
@@ -24,9 +27,9 @@ export const githubHeaders = (state: State) => ({
   ...standardHeaders(),
   authorization: `token ${state.githubToken}`,
   "editor-version": `vscode/${state.vsCodeVersion}`,
-  "editor-plugin-version": "copilot-chat/0.24.1",
-  "user-agent": "GitHubCopilotChat/0.24.1",
-  "x-github-api-version": "2024-12-15",
+  "editor-plugin-version": "copilot-chat/0.26.7",
+  "user-agent": "GitHubCopilotChat/0.26.7",
+  "x-github-api-version": "2025-04-01",
   "x-vscode-user-agent-library-version": "electron-fetch",
 })
 
