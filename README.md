@@ -73,16 +73,16 @@ Copilot API now uses a subcommand structure with two main commands:
 
 The following command line options are available for the `start` command:
 
-| Option         | Description                                  | Default | Alias |
-| -------------- | -------------------------------------------- | ------- | ----- |
-| --port         | Port to listen on                            | 4141    | -p    |
-| --verbose      | Enable verbose logging                       | false   | -v    |
-| --business     | Use a business plan GitHub account           | false   | none  |
-| --manual       | Enable manual request approval               | false   | none  |
-| --rate-limit   | Rate limit in seconds between requests       | none    | -r    |
-| --wait         | Wait instead of error when rate limit is hit | false   | -w    |
-| --github-token | Provide GitHub token directly                | none    | -g    |
-| --vision       | Enable vision capabilities                   | false   | none  |
+| Option         | Description                                                                   | Default | Alias |
+| -------------- | ----------------------------------------------------------------------------- | ------- | ----- |
+| --port         | Port to listen on                                                             | 4141    | -p    |
+| --verbose      | Enable verbose logging                                                        | false   | -v    |
+| --business     | Use a business plan GitHub account                                            | false   | none  |
+| --manual       | Enable manual request approval                                                | false   | none  |
+| --rate-limit   | Rate limit in seconds between requests                                        | none    | -r    |
+| --wait         | Wait instead of error when rate limit is hit                                  | false   | -w    |
+| --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none    | -g    |
+| --vision       | Enable vision capabilities                                                    | false   | none  |
 
 ### Auth Command Options
 
@@ -156,8 +156,7 @@ bun run start
 When using the `--manual` flag, the server will prompt you to approve each incoming request:
 
 ```
-? Accept incoming request? › (y/N)
+? Accept incoming request? > (y/N)
 ```
 
 This helps you control usage and monitor requests in real-time.
-

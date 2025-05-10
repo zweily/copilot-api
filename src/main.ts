@@ -109,7 +109,7 @@ const start = defineCommand({
       alias: "g",
       type: "string",
       description:
-        "Provide GitHub token directly instead of using stored token",
+        "Provide GitHub token directly (must be generated using the `auth` subcommand)",
     },
     vision: {
       type: "boolean",
