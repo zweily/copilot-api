@@ -3,7 +3,7 @@
 import { defineCommand } from "citty"
 import consola from "consola"
 
-import { PATHS } from "./lib/paths"
+import { PATHS, ensurePaths } from "./lib/paths"
 import { setupGitHubToken } from "./lib/token"
 
 interface RunAuthOptions {
@@ -16,6 +16,7 @@ export async function runAuth(options: RunAuthOptions): Promise<void> {
     consola.info("Verbose logging enabled")
   }
 
+  await ensurePaths()
   await setupGitHubToken({ force: true })
   consola.success("GitHub token written to", PATHS.GITHUB_TOKEN_PATH)
 }
