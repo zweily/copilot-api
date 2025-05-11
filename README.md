@@ -64,8 +64,8 @@ npx copilot-api@latest auth
 
 Copilot API now uses a subcommand structure with two main commands:
 
-- `start`: Start the Copilot API server (default command)
-- `auth`: Run GitHub authentication flow without starting the server
+- `start`: Start the Copilot API server (default command). This command will also handle authentication if needed.
+- `auth`: Run GitHub authentication flow without starting the server. This is typically used if you need to generate a token for use with the `--github-token` option, especially in non-interactive environments.
 
 ## Command Line Options
 
