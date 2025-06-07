@@ -20,4 +20,4 @@ EXPOSE 4141
 ARG GH_TOKEN
 ENV GH_TOKEN=$GH_TOKEN
 
-CMD bun run dist/main.js start -g $GH_TOKEN --vision
+CMD bun run dist/main.js start -g $GH_TOKEN

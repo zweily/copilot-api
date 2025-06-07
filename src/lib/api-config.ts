@@ -15,7 +15,7 @@ const API_VERSION = "2025-04-01"
 
 export const copilotBaseUrl = (state: State) =>
   `https://api.${state.accountType}.githubcopilot.com`
-export const copilotHeaders = (state: State) => {
+export const copilotHeaders = (state: State, vision: boolean = false) => {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${state.copilotToken}`,
     "content-type": standardHeaders()["content-type"],
@@ -29,9 +29,7 @@ export const copilotHeaders = (state: State) => {
     "x-vscode-user-agent-library-version": "electron-fetch",
   }
 
-  if (state.visionEnabled) {
-    headers["copilot-vision-request"] = "true"
-  }
+  if (vision) headers["copilot-vision-request"] = "true"
 
   return headers
 }
