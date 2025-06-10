@@ -16,6 +16,7 @@ interface RunServerOptions {
   port: number
   verbose: boolean
   business: boolean
+  enterprise: boolean
   manual: boolean
   rateLimit?: number
   rateLimitWait: boolean
@@ -31,6 +32,9 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.business) {
     state.accountType = "business"
     consola.info("Using business plan GitHub account")
+  } else if (options.enterprise) {
+    state.accountType = "enterprise"
+    consola.info("Using enterprise plan GitHub account")
   }
 
   state.manualApprove = options.manual
@@ -82,6 +86,11 @@ const start = defineCommand({
       default: false,
       description: "Use a business plan GitHub Account",
     },
+    enterprise: {
+      type: "boolean",
+      default: false,
+      description: "Use a enterprise plan GitHub Account",
+    },
     manual: {
       type: "boolean",
       default: false,
@@ -118,6 +127,7 @@ const start = defineCommand({
       port,
       verbose: args.verbose,
       business: args.business,
+      enterprise: args.enterprise,
       manual: args.manual,
       rateLimit,
       rateLimitWait: Boolean(args.wait),
