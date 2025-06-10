@@ -26,7 +26,7 @@ To install dependencies, run:
 bun install
 ```
 
-## Using with docker
+## Using with Docker
 
 Build image
 
@@ -78,6 +78,7 @@ The following command line options are available for the `start` command:
 | --port         | Port to listen on                                                             | 4141    | -p    |
 | --verbose      | Enable verbose logging                                                        | false   | -v    |
 | --business     | Use a business plan GitHub account                                            | false   | none  |
+| --enterprise   | Use an enterprise plan GitHub account                                         | false   | none  |
 | --manual       | Enable manual request approval                                                | false   | none  |
 | --rate-limit   | Rate limit in seconds between requests                                        | none    | -r    |
 | --wait         | Wait instead of error when rate limit is hit                                  | false   | -w    |
@@ -100,8 +101,11 @@ npx copilot-api@latest start
 # Run on custom port with verbose logging
 npx copilot-api@latest start --port 8080 --verbose
 
-# Use with a Business GitHub account
+# Use with a business plan GitHub account
 npx copilot-api@latest start --business
+
+# Use with an enterprise plan GitHub account
+npx copilot-api@latest start --enterprise
 
 # Enable manual approval for each request
 npx copilot-api@latest start --manual
@@ -145,7 +149,7 @@ bun run start
 - Disable `yes-always` in your aider configuration
 - Be mindful that Claude 3.7 thinking mode consumes more tokens
 - Enable the `--manual` flag to review and approve each request before processing
-- If you have a GitHub Business account with Copilot, use the `--business` flag
+- If you have a GitHub business or enterprise plan account with Copilot, use the `--business` or `--enterprise` flag respectively
 
 ### Manual Request Approval
 

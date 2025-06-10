@@ -84,12 +84,12 @@ const start = defineCommand({
     business: {
       type: "boolean",
       default: false,
-      description: "Use a business plan GitHub Account",
+      description: "Use a business plan GitHub account",
     },
     enterprise: {
       type: "boolean",
       default: false,
-      description: "Use a enterprise plan GitHub Account",
+      description: "Use an enterprise plan GitHub account",
     },
     manual: {
       type: "boolean",
