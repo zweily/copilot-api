@@ -1,7 +1,7 @@
 # Copilot API
 
-⚠️ **EDUCATIONAL PURPOSE ONLY** ⚠️
-This project is a reverse-engineered implementation of the GitHub Copilot API created for educational purposes only. It is not officially supported by GitHub and should not be used in production environments.
+> [!WARNING]
+> This is a reverse-engineered and unofficial implementation of the GitHub Copilot API. It is not supported by GitHub, and may break unexpectedly. Use at your own risk.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E519XS7W)
 
