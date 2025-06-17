@@ -15,8 +15,7 @@ import { server } from "./server"
 interface RunServerOptions {
   port: number
   verbose: boolean
-  business: boolean
-  enterprise: boolean
+  accountType: string
   manual: boolean
   rateLimit?: number
   rateLimitWait: boolean
@@ -29,12 +28,9 @@ export async function runServer(options: RunServerOptions): Promise<void> {
     consola.info("Verbose logging enabled")
   }
 
-  if (options.business) {
-    state.accountType = "business"
-    consola.info("Using business plan GitHub account")
-  } else if (options.enterprise) {
-    state.accountType = "enterprise"
-    consola.info("Using enterprise plan GitHub account")
+  state.accountType = options.accountType
+  if (options.accountType !== "individual") {
+    consola.info(`Using ${options.accountType} plan GitHub account`)
   }
 
   state.manualApprove = options.manual
@@ -81,15 +77,11 @@ const start = defineCommand({
       default: false,
       description: "Enable verbose logging",
     },
-    business: {
-      type: "boolean",
-      default: false,
-      description: "Use a business plan GitHub account",
-    },
-    enterprise: {
-      type: "boolean",
-      default: false,
-      description: "Use an enterprise plan GitHub account",
+    "account-type": {
+      alias: "a",
+      type: "string",
+      default: "individual",
+      description: "Account type to use (individual, business, enterprise)",
     },
     manual: {
       type: "boolean",
@@ -126,8 +118,7 @@ const start = defineCommand({
     return runServer({
       port,
       verbose: args.verbose,
-      business: args.business,
-      enterprise: args.enterprise,
+      accountType: args["account-type"],
       manual: args.manual,
       rateLimit,
       rateLimitWait: Boolean(args.wait),

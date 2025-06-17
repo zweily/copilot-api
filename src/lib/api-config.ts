@@ -14,7 +14,9 @@ const USER_AGENT = `GitHubCopilotChat/${COPILOT_VERSION}`
 const API_VERSION = "2025-04-01"
 
 export const copilotBaseUrl = (state: State) =>
-  `https://api.${state.accountType}.githubcopilot.com`
+  state.accountType === "individual" ?
+    "https://api.githubcopilot.com"
+  : `https://api.${state.accountType}.githubcopilot.com`
 export const copilotHeaders = (state: State, vision: boolean = false) => {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${state.copilotToken}`,

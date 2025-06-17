@@ -77,8 +77,7 @@ The following command line options are available for the `start` command:
 | -------------- | ----------------------------------------------------------------------------- | ------- | ----- |
 | --port         | Port to listen on                                                             | 4141    | -p    |
 | --verbose      | Enable verbose logging                                                        | false   | -v    |
-| --business     | Use a business plan GitHub account                                            | false   | none  |
-| --enterprise   | Use an enterprise plan GitHub account                                         | false   | none  |
+| --account-type | Account type to use (individual, business, enterprise)                        | individual | -a    |
 | --manual       | Enable manual request approval                                                | false   | none  |
 | --rate-limit   | Rate limit in seconds between requests                                        | none    | -r    |
 | --wait         | Wait instead of error when rate limit is hit                                  | false   | -w    |
@@ -102,10 +101,10 @@ npx copilot-api@latest start
 npx copilot-api@latest start --port 8080 --verbose
 
 # Use with a business plan GitHub account
-npx copilot-api@latest start --business
+npx copilot-api@latest start --account-type business
 
 # Use with an enterprise plan GitHub account
-npx copilot-api@latest start --enterprise
+npx copilot-api@latest start --account-type enterprise
 
 # Enable manual approval for each request
 npx copilot-api@latest start --manual
@@ -147,9 +146,8 @@ bun run start
 - Consider using free models (e.g., Gemini, Mistral, Openrouter) as the `weak-model`
 - Use architect mode sparingly
 - Disable `yes-always` in your aider configuration
-- Be mindful that Claude 3.7 thinking mode consumes more tokens
 - Enable the `--manual` flag to review and approve each request before processing
-- If you have a GitHub business or enterprise plan account with Copilot, use the `--business` or `--enterprise` flag respectively
+- If you have a GitHub business or enterprise plan account with Copilot, use the `--account-type` flag (e.g., `--account-type business`). See the [official documentation](https://docs.github.com/en/enterprise-cloud@latest/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-access-to-github-copilot-in-your-organization/managing-github-copilot-access-to-your-organizations-network#configuring-copilot-subscription-based-network-routing-for-your-enterprise-or-organization) for more details.
 
 ### Manual Request Approval
 
