@@ -1,7 +1,7 @@
 # Copilot API
 
 > [!WARNING]
-> This is a reverse-engineered and unofficial implementation of the GitHub Copilot API. It is not supported by GitHub, and may break unexpectedly. Use at your own risk.
+> This is a reverse-engineered proxy of GitHub Copilot API. It is not supported by GitHub, and may break unexpectedly. Use at your own risk.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E519XS7W)
 
