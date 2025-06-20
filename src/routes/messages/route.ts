@@ -4,12 +4,11 @@ import { forwardError } from "~/lib/forward-error"
 
 import { handleCompletion } from "./handler"
 
-export const completionRoutes = new Hono()
+export const messageRoutes = new Hono()
 
-completionRoutes.post("/", async (c) => {
+messageRoutes.post("/", async (c) => {
   try {
-    await handleCompletion(c)
-    return
+    return await handleCompletion(c)
   } catch (error) {
     return await forwardError(c, error)
   }
