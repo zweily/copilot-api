@@ -9,7 +9,8 @@ import {
 } from "~/services/copilot/create-chat-completions"
 
 import {
-  type AnthropicContentBlock,
+  type AnthropicAssistantContentBlock,
+  type AnthropicAssistantMessage,
   type AnthropicMessage,
   type AnthropicMessagesPayload,
   type AnthropicResponse,
@@ -17,6 +18,8 @@ import {
   type AnthropicTool,
   type AnthropicToolResultBlock,
   type AnthropicToolUseBlock,
+  type AnthropicUserContentBlock,
+  type AnthropicUserMessage,
 } from "./anthropic-types"
 import { mapOpenAIStopReasonToAnthropic } from "./utils"
 
@@ -72,8 +75,9 @@ function handleSystemPrompt(
   }
 }
 
-function handleUserMessage(message: AnthropicMessage): Array<Message> {
+function handleUserMessage(message: AnthropicUserMessage): Array<Message> {
   const newMessages: Array<Message> = []
+
   if (Array.isArray(message.content)) {
     const toolResultBlocks = message.content.filter(
       (block): block is AnthropicToolResultBlock =>
@@ -103,22 +107,32 @@ function handleUserMessage(message: AnthropicMessage): Array<Message> {
       content: mapContent(message.content),
     })
   }
+
   return newMessages
 }
 
-function handleAssistantMessage(message: AnthropicMessage): Array<Message> {
-  if (Array.isArray(message.content)) {
-    const toolUseBlocks = message.content.filter(
-      (block): block is AnthropicToolUseBlock =>
-        (block as { type: string }).type === "tool_use",
-    )
+function handleAssistantMessage(
+  message: AnthropicAssistantMessage,
+): Array<Message> {
+  if (!Array.isArray(message.content)) {
+    return [
+      {
+        role: "assistant",
+        content: mapContent(message.content),
+      },
+    ]
+  }
 
-    const textBlocks = message.content.filter(
-      (block): block is AnthropicTextBlock => block.type === "text",
-    )
+  const toolUseBlocks = message.content.filter(
+    (block): block is AnthropicToolUseBlock => block.type === "tool_use",
+  )
 
-    if (toolUseBlocks.length > 0) {
-      return [
+  const textBlocks = message.content.filter(
+    (block): block is AnthropicTextBlock => block.type === "text",
+  )
+
+  return toolUseBlocks.length > 0 ?
+      [
         {
           role: "assistant",
           content: textBlocks.map((b) => b.text).join("\n\n") || null,
@@ -132,27 +146,18 @@ function handleAssistantMessage(message: AnthropicMessage): Array<Message> {
           })),
         },
       ]
-    } else {
-      // No tool use, just regular content
-      return [
+    : [
         {
           role: "assistant",
           content: mapContent(message.content),
         },
       ]
-    }
-  } else {
-    return [
-      {
-        role: "assistant",
-        content: mapContent(message.content),
-      },
-    ]
-  }
 }
 
 function mapContent(
-  content: string | Array<AnthropicContentBlock>,
+  content:
+    | string
+    | Array<AnthropicUserContentBlock | AnthropicAssistantContentBlock>,
 ): string | Array<ContentPart> | null {
   if (typeof content === "string") {
     return content

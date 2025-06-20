@@ -20,16 +20,6 @@ export interface AnthropicMessagesPayload {
   }
 }
 
-export interface AnthropicMessage {
-  role: "user" | "assistant"
-  content: string | Array<AnthropicContentBlock>
-}
-
-export type AnthropicContentBlock =
-  | AnthropicTextBlock
-  | AnthropicImageBlock
-  | AnthropicToolResultBlock
-
 export interface AnthropicTextBlock {
   type: "text"
   text: string
@@ -51,6 +41,34 @@ export interface AnthropicToolResultBlock {
   is_error?: boolean
 }
 
+export interface AnthropicToolUseBlock {
+  type: "tool_use"
+  id: string
+  name: string
+  input: Record<string, unknown>
+}
+
+export type AnthropicUserContentBlock =
+  | AnthropicTextBlock
+  | AnthropicImageBlock
+  | AnthropicToolResultBlock
+
+export type AnthropicAssistantContentBlock =
+  | AnthropicTextBlock
+  | AnthropicToolUseBlock
+
+export interface AnthropicUserMessage {
+  role: "user"
+  content: string | Array<AnthropicUserContentBlock>
+}
+
+export interface AnthropicAssistantMessage {
+  role: "assistant"
+  content: string | Array<AnthropicAssistantContentBlock>
+}
+
+export type AnthropicMessage = AnthropicUserMessage | AnthropicAssistantMessage
+
 export interface AnthropicTool {
   name: string
   description?: string
@@ -61,7 +79,7 @@ export interface AnthropicResponse {
   id: string
   type: "message"
   role: "assistant"
-  content: Array<AnthropicResponseContentBlock>
+  content: Array<AnthropicAssistantContentBlock>
   model: string
   stop_reason:
     | "end_turn"
@@ -77,16 +95,7 @@ export interface AnthropicResponse {
   }
 }
 
-export type AnthropicResponseContentBlock =
-  | AnthropicTextBlock
-  | AnthropicToolUseBlock
-
-export interface AnthropicToolUseBlock {
-  type: "tool_use"
-  id: string
-  name: string
-  input: Record<string, unknown>
-}
+export type AnthropicResponseContentBlock = AnthropicAssistantContentBlock
 
 // Anthropic Stream Event Types
 export interface AnthropicMessageStartEvent {
