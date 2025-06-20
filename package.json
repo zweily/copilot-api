@@ -1,7 +1,7 @@
 {
   "name": "copilot-api",
   "version": "0.5.0",
-  "description": "A wrapper around GitHub Copilot API to make it OpenAI and Anthropic compatible, making it usable for other tools like Claude Code.",
+  "description": "Turn GitHub Copilot into OpenAI/Anthropic API compatible server. Usable with Claude Code!",
   "keywords": [
     "proxy",
     "github-copilot",
