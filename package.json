@@ -42,7 +42,7 @@
     "consola": "^3.4.2",
     "fetch-event-stream": "^0.1.5",
     "gpt-tokenizer": "^3.0.1",
-    "hono": "^4.7.11",
+    "hono": "^4.8.1",
     "srvx": "^0.8.0"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "bumpp": "^10.2.0",
     "eslint": "^9.29.0",
     "jiti": "^2.4.2",
-    "knip": "^5.61.1",
+    "knip": "^5.61.2",
     "lint-staged": "^16.1.2",
     "prettier-plugin-packagejson": "^2.5.15",
     "simple-git-hooks": "^2.13.0",

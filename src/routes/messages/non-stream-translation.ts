@@ -42,26 +42,38 @@ export function translateToOpenAI(
   }
 }
 
+function translateAnthropicMessagesToOpenAI(
+  anthropicMessages: Array<AnthropicMessage>,
+  system: string | Array<AnthropicTextBlock> | undefined,
+): Array<Message> {
+  const systemMessages = handleSystemPrompt(system)
+
+  const otherMessages = anthropicMessages.flatMap((message) =>
+    message.role === "user" ?
+      handleUserMessage(message)
+    : handleAssistantMessage(message),
+  )
+
+  return [...systemMessages, ...otherMessages]
+}
+
 function handleSystemPrompt(
   system: string | Array<AnthropicTextBlock> | undefined,
-  messages: Array<Message>,
-) {
+): Array<Message> {
   if (!system) {
-    return
+    return []
   }
 
   if (typeof system === "string") {
-    messages.push({ role: "system", content: system })
+    return [{ role: "system", content: system }]
   } else {
     const systemText = system.map((block) => block.text).join("\n\n")
-    messages.push({ role: "system", content: systemText })
+    return [{ role: "system", content: systemText }]
   }
 }
 
-function handleUserMessage(
-  message: AnthropicMessage,
-  messages: Array<Message>,
-) {
+function handleUserMessage(message: AnthropicMessage): Array<Message> {
+  const newMessages: Array<Message> = []
   if (Array.isArray(message.content)) {
     const toolResultBlocks = message.content.filter(
       (block): block is AnthropicToolResultBlock =>
@@ -72,31 +84,29 @@ function handleUserMessage(
     )
 
     if (otherBlocks.length > 0) {
-      messages.push({
+      newMessages.push({
         role: "user",
         content: mapContent(otherBlocks),
       })
     }
 
     for (const block of toolResultBlocks) {
-      messages.push({
+      newMessages.push({
         role: "tool",
         tool_call_id: block.tool_use_id,
         content: block.content,
       })
     }
   } else {
-    messages.push({
+    newMessages.push({
       role: "user",
       content: mapContent(message.content),
     })
   }
+  return newMessages
 }
 
-function handleAssistantMessage(
-  message: AnthropicMessage,
-  messages: Array<Message>,
-) {
+function handleAssistantMessage(message: AnthropicMessage): Array<Message> {
   if (Array.isArray(message.content)) {
     const toolUseBlocks = message.content.filter(
       (block): block is AnthropicToolUseBlock =>
@@ -108,48 +118,37 @@ function handleAssistantMessage(
     )
 
     if (toolUseBlocks.length > 0) {
-      messages.push({
-        role: "assistant",
-        content: textBlocks.map((b) => b.text).join("\n\n") || null,
-        tool_calls: toolUseBlocks.map((toolUse) => ({
-          id: toolUse.id,
-          type: "function",
-          function: {
-            name: toolUse.name,
-            arguments: JSON.stringify(toolUse.input),
-          },
-        })),
-      })
+      return [
+        {
+          role: "assistant",
+          content: textBlocks.map((b) => b.text).join("\n\n") || null,
+          tool_calls: toolUseBlocks.map((toolUse) => ({
+            id: toolUse.id,
+            type: "function",
+            function: {
+              name: toolUse.name,
+              arguments: JSON.stringify(toolUse.input),
+            },
+          })),
+        },
+      ]
     } else {
       // No tool use, just regular content
-      messages.push({
-        role: "assistant",
-        content: mapContent(message.content),
-      })
+      return [
+        {
+          role: "assistant",
+          content: mapContent(message.content),
+        },
+      ]
     }
   } else {
-    messages.push({
-      role: "assistant",
-      content: mapContent(message.content),
-    })
+    return [
+      {
+        role: "assistant",
+        content: mapContent(message.content),
+      },
+    ]
   }
-}
-
-function translateAnthropicMessagesToOpenAI(
-  anthropicMessages: Array<AnthropicMessage>,
-  system: string | Array<AnthropicTextBlock> | undefined,
-): Array<Message> {
-  const messages: Array<Message> = []
-  handleSystemPrompt(system, messages)
-
-  for (const message of anthropicMessages) {
-    if (message.role === "user") {
-      handleUserMessage(message, messages)
-    } else {
-      handleAssistantMessage(message, messages)
-    }
-  }
-  return messages
 }
 
 function mapContent(

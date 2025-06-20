@@ -91,7 +91,10 @@ export interface AnthropicToolUseBlock {
 // Anthropic Stream Event Types
 export interface AnthropicMessageStartEvent {
   type: "message_start"
-  message: Omit<AnthropicResponse, "content" | "stop_reason" | "stop_sequence"> & {
+  message: Omit<
+    AnthropicResponse,
+    "content" | "stop_reason" | "stop_sequence"
+  > & {
     content: []
     stop_reason: null
     stop_sequence: null
