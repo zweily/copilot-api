@@ -18,6 +18,11 @@ export interface AnthropicMessagesPayload {
     type: "auto" | "any" | "tool" | "none"
     name?: string
   }
+  thinking?: {
+    type: "enabled"
+    budget_tokens?: number
+  }
+  service_tier?: "auto" | "standard_only"
 }
 
 export interface AnthropicTextBlock {
@@ -48,6 +53,11 @@ export interface AnthropicToolUseBlock {
   input: Record<string, unknown>
 }
 
+export interface AnthropicThinkingBlock {
+  type: "thinking"
+  thinking: string
+}
+
 export type AnthropicUserContentBlock =
   | AnthropicTextBlock
   | AnthropicImageBlock
@@ -56,6 +66,7 @@ export type AnthropicUserContentBlock =
 export type AnthropicAssistantContentBlock =
   | AnthropicTextBlock
   | AnthropicToolUseBlock
+  | AnthropicThinkingBlock
 
 export interface AnthropicUserMessage {
   role: "user"
@@ -92,6 +103,9 @@ export interface AnthropicResponse {
   usage: {
     input_tokens: number
     output_tokens: number
+    cache_creation_input_tokens?: number
+    cache_read_input_tokens?: number
+    service_tier?: "standard" | "priority" | "batch"
   }
 }
 
@@ -118,6 +132,7 @@ export interface AnthropicContentBlockStartEvent {
     | (Omit<AnthropicToolUseBlock, "input"> & {
         input: Record<string, unknown>
       })
+    | { type: "thinking"; thinking: string }
 }
 
 export interface AnthropicContentBlockDeltaEvent {
@@ -126,6 +141,8 @@ export interface AnthropicContentBlockDeltaEvent {
   delta:
     | { type: "text_delta"; text: string }
     | { type: "input_json_delta"; partial_json: string }
+    | { type: "thinking_delta"; thinking: string }
+    | { type: "signature_delta"; signature: string }
 }
 
 export interface AnthropicContentBlockStopEvent {
@@ -139,12 +156,23 @@ export interface AnthropicMessageDeltaEvent {
     stop_reason?: AnthropicResponse["stop_reason"]
     stop_sequence?: string | null
   }
-  // OpenAI does not provide token usage per chunk, so this is omitted.
-  // usage: { output_tokens: number }
+  usage?: { output_tokens: number }
 }
 
 export interface AnthropicMessageStopEvent {
   type: "message_stop"
+}
+
+export interface AnthropicPingEvent {
+  type: "ping"
+}
+
+export interface AnthropicErrorEvent {
+  type: "error"
+  error: {
+    type: string
+    message: string
+  }
 }
 
 export type AnthropicStreamEventData =
@@ -154,6 +182,8 @@ export type AnthropicStreamEventData =
   | AnthropicContentBlockStopEvent
   | AnthropicMessageDeltaEvent
   | AnthropicMessageStopEvent
+  | AnthropicPingEvent
+  | AnthropicErrorEvent
 
 // State for streaming translation
 export interface AnthropicStreamState {

@@ -77,9 +77,41 @@ A successful **non-streaming** request returns a `Message` object.
 
 #### Streaming Response (200 OK)
 
-If `stream: true` is set, the API streams back a sequence of server-sent events. The response is a series of JSON events that incrementally build the complete message object.
+When `stream: true` is set, the API streams the response using server-sent events (SSE). Each event is named (e.g., `event: message_start`) and contains associated JSON data.
 
-According to the documentation, the `stop_reason` provides insight into the stream's state: in the initial `message_start` event, the `stop_reason` field will be `null`. In all other events, it will be non-null once the stopping condition is known.
+The event flow for a stream is as follows:
+
+1.  `message_start`: Contains a `Message` object with empty `content`.
+2.  A series of content blocks. Each block has a `content_block_start` event, one or more `content_block_delta` events, and a `content_block_stop` event. The `index` in these events corresponds to the content block's position in the final `content` array.
+3.  One or more `message_delta` events, which indicate top-level changes to the final `Message` object. The `usage` field in this event contains cumulative token counts.
+4.  A final `message_stop` event.
+
+The stream may also include `ping` events to keep the connection alive and `error` events if issues occur.
+
+##### Content Block Delta Types
+
+Each `content_block_delta` event contains a `delta` object that updates a content block.
+
+- **Text Delta**: Updates a `text` content block.
+
+  ```json
+  event: content_block_delta
+  data: {"type": "content_block_delta","index": 0,"delta": {"type": "text_delta", "text": "ello frien"}}
+  ```
+
+- **Input JSON Delta**: Used for `tool_use` blocks, these deltas contain partial JSON strings for the tool's `input` field. The partial strings must be accumulated and parsed into a final JSON object upon receiving the `content_block_stop` event.
+
+  ```json
+  event: content_block_delta
+  data: {"type": "content_block_delta","index": 1,"delta": {"type": "input_json_delta","partial_json": "{\"location\": \"San Fra"}}}
+  ```
+
+- **Thinking Delta**: When extended thinking is enabled, these deltas update the `thinking` field of a thinking content block. A special `signature_delta` event is sent just before the `content_block_stop` to verify the block's integrity.
+
+  ```json
+  event: content_block_delta
+  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "Let me solve this step by step:\n\n1. First break down 27 * 453"}}
+  ```
 
 #### The Usage Object
 
@@ -92,6 +124,257 @@ The `usage` object details billing and rate-limit token counts.
 | `cache_creation_input_tokens` | integer | The number of input tokens used to create a cache entry.                    |
 | `cache_read_input_tokens`     | integer | The number of input tokens read from the cache.                             |
 | `service_tier`                | string  | The service tier used for the request (`standard`, `priority`, or `batch`). |
+
+### Streaming Examples
+
+#### Basic Streaming Request
+
+```bash
+curl https://api.anthropic.com/v1/messages \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --data \
+'{
+  "model": "claude-opus-4-20250514",
+  "messages": [{"role": "user", "content": "Hello"}],
+  "max_tokens": 256,
+  "stream": true
+}'
+```
+
+**Response:**
+
+```json
+event: message_start
+data: {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assistant", "content": [], "model": "claude-opus-4-20250514", "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+event: ping
+data: {"type": "ping"}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence":null}, "usage": {"output_tokens": 15}}
+
+event: message_stop
+data: {"type": "message_stop"}
+```
+
+#### Streaming Request with Tool Use
+
+```bash
+curl https://api.anthropic.com/v1/messages \
+  -H "content-type: application/json" \
+  -H "x-api-key: $ANTHROPIC_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -d '{
+    "model": "claude-opus-4-20250514",
+    "max_tokens": 1024,
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Get the current weather in a given location",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The city and state, e.g. San Francisco, CA"
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    ],
+    "tool_choice": {"type": "any"},
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the weather like in San Francisco?"
+      }
+    ],
+    "stream": true
+  }'
+```
+
+**Response:**
+
+```json
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_014p7gG3wDgGV9EUtLvnow3U","type":"message","role":"assistant","model":"claude-opus-4-20250514","stop_sequence":null,"usage":{"input_tokens":472,"output_tokens":2},"content":[],"stop_reason":null}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: ping
+data: {"type": "ping"}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Okay"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" let"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'s"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" check"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" weather"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" San"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Francisco"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" CA"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01T1x1fJ34qAmk2tNTrN7Up6","name":"get_weather","input":{}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"location\":"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" \"San"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" Francisc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"o,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" CA\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"unit\": \"fah"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"renheit\"}"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"output_tokens":89}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+#### Streaming Request with Extended Thinking
+
+```bash
+curl https://api.anthropic.com/v1/messages \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --data \
+'{
+    "model": "claude-opus-4-20250514",
+    "max_tokens": 20000,
+    "stream": true,
+    "thinking": {
+        "type": "enabled",
+        "budget_tokens": 16000
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": "What is 27 * 453?"
+        }
+    ]
+}'
+```
+
+**Response:**
+
+```json
+event: message_start
+data: {"type": "message_start", "message": {"id": "msg_01...", "type": "message", "role": "assistant", "content": [], "model": "claude-opus-4-20250514", "stop_reason": null, "stop_sequence": null}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "thinking", "thinking": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "Let me solve this step by step:\n\n1. First break down 27 * 453"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "\n2. 453 = 400 + 50 + 3"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "\n3. 27 * 400 = 10,800"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "\n4. 27 * 50 = 1,350"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "\n5. 27 * 3 = 81"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "thinking_delta", "thinking": "\n6. 10,800 + 1,350 + 81 = 12,231"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "signature_delta", "signature": "EqQBCgIYAhIM1gbcDa9GJwZA2b3hGgxBdjrkzLoky3dl1pkiMOYds..."}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 1, "content_block": {"type": "text", "text": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 1, "delta": {"type": "text_delta", "text": "27 * 453 = 12,231"}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 1}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence": null}}
+
+event: message_stop
+data: {"type": "message_stop"}
+```
 
 ### Count Message Tokens
 
