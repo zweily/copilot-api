@@ -1,4 +1,5 @@
 import {
+  type ChatCompletionChunk,
   type ChatCompletionResponse,
   type ChatCompletionsPayload,
   type ContentPart,
@@ -89,6 +90,76 @@ interface AnthropicToolUseBlock {
   id: string
   name: string
   input: Record<string, unknown>
+}
+
+// Anthropic Stream Event Types
+export interface AnthropicMessageStartEvent {
+  type: "message_start"
+  message: Omit<
+    AnthropicResponse,
+    "stop_reason" | "stop_sequence" | "content"
+  > & {
+    content: []
+  }
+}
+
+export interface AnthropicContentBlockStartEvent {
+  type: "content_block_start"
+  index: number
+  content_block:
+    | { type: "text"; text: string }
+    | (Omit<AnthropicToolUseBlock, "input"> & {
+        input: Record<string, unknown>
+      })
+}
+
+export interface AnthropicContentBlockDeltaEvent {
+  type: "content_block_delta"
+  index: number
+  delta:
+    | { type: "text_delta"; text: string }
+    | { type: "input_json_delta"; partial_json: string }
+}
+
+export interface AnthropicContentBlockStopEvent {
+  type: "content_block_stop"
+  index: number
+}
+
+export interface AnthropicMessageDeltaEvent {
+  type: "message_delta"
+  delta: {
+    stop_reason: AnthropicResponse["stop_reason"]
+    stop_sequence: string | null
+  }
+  // OpenAI does not provide token usage per chunk, so this is omitted.
+  // usage: { output_tokens: number }
+}
+
+export interface AnthropicMessageStopEvent {
+  type: "message_stop"
+}
+
+export type AnthropicStreamEventData =
+  | AnthropicMessageStartEvent
+  | AnthropicContentBlockStartEvent
+  | AnthropicContentBlockDeltaEvent
+  | AnthropicContentBlockStopEvent
+  | AnthropicMessageDeltaEvent
+  | AnthropicMessageStopEvent
+
+// State for streaming translation
+export interface AnthropicStreamState {
+  messageStartSent: boolean
+  contentBlockIndex: number
+  contentBlockOpen: boolean
+  toolCalls: {
+    [openAIToolIndex: number]: {
+      id: string
+      name: string
+      anthropicBlockIndex: number
+    }
+  }
 }
 
 // Payload translation
@@ -234,6 +305,134 @@ function translateAnthropicToolChoiceToOpenAI(
 }
 
 // Response translation
+
+// Stream response translation
+
+/**
+ * Translates a single OpenAI ChatCompletionChunk to a series of Anthropic-style stream events.
+ * This function is stateful and requires a state object to be maintained across calls.
+ *
+ * @param chunk The OpenAI chunk to translate.
+ * @param state The current state of the stream translation.
+ * @param inputTokens The number of tokens in the prompt, required for the initial message_start event.
+ * @returns An array of Anthropic stream event data objects.
+ */
+export function translateChunkToAnthropicEvents(
+  chunk: ChatCompletionChunk,
+  state: AnthropicStreamState,
+  inputTokens: number,
+): Array<AnthropicStreamEventData> {
+  const events: Array<AnthropicStreamEventData> = []
+  const delta = chunk.choices[0].delta
+
+  // 1. Handle message_start
+  if (delta.role === "assistant" && !state.messageStartSent) {
+    events.push({
+      type: "message_start",
+      message: {
+        id: chunk.id,
+        type: "message",
+        role: "assistant",
+        content: [],
+        model: chunk.model,
+        usage: {
+          input_tokens: inputTokens,
+          output_tokens: 1, // Placeholder, not updated in subsequent events
+        },
+      },
+    })
+    state.messageStartSent = true
+  }
+
+  // 2. Handle text content
+  if (delta.content) {
+    if (!state.contentBlockOpen) {
+      // Start a new text block if no block is open
+      events.push({
+        type: "content_block_start",
+        index: state.contentBlockIndex,
+        content_block: { type: "text", text: "" },
+      })
+      state.contentBlockOpen = true
+    }
+    events.push({
+      type: "content_block_delta",
+      index: state.contentBlockIndex,
+      delta: { type: "text_delta", text: delta.content },
+    })
+  }
+
+  // 3. Handle tool calls
+  if (delta.tool_calls) {
+    for (const toolCallDelta of delta.tool_calls) {
+      // A new tool call is starting
+      if (toolCallDelta.id && toolCallDelta.function?.name) {
+        if (state.contentBlockOpen) {
+          // Close the previous content block (which must be a text block)
+          events.push({
+            type: "content_block_stop",
+            index: state.contentBlockIndex,
+          })
+          state.contentBlockIndex++
+        }
+        const anthropicBlockIndex = state.contentBlockIndex
+        state.toolCalls[toolCallDelta.index] = {
+          id: toolCallDelta.id,
+          name: toolCallDelta.function.name,
+          anthropicBlockIndex,
+        }
+        events.push({
+          type: "content_block_start",
+          index: anthropicBlockIndex,
+          content_block: {
+            type: "tool_use",
+            id: toolCallDelta.id,
+            name: toolCallDelta.function.name,
+            input: {},
+          },
+        })
+        state.contentBlockOpen = true
+      }
+
+      // Argument chunks for the tool call
+      if (toolCallDelta.function?.arguments) {
+        const toolInfo = state.toolCalls[toolCallDelta.index]
+        if (toolInfo) {
+          events.push({
+            type: "content_block_delta",
+            index: toolInfo.anthropicBlockIndex,
+            delta: {
+              type: "input_json_delta",
+              partial_json: toolCallDelta.function.arguments,
+            },
+          })
+        }
+      }
+    }
+  }
+
+  // 4. Handle end of stream
+  const finishReason = chunk.choices[0].finish_reason
+  if (finishReason) {
+    if (state.contentBlockOpen) {
+      events.push({
+        type: "content_block_stop",
+        index: state.contentBlockIndex,
+      })
+      state.contentBlockOpen = false
+    }
+    events.push({
+      type: "message_delta",
+      delta: {
+        stop_reason: mapOpenAIStopReasonToAnthropic(finishReason),
+        stop_sequence: null,
+      },
+    })
+    events.push({ type: "message_stop" })
+  }
+
+  return events
+}
 
 export function translateToAnthropic(
   response: ChatCompletionResponse,

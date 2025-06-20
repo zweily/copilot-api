@@ -8,7 +8,8 @@ export const completionRoutes = new Hono()
 
 completionRoutes.post("/", async (c) => {
   try {
-    return await handleCompletion(c)
+    await handleCompletion(c)
+    return
   } catch (error) {
     return await forwardError(c, error)
   }
