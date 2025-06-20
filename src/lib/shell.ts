@@ -39,84 +39,50 @@ function getShell(): ShellName {
  * @param {string} commandToRun - The command to run after setting the variables.
  * @returns {string} The formatted script string.
  */
-// eslint-disable-next-line complexity
-function generateEnvScript(
+export function generateEnvScript(
   envVars: EnvVars,
   commandToRun: string = "",
 ): string {
   const shell = getShell()
-  const commands: Array<string> = []
+  const filteredEnvVars = Object.entries(envVars).filter(
+    ([, value]) => value !== undefined,
+  ) as Array<[string, string]>
 
-  for (const [key, value] of Object.entries(envVars)) {
-    if (value === undefined) {
-      continue // Skip undefined values
+  let commandBlock: string
+
+  switch (shell) {
+    case "powershell": {
+      commandBlock = filteredEnvVars
+        .map(([key, value]) => `$env:${key} = ${value}`)
+        .join("; ")
+      break
     }
-
-    // Best-effort quoting to handle spaces and special characters.
-    // PowerShell and cmd handle quotes differently from Unix shells.
-    let escapedValue: string
-    if (shell === "cmd") {
-      // CMD is tricky with quotes. Often it's safer without them if no spaces.
-      escapedValue = value.includes(" ") ? `"${value}"` : value
-    } else {
-      // For PowerShell and Unix shells, wrapping in double quotes is generally safe.
-      // We escape any internal double quotes for robustness.
-      escapedValue = `"${value.replaceAll('"', String.raw`\"`)}"`
+    case "cmd": {
+      commandBlock = filteredEnvVars
+        .map(([key, value]) => `set ${key}=${value}`)
+        .join(" & ")
+      break
     }
-
-    switch (shell) {
-      case "powershell": {
-        commands.push(`$env:${key} = ${escapedValue}`)
-        break
-      }
-      case "cmd": {
-        commands.push(`set ${key}=${escapedValue}`)
-        break
-      }
-      case "fish": {
-        // Fish prefers 'set -gx KEY VALUE' syntax.
-        commands.push(`set -gx ${key} ${escapedValue}`)
-        break
-      }
-      default: {
-        commands.push(`export ${key}=${escapedValue}`)
-        break
-      }
+    case "fish": {
+      commandBlock = filteredEnvVars
+        .map(([key, value]) => `set -gx ${key} ${value}`)
+        .join("; ")
+      break
+    }
+    default: {
+      // bash, zsh, sh
+      const assignments = filteredEnvVars
+        .map(([key, value]) => `${key}=${value}`)
+        .join(" ")
+      commandBlock = filteredEnvVars.length > 0 ? `export ${assignments}` : ""
+      break
     }
   }
 
-  const intro = `# Paste the following into your terminal (${shell}) to set environment variables and run the command:\n`
-  const finalCommand = commandToRun ? `\n${commandToRun}` : ""
-  const commandBlock = commands.join("\n")
-
-  if (shell === "cmd") {
-    // For cmd, chaining is difficult. Presenting a block to copy is most reliable.
-    const runInstruction =
-      finalCommand ? `\n\n# Now, run the command:\n${commandToRun}` : ""
-    return `${intro}${commandBlock}${runInstruction}`
+  if (commandBlock && commandToRun) {
+    const separator = shell === "cmd" ? " & " : " && "
+    return `${commandBlock}${separator}${commandToRun}`
   }
 
-  return `${intro}${commandBlock}${finalCommand}`
+  return commandBlock || commandToRun
 }
-
-// --- Example Usage ---
-
-// 1. Define the environment variables and the final command.
-const serverUrl = "http://localhost:1234/v1"
-const selectedModel = "claude-3-opus-20240229"
-const selectedSmallModel = "claude-3-haiku-20240307"
-
-const envVariables: EnvVars = {
-  ANTHROPIC_BASE_URL: serverUrl,
-  ANTHROPIC_AUTH_TOKEN: "your-secret-token",
-  ANTHROPIC_MODEL: selectedModel,
-  ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
-  // You can include undefined values; the function will safely skip them.
-  OPTIONAL_SETTING: undefined,
-}
-
-const command = 'claude "What is the airspeed velocity of an unladen swallow?"'
-
-// 2. Generate and print the script.
-const scriptString = generateEnvScript(envVariables, command)
-console.log(scriptString)

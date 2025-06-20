@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 import { defineCommand, runMain } from "citty"
+import clipboard from "clipboardy"
 import consola from "consola"
-import child from "node:child_process"
 import { serve, type ServerHandler } from "srvx"
 import invariant from "tiny-invariant"
 
 import { auth } from "./auth"
 import { ensurePaths } from "./lib/paths"
+import { generateEnvScript } from "./lib/shell"
 import { state } from "./lib/state"
 import { setupCopilotToken, setupGitHubToken } from "./lib/token"
 import { cacheModels, cacheVSCodeVersion } from "./lib/utils"
@@ -78,17 +79,18 @@ export async function runServer(options: RunServerOptions): Promise<void> {
       },
     )
 
-    child.spawn("claude", [], {
-      detached: true,
-      stdio: "ignore",
-      shell: true,
-      env: {
+    const command = generateEnvScript(
+      {
         ANTHROPIC_BASE_URL: serverUrl,
         ANTHROPIC_AUTH_TOKEN: "dummy",
         ANTHROPIC_MODEL: selectedModel,
         ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
       },
-    })
+      "claude",
+    )
+
+    clipboard.writeSync(command)
+    consola.success("Copied Claude Code command to clipboard!")
   }
 
   serve({
