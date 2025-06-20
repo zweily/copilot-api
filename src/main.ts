@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 
 import { defineCommand, runMain } from "citty"
+import clipboard from "clipboardy"
 import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
+import invariant from "tiny-invariant"
 
 import { auth } from "./auth"
-import { cacheModels } from "./lib/models"
 import { ensurePaths } from "./lib/paths"
+import { generateEnvScript } from "./lib/shell"
 import { state } from "./lib/state"
 import { setupCopilotToken, setupGitHubToken } from "./lib/token"
-import { cacheVSCodeVersion } from "./lib/vscode-version"
+import { cacheModels, cacheVSCodeVersion } from "./lib/utils"
 import { server } from "./server"
 
 interface RunServerOptions {
@@ -20,8 +22,10 @@ interface RunServerOptions {
   rateLimit?: number
   rateLimitWait: boolean
   githubToken?: string
+  launchClaudeCode: boolean
 }
 
+// eslint-disable-next-line max-lines-per-function
 export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.verbose) {
     consola.level = 5
@@ -50,8 +54,44 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   await setupCopilotToken()
   await cacheModels()
 
+  consola.info(
+    `Available models: \n${state.models?.data.map((model) => `- ${model.id}`).join("\n")}`,
+  )
+
   const serverUrl = `http://localhost:${options.port}`
-  consola.box(`Server started at ${serverUrl}`)
+
+  if (options.launchClaudeCode) {
+    invariant(state.models, "Models should be loaded by now")
+
+    const selectedModel = await consola.prompt(
+      "Select a model to use with Claude Code",
+      {
+        type: "select",
+        options: state.models.data.map((model) => model.id),
+      },
+    )
+
+    const selectedSmallModel = await consola.prompt(
+      "Select a small model to use with Claude Code (https://docs.anthropic.com/en/docs/claude-code/costs#background-token-usage)",
+      {
+        type: "select",
+        options: state.models.data.map((model) => model.id),
+      },
+    )
+
+    const command = generateEnvScript(
+      {
+        ANTHROPIC_BASE_URL: serverUrl,
+        ANTHROPIC_AUTH_TOKEN: "dummy",
+        ANTHROPIC_MODEL: selectedModel,
+        ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
+      },
+      "claude",
+    )
+
+    clipboard.writeSync(command)
+    consola.success("Copied Claude Code command to clipboard!")
+  }
 
   serve({
     fetch: server.fetch as ServerHandler,
@@ -106,6 +146,13 @@ const start = defineCommand({
       description:
         "Provide GitHub token directly (must be generated using the `auth` subcommand)",
     },
+    "claude-code": {
+      alias: "c",
+      type: "boolean",
+      default: false,
+      description:
+        "Generate a command to launch Claude Code with Copilot API config",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -113,16 +160,15 @@ const start = defineCommand({
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       rateLimitRaw === undefined ? undefined : Number.parseInt(rateLimitRaw, 10)
 
-    const port = Number.parseInt(args.port, 10)
-
     return runServer({
-      port,
+      port: Number.parseInt(args.port, 10),
       verbose: args.verbose,
       accountType: args["account-type"],
       manual: args.manual,
       rateLimit,
       rateLimitWait: Boolean(args.wait),
       githubToken: args["github-token"],
+      launchClaudeCode: args["claude-code"],
     })
   },
 })

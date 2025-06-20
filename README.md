@@ -1,13 +1,13 @@
-# Copilot API
+# Copilot API Proxy
 
-⚠️ **EDUCATIONAL PURPOSE ONLY** ⚠️
-This project is a reverse-engineered implementation of the GitHub Copilot API created for educational purposes only. It is not officially supported by GitHub and should not be used in production environments.
+> [!WARNING]
+> This is a reverse-engineered proxy of GitHub Copilot API. It is not supported by GitHub, and may break unexpectedly. Use at your own risk.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E519XS7W)
 
 ## Project Overview
 
-A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools like AI assistants, local interfaces, and development utilities.
+A reverse-engineered proxy for the GitHub Copilot API that exposes it as an OpenAI and Anthropic compatible service. This allows you to use GitHub Copilot with any tool that supports the OpenAI Chat Completions API or the Anthropic Messages API, including to power [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview).
 
 ## Demo
 
@@ -16,7 +16,7 @@ https://github.com/user-attachments/assets/7654b383-669d-4eb9-b23c-06d7aefee8c5
 ## Prerequisites
 
 - Bun (>= 1.2.x)
-- GitHub account with Copilot subscription (Individual or Business)
+- GitHub account with Copilot subscription (individual, business, or enterprise)
 
 ## Installation
 
@@ -64,7 +64,7 @@ npx copilot-api@latest auth
 
 Copilot API now uses a subcommand structure with two main commands:
 
-- `start`: Start the Copilot API server (default command). This command will also handle authentication if needed.
+- `start`: Start the Copilot API server. This command will also handle authentication if needed.
 - `auth`: Run GitHub authentication flow without starting the server. This is typically used if you need to generate a token for use with the `--github-token` option, especially in non-interactive environments.
 
 ## Command Line Options
@@ -73,21 +73,45 @@ Copilot API now uses a subcommand structure with two main commands:
 
 The following command line options are available for the `start` command:
 
-| Option         | Description                                                                   | Default | Alias |
-| -------------- | ----------------------------------------------------------------------------- | ------- | ----- |
-| --port         | Port to listen on                                                             | 4141    | -p    |
-| --verbose      | Enable verbose logging                                                        | false   | -v    |
+| Option         | Description                                                                   | Default    | Alias |
+| -------------- | ----------------------------------------------------------------------------- | ---------- | ----- |
+| --port         | Port to listen on                                                             | 4141       | -p    |
+| --verbose      | Enable verbose logging                                                        | false      | -v    |
 | --account-type | Account type to use (individual, business, enterprise)                        | individual | -a    |
-| --manual       | Enable manual request approval                                                | false   | none  |
-| --rate-limit   | Rate limit in seconds between requests                                        | none    | -r    |
-| --wait         | Wait instead of error when rate limit is hit                                  | false   | -w    |
-| --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none    | -g    |
+| --manual       | Enable manual request approval                                                | false      | none  |
+| --rate-limit   | Rate limit in seconds between requests                                        | none       | -r    |
+| --wait         | Wait instead of error when rate limit is hit                                  | false      | -w    |
+| --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none       | -g    |
+| --claude-code  | Generate a command to launch Claude Code with Copilot API config              | false      | -c    |
 
 ### Auth Command Options
 
 | Option    | Description            | Default | Alias |
 | --------- | ---------------------- | ------- | ----- |
 | --verbose | Enable verbose logging | false   | -v    |
+
+## API Endpoints
+
+The server exposes several endpoints to interact with the Copilot API. It provides OpenAI-compatible endpoints and now also includes support for Anthropic-compatible endpoints, allowing for greater flexibility with different tools and services.
+
+### OpenAI Compatible Endpoints
+
+These endpoints mimic the OpenAI API structure.
+
+| Endpoint                    | Method | Description                                               |
+| --------------------------- | ------ | --------------------------------------------------------- |
+| `POST /v1/chat/completions` | `POST` | Creates a model response for the given chat conversation. |
+| `GET /v1/models`            | `GET`  | Lists the currently available models.                     |
+| `POST /v1/embeddings`       | `POST` | Creates an embedding vector representing the input text.  |
+
+### Anthropic Compatible Endpoints
+
+These endpoints are designed to be compatible with the Anthropic Messages API.
+
+| Endpoint                         | Method | Description                                                  |
+| -------------------------------- | ------ | ------------------------------------------------------------ |
+| `POST /v1/messages`              | `POST` | Creates a model response for a given conversation.           |
+| `POST /v1/messages/count_tokens` | `POST` | Calculates the number of tokens for a given set of messages. |
 
 ## Example Usage
 
@@ -125,6 +149,45 @@ npx copilot-api@latest auth
 npx copilot-api@latest auth --verbose
 ```
 
+## Using with Claude Code
+
+This proxy can be used to power [Claude Code](https://docs.anthropic.com/en/claude-code), an experimental conversational AI assistant for developers from Anthropic.
+
+There are two ways to configure Claude Code to use this proxy:
+
+### Interactive Setup with `--claude-code` flag
+
+To get started, run the `start` command with the `--claude-code` flag:
+
+```sh
+npx copilot-api@latest start --claude-code
+```
+
+You will be prompted to select a primary model and a "small, fast" model for background tasks. After selecting the models, a command will be copied to your clipboard. This command sets the necessary environment variables for Claude Code to use the proxy.
+
+Paste and run this command in a new terminal to launch Claude Code.
+
+### Manual Configuration with `settings.json`
+
+Alternatively, you can configure Claude Code by creating a `.claude/settings.json` file in your project's root directory. This file should contain the environment variables needed by Claude Code. This way you don't need to run the interactive setup every time.
+
+Here is an example `.claude/settings.json` file:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:4141",
+    "ANTHROPIC_AUTH_TOKEN": "dummy",
+    "ANTHROPIC_MODEL": "gpt-4.1",
+    "ANTHROPIC_SMALL_FAST_MODEL": "gpt-4.1"
+  }
+}
+```
+
+You can find more options here: [Claude Code settings](https://docs.anthropic.com/en/docs/claude-code/settings#environment-variables)
+
+You can also read more about IDE integration here: [Add Claude Code to your IDE](https://docs.anthropic.com/en/docs/claude-code/ide-integrations)
+
 ## Running from Source
 
 The project can be run from source in several ways:
@@ -143,18 +206,8 @@ bun run start
 
 ## Usage Tips
 
-- Consider using free models (e.g., Gemini, Mistral, Openrouter) as the `weak-model`
-- Use architect mode sparingly
-- Disable `yes-always` in your aider configuration
-- Enable the `--manual` flag to review and approve each request before processing
+- To avoid hitting GitHub Copilot's rate limits, you can use the following flags:
+  - `--manual`: Enables manual approval for each request, giving you full control over when requests are sent.
+  - `--rate-limit <seconds>`: Enforces a minimum time interval between requests. For example, `copilot-api start --rate-limit 30` will ensure there's at least a 30-second gap between requests.
+  - `--wait`: Use this with `--rate-limit`. It makes the server wait for the cooldown period to end instead of rejecting the request with an error. This is useful for clients that don't automatically retry on rate limit errors.
 - If you have a GitHub business or enterprise plan account with Copilot, use the `--account-type` flag (e.g., `--account-type business`). See the [official documentation](https://docs.github.com/en/enterprise-cloud@latest/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-access-to-github-copilot-in-your-organization/managing-github-copilot-access-to-your-organizations-network#configuring-copilot-subscription-based-network-routing-for-your-enterprise-or-organization) for more details.
-
-### Manual Request Approval
-
-When using the `--manual` flag, the server will prompt you to approve each incoming request:
-
-```
-? Accept incoming request? > (y/N)
-```
-
-This helps you control usage and monitor requests in real-time.

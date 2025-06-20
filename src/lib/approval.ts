@@ -1,6 +1,6 @@
 import consola from "consola"
 
-import { HTTPError } from "./http-error"
+import { HTTPError } from "./error"
 
 export const awaitApproval = async () => {
   const response = await consola.prompt(`Accept incoming request?`, {

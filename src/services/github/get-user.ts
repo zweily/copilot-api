@@ -1,5 +1,5 @@
 import { GITHUB_API_BASE_URL, standardHeaders } from "~/lib/api-config"
-import { HTTPError } from "~/lib/http-error"
+import { HTTPError } from "~/lib/error"
 import { state } from "~/lib/state"
 
 export async function getGitHubUser() {

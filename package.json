@@ -1,7 +1,7 @@
 {
   "name": "copilot-api",
   "version": "0.4.0",
-  "description": "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+  "description": "A wrapper around GitHub Copilot API to make it OpenAI and Anthropic compatible, making it usable for other tools like Claude Code.",
   "keywords": [
     "proxy",
     "github-copilot",
@@ -39,11 +39,13 @@
   },
   "dependencies": {
     "citty": "^0.1.6",
+    "clipboardy": "^4.0.0",
     "consola": "^3.4.2",
     "fetch-event-stream": "^0.1.5",
     "gpt-tokenizer": "^3.0.1",
-    "hono": "^4.7.11",
-    "srvx": "^0.8.0"
+    "hono": "^4.8.1",
+    "srvx": "^0.8.0",
+    "tiny-invariant": "^1.3.3"
   },
   "devDependencies": {
     "@echristian/eslint-config": "^0.0.43",
@@ -51,7 +53,7 @@
     "bumpp": "^10.2.0",
     "eslint": "^9.29.0",
     "jiti": "^2.4.2",
-    "knip": "^5.61.1",
+    "knip": "^5.61.2",
     "lint-staged": "^16.1.2",
     "prettier-plugin-packagejson": "^2.5.15",
     "simple-git-hooks": "^2.13.0",
