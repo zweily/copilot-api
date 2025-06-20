@@ -3,6 +3,8 @@
 import { defineCommand, runMain } from "citty"
 import consola from "consola"
 import { serve, type ServerHandler } from "srvx"
+import invariant from "tiny-invariant"
+import { x } from "tinyexec"
 
 import { auth } from "./auth"
 import { cacheModels } from "./lib/models"
@@ -20,8 +22,11 @@ interface RunServerOptions {
   rateLimit?: number
   rateLimitWait: boolean
   githubToken?: string
+  launchClaudeCode: boolean
+  launchClaudeCodeDelay: number
 }
 
+// eslint-disable-next-line max-lines-per-function
 export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.verbose) {
     consola.level = 5
@@ -52,6 +57,39 @@ export async function runServer(options: RunServerOptions): Promise<void> {
 
   const serverUrl = `http://localhost:${options.port}`
   consola.box(`Server started at ${serverUrl}`)
+
+  if (options.launchClaudeCode) {
+    invariant(state.models, "Models should be loaded by now")
+
+    const selectedModel = await consola.prompt(
+      "Select a model to use with Claude Code",
+      {
+        type: "select",
+        options: state.models.data.map((model) => model.id),
+      },
+    )
+
+    const selectedSmallModel = await consola.prompt(
+      "Select a small model to use with Claude Code (https://docs.anthropic.com/en/docs/claude-code/costs#background-token-usage)",
+      {
+        type: "select",
+        options: state.models.data.map((model) => model.id),
+      },
+    )
+
+    setTimeout(() => {
+      x("claude", [], {
+        nodeOptions: {
+          env: {
+            ANTHROPIC_BASE_URL: serverUrl,
+            ANTHROPIC_AUTH_TOKEN: "dummy",
+            ANTHROPIC_MODEL: selectedModel,
+            ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
+          },
+        },
+      })
+    }, options.launchClaudeCodeDelay)
+  }
 
   serve({
     fetch: server.fetch as ServerHandler,
@@ -106,6 +144,17 @@ const start = defineCommand({
       description:
         "Provide GitHub token directly (must be generated using the `auth` subcommand)",
     },
+    "claude-code": {
+      alias: "c",
+      type: "boolean",
+      default: false,
+      description: "Run Claude Code directly after starting the server",
+    },
+    "claude-code-delay": {
+      type: "string",
+      default: "1000",
+      description: "Delay in milliseconds before running Claude Code",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -113,16 +162,16 @@ const start = defineCommand({
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       rateLimitRaw === undefined ? undefined : Number.parseInt(rateLimitRaw, 10)
 
-    const port = Number.parseInt(args.port, 10)
-
     return runServer({
-      port,
+      port: Number.parseInt(args.port, 10),
       verbose: args.verbose,
       accountType: args["account-type"],
       manual: args.manual,
       rateLimit,
       rateLimitWait: Boolean(args.wait),
       githubToken: args["github-token"],
+      launchClaudeCode: args["claude-code"],
+      launchClaudeCodeDelay: Number.parseInt(args["claude-code-delay"], 10),
     })
   },
 })
