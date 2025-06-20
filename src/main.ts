@@ -2,16 +2,15 @@
 
 import { defineCommand, runMain } from "citty"
 import consola from "consola"
+import child from "node:child_process"
 import { serve, type ServerHandler } from "srvx"
 import invariant from "tiny-invariant"
-import { x } from "tinyexec"
 
 import { auth } from "./auth"
-import { cacheModels } from "./lib/models"
 import { ensurePaths } from "./lib/paths"
 import { state } from "./lib/state"
 import { setupCopilotToken, setupGitHubToken } from "./lib/token"
-import { cacheVSCodeVersion } from "./lib/vscode-version"
+import { cacheModels, cacheVSCodeVersion } from "./lib/utils"
 import { server } from "./server"
 
 interface RunServerOptions {
@@ -23,7 +22,6 @@ interface RunServerOptions {
   rateLimitWait: boolean
   githubToken?: string
   launchClaudeCode: boolean
-  launchClaudeCodeDelay: number
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -55,8 +53,11 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   await setupCopilotToken()
   await cacheModels()
 
+  consola.info(
+    `Available models: \n${state.models?.data.map((model) => `- ${model.id}`).join("\n")}`,
+  )
+
   const serverUrl = `http://localhost:${options.port}`
-  consola.box(`Server started at ${serverUrl}`)
 
   if (options.launchClaudeCode) {
     invariant(state.models, "Models should be loaded by now")
@@ -77,18 +78,17 @@ export async function runServer(options: RunServerOptions): Promise<void> {
       },
     )
 
-    setTimeout(() => {
-      x("claude", [], {
-        nodeOptions: {
-          env: {
-            ANTHROPIC_BASE_URL: serverUrl,
-            ANTHROPIC_AUTH_TOKEN: "dummy",
-            ANTHROPIC_MODEL: selectedModel,
-            ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
-          },
-        },
-      })
-    }, options.launchClaudeCodeDelay)
+    child.spawn("claude", [], {
+      detached: true,
+      stdio: "ignore",
+      shell: true,
+      env: {
+        ANTHROPIC_BASE_URL: serverUrl,
+        ANTHROPIC_AUTH_TOKEN: "dummy",
+        ANTHROPIC_MODEL: selectedModel,
+        ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
+      },
+    })
   }
 
   serve({
@@ -148,12 +148,8 @@ const start = defineCommand({
       alias: "c",
       type: "boolean",
       default: false,
-      description: "Run Claude Code directly after starting the server",
-    },
-    "claude-code-delay": {
-      type: "string",
-      default: "1000",
-      description: "Delay in milliseconds before running Claude Code",
+      description:
+        "Generate a command to launch Claude Code with Copilot API config",
     },
   },
   run({ args }) {
@@ -171,7 +167,6 @@ const start = defineCommand({
       rateLimitWait: Boolean(args.wait),
       githubToken: args["github-token"],
       launchClaudeCode: args["claude-code"],
-      launchClaudeCodeDelay: Number.parseInt(args["claude-code-delay"], 10),
     })
   },
 })

@@ -1,5 +1,5 @@
 import { copilotHeaders, copilotBaseUrl } from "~/lib/api-config"
-import { HTTPError } from "~/lib/http-error"
+import { HTTPError } from "~/lib/error"
 import { state } from "~/lib/state"
 
 export const createEmbeddings = async (payload: EmbeddingRequest) => {

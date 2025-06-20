@@ -7,7 +7,7 @@ import { getDeviceCode } from "~/services/github/get-device-code"
 import { getGitHubUser } from "~/services/github/get-user"
 import { pollAccessToken } from "~/services/github/poll-access-token"
 
-import { HTTPError } from "./http-error"
+import { HTTPError } from "./error"
 import { state } from "./state"
 
 const readGithubToken = () => fs.readFile(PATHS.GITHUB_TOKEN_PATH, "utf8")

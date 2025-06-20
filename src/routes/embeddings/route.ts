@@ -1,6 +1,6 @@
 import { Hono } from "hono"
 
-import { forwardError } from "~/lib/forward-error"
+import { forwardError } from "~/lib/error"
 import {
   createEmbeddings,
   type EmbeddingRequest,

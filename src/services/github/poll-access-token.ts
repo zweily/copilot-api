@@ -5,7 +5,7 @@ import {
   GITHUB_CLIENT_ID,
   standardHeaders,
 } from "~/lib/api-config"
-import { sleep } from "~/lib/sleep"
+import { sleep } from "~/lib/utils"
 
 import type { DeviceCodeResponse } from "./get-device-code"
 

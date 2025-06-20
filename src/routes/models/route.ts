@@ -1,8 +1,8 @@
 import { Hono } from "hono"
 
-import { forwardError } from "~/lib/forward-error"
-import { cacheModels } from "~/lib/models"
+import { forwardError } from "~/lib/error"
 import { state } from "~/lib/state"
+import { cacheModels } from "~/lib/utils"
 
 export const modelRoutes = new Hono()
 

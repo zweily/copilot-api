@@ -4,10 +4,10 @@ import consola from "consola"
 import { streamSSE, type SSEMessage } from "hono/streaming"
 
 import { awaitApproval } from "~/lib/approval"
-import { isNullish } from "~/lib/is-nullish"
 import { checkRateLimit } from "~/lib/rate-limit"
 import { state } from "~/lib/state"
 import { getTokenCount } from "~/lib/tokenizer"
+import { isNullish } from "~/lib/utils"
 import {
   createChatCompletions,
   type ChatCompletionResponse,

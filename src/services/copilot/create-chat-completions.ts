@@ -1,7 +1,7 @@
 import { events } from "fetch-event-stream"
 
 import { copilotHeaders, copilotBaseUrl } from "~/lib/api-config"
-import { HTTPError } from "~/lib/http-error"
+import { HTTPError } from "~/lib/error"
 import { state } from "~/lib/state"
 
 export const createChatCompletions = async (
