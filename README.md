@@ -153,6 +153,10 @@ npx copilot-api@latest auth --verbose
 
 This proxy can be used to power [Claude Code](https://docs.anthropic.com/en/claude-code), an experimental conversational AI assistant for developers from Anthropic.
 
+There are two ways to configure Claude Code to use this proxy:
+
+### Interactive Setup with `--claude-code` flag
+
 To get started, run the `start` command with the `--claude-code` flag:
 
 ```sh
@@ -163,7 +167,26 @@ You will be prompted to select a primary model and a "small, fast" model for bac
 
 Paste and run this command in a new terminal to launch Claude Code.
 
+### Manual Configuration with `settings.json`
+
+Alternatively, you can configure Claude Code by creating a `.claude/settings.json` file in your project's root directory. This file should contain the environment variables needed by Claude Code. This way you don't need to run the interactive setup every time.
+
+Here is an example `.claude/settings.json` file:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:4141",
+    "ANTHROPIC_AUTH_TOKEN": "dummy",
+    "ANTHROPIC_MODEL": "gpt-4.1",
+    "ANTHROPIC_SMALL_FAST_MODEL": "gpt-4.1"
+  }
+}
+```
+
 You can find more options here: [Claude Code settings](https://docs.anthropic.com/en/docs/claude-code/settings#environment-variables)
+
+You can also read more about IDE integration here: [Add Claude Code to your IDE](https://docs.anthropic.com/en/docs/claude-code/ide-integrations)
 
 ## Running from Source
 
