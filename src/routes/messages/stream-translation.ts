@@ -20,9 +20,9 @@ function isToolBlockOpen(state: AnthropicStreamState): boolean {
 export function translateChunkToAnthropicEvents(
   chunk: ChatCompletionChunk,
   state: AnthropicStreamState,
-  inputTokens: number,
 ): Array<AnthropicStreamEventData> {
   const events: Array<AnthropicStreamEventData> = []
+
   const choice = chunk.choices[0]
   const { delta } = choice
 
@@ -38,7 +38,7 @@ export function translateChunkToAnthropicEvents(
         stop_reason: null,
         stop_sequence: null,
         usage: {
-          input_tokens: inputTokens,
+          input_tokens: 1,
           output_tokens: 1, // Anthropic requires this to be > 0
         },
       },
@@ -115,6 +115,8 @@ export function translateChunkToAnthropicEvents(
 
       if (toolCall.function?.arguments) {
         const toolCallInfo = state.toolCalls[toolCall.index]
+        // Tool call can still be empty
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (toolCallInfo) {
           events.push({
             type: "content_block_delta",
@@ -144,6 +146,9 @@ export function translateChunkToAnthropicEvents(
         stop_reason: mapOpenAIStopReasonToAnthropic(choice.finish_reason),
         stop_sequence: null,
       },
+      usage: {
+        output_tokens: 1,
+      },
     })
 
     events.push({
@@ -152,4 +157,14 @@ export function translateChunkToAnthropicEvents(
   }
 
   return events
+}
+
+export function translateErrorToAnthropicErrorEvent(): AnthropicStreamEventData {
+  return {
+    type: "error",
+    error: {
+      type: "api_error",
+      message: "An unexpected error occurred during streaming.",
+    },
+  }
 }

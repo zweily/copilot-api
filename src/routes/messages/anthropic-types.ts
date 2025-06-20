@@ -99,6 +99,7 @@ export interface AnthropicResponse {
     | "tool_use"
     | "pause_turn"
     | "refusal"
+    | null
   stop_sequence: string | null
   usage: {
     input_tokens: number
