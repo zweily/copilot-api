@@ -1,7 +1,7 @@
 {
   "name": "copilot-api",
   "version": "0.4.0",
-  "description": "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
+  "description": "A wrapper around GitHub Copilot API to make it OpenAI and Anthropic compatible, making it usable for other tools like Claude Code.",
   "keywords": [
     "proxy",
     "github-copilot",

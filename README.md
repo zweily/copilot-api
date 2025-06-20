@@ -7,7 +7,7 @@
 
 ## Project Overview
 
-A reverse-engineered proxy for the GitHub Copilot API that exposes it as an OpenAI and Anthropic compatible service. This allows you to use GitHub Copilot with any tool that supports the OpenAI Chat Completions API or the Anthropic Messages API.
+A reverse-engineered proxy for the GitHub Copilot API that exposes it as an OpenAI and Anthropic compatible service. This allows you to use GitHub Copilot with any tool that supports the OpenAI Chat Completions API or the Anthropic Messages API, including to power [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview).
 
 ## Demo
 
@@ -82,6 +82,7 @@ The following command line options are available for the `start` command:
 | --rate-limit   | Rate limit in seconds between requests                                        | none       | -r    |
 | --wait         | Wait instead of error when rate limit is hit                                  | false      | -w    |
 | --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none       | -g    |
+| --claude-code  | Generate a command to launch Claude Code with Copilot API config              | false      | -c    |
 
 ### Auth Command Options
 
@@ -147,6 +148,22 @@ npx copilot-api@latest auth
 # Run auth flow with verbose logging
 npx copilot-api@latest auth --verbose
 ```
+
+## Using with Claude Code
+
+This proxy can be used to power [Claude Code](https://docs.anthropic.com/en/claude-code), an experimental conversational AI assistant for developers from Anthropic.
+
+To get started, run the `start` command with the `--claude-code` flag:
+
+```sh
+npx copilot-api@latest start --claude-code
+```
+
+You will be prompted to select a primary model and a "small, fast" model for background tasks. After selecting the models, a command will be copied to your clipboard. This command sets the necessary environment variables for Claude Code to use the proxy.
+
+Paste and run this command in a new terminal to launch Claude Code.
+
+You can find more options here: [Claude Code settings](https://docs.anthropic.com/en/docs/claude-code/settings#environment-variables)
 
 ## Running from Source
 
