@@ -9,7 +9,7 @@ export const createChatCompletions = async (
 ) => {
   if (!state.copilotToken) throw new Error("Copilot token not found")
 
-  const visionEnable = payload.messages.some(
+  const enableVision = payload.messages.some(
     (x) =>
       typeof x.content !== "string"
       && x.content?.some((x) => x.type === "image_url"),
@@ -17,7 +17,7 @@ export const createChatCompletions = async (
 
   const response = await fetch(`${copilotBaseUrl(state)}/chat/completions`, {
     method: "POST",
-    headers: copilotHeaders(state, visionEnable),
+    headers: copilotHeaders(state, enableVision),
     body: JSON.stringify(payload),
   })
 
@@ -60,7 +60,7 @@ interface Choice {
   index: number
   delta: Delta
   finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | null
-  logprobs: null
+  logprobs: object | null
 }
 
 // Non-streaming types
@@ -82,7 +82,7 @@ export interface ChatCompletionResponse {
 interface ChoiceNonStreaming {
   index: number
   message: Message
-  logprobs: null
+  logprobs: object | null
   finish_reason: "stop" | "length" | "tool_calls" | "content_filter"
 }
 
@@ -108,6 +108,7 @@ export interface ChatCompletionsPayload {
   tool_choice?:
     | "none"
     | "auto"
+    | "required"
     | { type: "function"; function: { name: string } }
     | null
   user?: string | null

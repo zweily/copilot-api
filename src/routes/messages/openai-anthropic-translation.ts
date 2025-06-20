@@ -91,74 +91,26 @@ interface AnthropicToolUseBlock {
   input: Record<string, unknown>
 }
 
-// Translation functions
+// Payload translation
 
-function getAnthropicTextBlocks(
-  messageContent: Message["content"],
-): Array<AnthropicTextBlock> {
-  if (typeof messageContent === "string") {
-    return [{ type: "text", text: messageContent }]
+export function translateToOpenAI(
+  payload: AnthropicMessagesPayload,
+): ChatCompletionsPayload {
+  return {
+    model: payload.model,
+    messages: translateAnthropicMessagesToOpenAI(
+      payload.messages,
+      payload.system,
+    ),
+    max_tokens: payload.max_tokens,
+    stop: payload.stop_sequences,
+    stream: payload.stream,
+    temperature: payload.temperature,
+    top_p: payload.top_p,
+    user: payload.metadata?.user_id,
+    tools: translateAnthropicToolsToOpenAI(payload.tools),
+    tool_choice: translateAnthropicToolChoiceToOpenAI(payload.tool_choice),
   }
-
-  if (Array.isArray(messageContent)) {
-    return messageContent
-      .filter((part): part is TextPart => part.type === "text")
-      .map((part) => ({ type: "text", text: part.text }))
-  }
-
-  return []
-}
-
-function getAnthropicToolUseBlocks(
-  toolCalls: Array<ToolCall> | undefined,
-): Array<AnthropicToolUseBlock> {
-  if (!toolCalls) {
-    return []
-  }
-  return toolCalls.map((toolCall) => ({
-    type: "tool_use",
-    id: toolCall.id,
-    name: toolCall.function.name,
-    input: JSON.parse(toolCall.function.arguments) as Record<string, unknown>,
-  }))
-}
-
-function mapOpenAIStopReasonToAnthropic(
-  finishReason: ChatCompletionResponse["choices"][0]["finish_reason"],
-): AnthropicResponse["stop_reason"] {
-  const stopReasonMap = {
-    stop: "end_turn",
-    length: "max_tokens",
-    tool_calls: "tool_use",
-    content_filter: "end_turn",
-  } as const
-  return stopReasonMap[finishReason]
-}
-
-function mapContent(
-  content: string | Array<AnthropicContentBlock>,
-): string | Array<ContentPart> | null {
-  if (typeof content === "string") {
-    return content
-  }
-  if (!Array.isArray(content)) {
-    return null
-  }
-
-  const contentParts: Array<ContentPart> = []
-  for (const block of content) {
-    if (block.type === "text") {
-      contentParts.push({ type: "text", text: block.text })
-    } else if (block.type === "image") {
-      contentParts.push({
-        type: "image_url",
-        image_url: {
-          url: `data:${block.source.media_type};base64,${block.source.data}`,
-        },
-      })
-    }
-  }
-  return contentParts
 }
 
 function translateAnthropicMessagesToOpenAI(
@@ -210,6 +162,32 @@ function translateAnthropicMessagesToOpenAI(
   return messages
 }
 
+function mapContent(
+  content: string | Array<AnthropicContentBlock>,
+): string | Array<ContentPart> | null {
+  if (typeof content === "string") {
+    return content
+  }
+  if (!Array.isArray(content)) {
+    return null
+  }
+
+  const contentParts: Array<ContentPart> = []
+  for (const block of content) {
+    if (block.type === "text") {
+      contentParts.push({ type: "text", text: block.text })
+    } else if (block.type === "image") {
+      contentParts.push({
+        type: "image_url",
+        image_url: {
+          url: `data:${block.source.media_type};base64,${block.source.data}`,
+        },
+      })
+    }
+  }
+  return contentParts
+}
+
 function translateAnthropicToolsToOpenAI(
   anthropicTools: Array<AnthropicTool> | undefined,
 ): Array<Tool> | undefined {
@@ -238,9 +216,6 @@ function translateAnthropicToolChoiceToOpenAI(
       return "auto"
     }
     case "any": {
-      // The type definition for tool_choice is missing "required", but it's a valid value.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       return "required"
     }
     case "tool": {
@@ -258,25 +233,7 @@ function translateAnthropicToolChoiceToOpenAI(
   }
 }
 
-export function translateToOpenAI(
-  payload: AnthropicMessagesPayload,
-): ChatCompletionsPayload {
-  return {
-    model: payload.model,
-    messages: translateAnthropicMessagesToOpenAI(
-      payload.messages,
-      payload.system,
-    ),
-    max_tokens: payload.max_tokens,
-    stop: payload.stop_sequences,
-    stream: payload.stream,
-    temperature: payload.temperature,
-    top_p: payload.top_p,
-    user: payload.metadata?.user_id,
-    tools: translateAnthropicToolsToOpenAI(payload.tools),
-    tool_choice: translateAnthropicToolChoiceToOpenAI(payload.tool_choice),
-  }
-}
+// Response translation
 
 export function translateToAnthropic(
   response: ChatCompletionResponse,
@@ -298,4 +255,46 @@ export function translateToAnthropic(
       output_tokens: response.usage?.completion_tokens ?? 0,
     },
   }
+}
+
+function getAnthropicTextBlocks(
+  messageContent: Message["content"],
+): Array<AnthropicTextBlock> {
+  if (typeof messageContent === "string") {
+    return [{ type: "text", text: messageContent }]
+  }
+
+  if (Array.isArray(messageContent)) {
+    return messageContent
+      .filter((part): part is TextPart => part.type === "text")
+      .map((part) => ({ type: "text", text: part.text }))
+  }
+
+  return []
+}
+
+function getAnthropicToolUseBlocks(
+  toolCalls: Array<ToolCall> | undefined,
+): Array<AnthropicToolUseBlock> {
+  if (!toolCalls) {
+    return []
+  }
+  return toolCalls.map((toolCall) => ({
+    type: "tool_use",
+    id: toolCall.id,
+    name: toolCall.function.name,
+    input: JSON.parse(toolCall.function.arguments) as Record<string, unknown>,
+  }))
+}
+
+function mapOpenAIStopReasonToAnthropic(
+  finishReason: ChatCompletionResponse["choices"][0]["finish_reason"],
+): AnthropicResponse["stop_reason"] {
+  const stopReasonMap = {
+    stop: "end_turn",
+    length: "max_tokens",
+    tool_calls: "tool_use",
+    content_filter: "end_turn",
+  } as const
+  return stopReasonMap[finishReason]
 }
