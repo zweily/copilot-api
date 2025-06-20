@@ -156,6 +156,9 @@ function translateAnthropicToolChoiceToOpenAI(
       }
       return undefined
     }
+    case "none": {
+      return "none"
+    }
     default: {
       return undefined
     }
