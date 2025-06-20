@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 
 import { forwardError } from "~/lib/forward-error"
+import { cacheModels } from "~/lib/models"
 import { state } from "~/lib/state"
 
 export const modelRoutes = new Hono()
@@ -9,10 +10,10 @@ modelRoutes.get("/", async (c) => {
   try {
     if (!state.models) {
       // This should be handled by startup logic, but as a fallback.
-      return c.json({ error: "Models not available" }, 503)
+      await cacheModels()
     }
 
-    const models = state.models.data.map((model) => ({
+    const models = state.models?.data.map((model) => ({
       id: model.id,
       object: "model",
       type: "model",
