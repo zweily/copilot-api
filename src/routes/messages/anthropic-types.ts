@@ -63,7 +63,13 @@ export interface AnthropicResponse {
   role: "assistant"
   content: Array<AnthropicResponseContentBlock>
   model: string
-  stop_reason: "end_turn" | "max_tokens" | "stop_sequence" | "tool_use" | null
+  stop_reason:
+    | "end_turn"
+    | "max_tokens"
+    | "stop_sequence"
+    | "tool_use"
+    | "pause_turn"
+    | "refusal"
   stop_sequence: string | null
   usage: {
     input_tokens: number
@@ -85,11 +91,10 @@ export interface AnthropicToolUseBlock {
 // Anthropic Stream Event Types
 export interface AnthropicMessageStartEvent {
   type: "message_start"
-  message: Omit<
-    AnthropicResponse,
-    "stop_reason" | "stop_sequence" | "content"
-  > & {
+  message: Omit<AnthropicResponse, "content" | "stop_reason" | "stop_sequence"> & {
     content: []
+    stop_reason: null
+    stop_sequence: null
   }
 }
 
@@ -119,8 +124,8 @@ export interface AnthropicContentBlockStopEvent {
 export interface AnthropicMessageDeltaEvent {
   type: "message_delta"
   delta: {
-    stop_reason: AnthropicResponse["stop_reason"]
-    stop_sequence: string | null
+    stop_reason?: AnthropicResponse["stop_reason"]
+    stop_sequence?: string | null
   }
   // OpenAI does not provide token usage per chunk, so this is omitted.
   // usage: { output_tokens: number }
