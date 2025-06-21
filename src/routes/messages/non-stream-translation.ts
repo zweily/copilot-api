@@ -166,6 +166,14 @@ function mapContent(
     return null
   }
 
+  const hasImage = content.some((block) => block.type === "image")
+  if (!hasImage) {
+    return content
+      .filter((block): block is AnthropicTextBlock => block.type === "text")
+      .map((block) => block.text)
+      .join("\n\n")
+  }
+
   const contentParts: Array<ContentPart> = []
   for (const block of content) {
     if (block.type === "text") {
@@ -248,8 +256,8 @@ export function translateToAnthropic(
     stop_reason: mapOpenAIStopReasonToAnthropic(choice.finish_reason),
     stop_sequence: null,
     usage: {
-      input_tokens: 1,
-      output_tokens: 1,
+      input_tokens: response.usage?.prompt_tokens ?? 0,
+      output_tokens: response.usage?.completion_tokens ?? 0,
     },
   }
 }
