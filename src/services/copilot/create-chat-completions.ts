@@ -1,3 +1,4 @@
+import consola from "consola"
 import { events } from "fetch-event-stream"
 
 import { copilotHeaders, copilotBaseUrl } from "~/lib/api-config"
@@ -21,8 +22,10 @@ export const createChatCompletions = async (
     body: JSON.stringify(payload),
   })
 
-  if (!response.ok)
+  if (!response.ok) {
+    consola.error("Failed to create chat completions", response)
     throw new HTTPError("Failed to create chat completions", response)
+  }
 
   if (payload.stream) {
     return events(response)
