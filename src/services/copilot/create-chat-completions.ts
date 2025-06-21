@@ -41,7 +41,7 @@ export interface ChatCompletionChunk {
   object: "chat.completion.chunk"
   created: number
   model: string
-  choices: [Choice]
+  choices: Array<Choice>
   system_fingerprint?: string
 }
 
@@ -73,7 +73,7 @@ export interface ChatCompletionResponse {
   object: "chat.completion"
   created: number
   model: string
-  choices: [ChoiceNonStreaming]
+  choices: Array<ChoiceNonStreaming>
   system_fingerprint?: string
   usage?: {
     prompt_tokens: number
@@ -82,9 +82,15 @@ export interface ChatCompletionResponse {
   }
 }
 
+interface ResponseMessage {
+  role: "assistant"
+  content: string | null
+  tool_calls?: Array<ToolCall>
+}
+
 interface ChoiceNonStreaming {
   index: number
-  message: Message
+  message: ResponseMessage
   logprobs: object | null
   finish_reason: "stop" | "length" | "tool_calls" | "content_filter"
 }
@@ -127,7 +133,7 @@ export interface Tool {
 }
 
 export interface Message {
-  role: "user" | "assistant" | "system" | "tool"
+  role: "user" | "assistant" | "system" | "tool" | "developer"
   content: string | Array<ContentPart> | null
 
   name?: string
