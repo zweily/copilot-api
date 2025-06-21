@@ -44,7 +44,7 @@ export async function handleCompletion(c: Context) {
   if (isNonStreaming(response)) {
     consola.debug(
       "Non-streaming response from Copilot:",
-      JSON.stringify(response),
+      JSON.stringify(response).slice(-400),
     )
     const anthropicResponse = translateToAnthropic(response)
     consola.debug(
@@ -64,7 +64,7 @@ export async function handleCompletion(c: Context) {
     }
 
     for await (const rawEvent of response) {
-      consola.trace("Copilot raw stream event:", JSON.stringify(rawEvent))
+      consola.debug("Copilot raw stream event:", JSON.stringify(rawEvent))
       if (rawEvent.data === "[DONE]") {
         break
       }
@@ -77,7 +77,7 @@ export async function handleCompletion(c: Context) {
       const events = translateChunkToAnthropicEvents(chunk, streamState)
 
       for (const event of events) {
-        consola.trace("Translated Anthropic event:", JSON.stringify(event))
+        consola.debug("Translated Anthropic event:", JSON.stringify(event))
         await stream.writeSSE({
           event: event.type,
           data: JSON.stringify(event),

@@ -72,7 +72,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
     )
 
     const selectedSmallModel = await consola.prompt(
-      "Select a small model to use with Claude Code (https://docs.anthropic.com/en/docs/claude-code/costs#background-token-usage)",
+      "Select a small model to use with Claude Code",
       {
         type: "select",
         options: state.models.data.map((model) => model.id),
