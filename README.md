@@ -9,9 +9,16 @@
 
 A reverse-engineered proxy for the GitHub Copilot API that exposes it as an OpenAI and Anthropic compatible service. This allows you to use GitHub Copilot with any tool that supports the OpenAI Chat Completions API or the Anthropic Messages API, including to power [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview).
 
-### New Features
+## Features
 
-- **Copilot Usage Viewer**: Integrated web interface to view your GitHub Copilot usage statistics and quota information.
+- **OpenAI & Anthropic Compatibility**: Exposes GitHub Copilot as an OpenAI-compatible (`/v1/chat/completions`, `/v1/models`, `/v1/embeddings`) and Anthropic-compatible (`/v1/messages`) API.
+- **Claude Code Integration**: Easily configure and launch [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) to use Copilot as its backend with a simple command-line flag (`--claude-code`).
+- **Usage Dashboard**: A web-based dashboard to monitor your Copilot API usage, view quotas, and see detailed statistics.
+- **Rate Limit Control**: Manage API usage with rate-limiting options (`--rate-limit`) and a waiting mechanism (`--wait`) to prevent errors from rapid requests.
+- **Manual Request Approval**: Manually approve or deny each API request for fine-grained control over usage (`--manual`).
+- **Token Visibility**: Option to display GitHub and Copilot tokens during authentication and refresh for debugging (`--show-token`).
+- **Flexible Authentication**: Authenticate interactively or provide a GitHub token directly, suitable for CI/CD environments.
+- **Support for Different Account Types**: Works with individual, business, and enterprise GitHub Copilot plans.
 
 ## Demo
 
@@ -87,12 +94,14 @@ The following command line options are available for the `start` command:
 | --wait         | Wait instead of error when rate limit is hit                                  | false      | -w    |
 | --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none       | -g    |
 | --claude-code  | Generate a command to launch Claude Code with Copilot API config              | false      | -c    |
+| --show-token   | Show GitHub and Copilot tokens on fetch and refresh                           | false      | none  |
 
 ### Auth Command Options
 
-| Option    | Description            | Default | Alias |
-| --------- | ---------------------- | ------- | ----- |
-| --verbose | Enable verbose logging | false   | -v    |
+| Option       | Description               | Default | Alias |
+| ------------ | ------------------------- | ------- | ----- |
+| --verbose    | Enable verbose logging    | false   | -v    |
+| --show-token | Show GitHub token on auth | false   | none  |
 
 ## API Endpoints
 
