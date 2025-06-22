@@ -6,7 +6,7 @@ echo.
 
 if not exist node_modules (
     echo Installing dependencies...
-    npm install
+    bun install
     echo.
 )
 
@@ -14,7 +14,7 @@ echo Starting server...
 echo The usage viewer page will open automatically after the server starts
 echo.
 
-start "" "http://localhost:4141/public/usage.html"
-npm run dev
+start "" "https://ericc-ch.github.io/copilot-api?endpoint=http://localhost:4141/usage"
+bun run dev
 
 pause

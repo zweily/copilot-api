@@ -11,9 +11,7 @@ A reverse-engineered proxy for the GitHub Copilot API that exposes it as an Open
 
 ### New Features
 
-- **Copilot Usage Viewer**: Integrated web interface to view your GitHub Copilot usage statistics and quota information
-- **Token Display**: View the current Copilot token being used by the API
-- **Real-time Monitoring**: Track your usage and remaining quotas in real-time
+- **Copilot Usage Viewer**: Integrated web interface to view your GitHub Copilot usage statistics and quota information.
 
 ## Demo
 
@@ -127,7 +125,6 @@ New endpoints for monitoring your Copilot usage and quotas.
 | --------------------------- | ------ | --------------------------------------------------------- |
 | `GET /usage`               | `GET`  | Get detailed Copilot usage statistics and quota information. |
 | `GET /token`               | `GET`  | Get the current Copilot token being used by the API.     |
-| `GET /public/usage.html`   | `GET`  | Web interface for viewing usage statistics (accessible via browser). |
 
 ## Example Usage
 
@@ -167,31 +164,24 @@ npx copilot-api@latest auth --verbose
 
 ## Using the Usage Viewer
 
-After starting the server, you can access the Copilot Usage Viewer through your web browser:
+After starting the server, a URL to the Copilot Usage Dashboard will be displayed in your console. This dashboard is a web interface for monitoring your API usage.
 
-1. Start the server: `npx copilot-api@latest start`
-2. Open your browser and navigate to: `http://localhost:4141/public/usage.html`
-3. The page will automatically load your usage data when opened
-4. Use the controls to:
-   - **Fetch Usage**: Manually refresh usage data
-   - **Show Current Token**: View the current Copilot token
-   - **Enable Auto Refresh**: Automatically refresh data every 30 seconds
+1.  Start the server. For example, using npx:
+    ```sh
+    npx copilot-api@latest start
+    ```
+2.  The server will output a URL to the usage viewer. Copy and paste this URL into your browser. It will look something like this:
+    `https://ericc-ch.github.io/copilot-api?endpoint=http://localhost:4141/usage`
+    - If you use the `start.bat` script on Windows, this page will open automatically.
 
-### Auto Refresh Feature
+The dashboard provides a user-friendly interface to view your Copilot usage data:
 
-The usage viewer includes an automatic refresh feature that:
-- Updates usage data every 30 seconds when enabled
-- Shows a countdown timer to the next refresh
-- Displays the last update time
-- Can be toggled on/off at any time
-- Continues running in the background without interrupting your view
-
-The usage viewer provides:
-- Account information (plan type, access type, assigned date)
-- Quota information (remaining usage, total quota, overage count)
-- Real-time token display with automatic refresh
-- Support for Chinese and English interfaces
-- Auto-refresh functionality for continuous monitoring
+-   **API Endpoint URL**: The dashboard is pre-configured to fetch data from your local server endpoint via the URL query parameter. You can change this URL to point to any other compatible API endpoint.
+-   **Fetch Data**: Click the "Fetch" button to load or refresh the usage data. The dashboard will automatically fetch data on load.
+-   **Usage Quotas**: View a summary of your usage quotas for different services like Chat and Completions, displayed with progress bars for a quick overview.
+-   **Detailed Information**: See the full JSON response from the API for a detailed breakdown of all available usage statistics.
+-   **URL-based Configuration**: You can also specify the API endpoint directly in the URL using a query parameter. This is useful for bookmarks or sharing links. For example:
+    `https://ericc-ch.github.io/copilot-api?endpoint=http://your-api-server/usage`
 
 ## Using with Claude Code
 
