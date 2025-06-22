@@ -23,8 +23,6 @@ export function translateChunkToAnthropicEvents(
 ): Array<AnthropicStreamEventData> {
   const events: Array<AnthropicStreamEventData> = []
 
-  // @ts-expect-error sometimes chunk.choices is empty, and idk why
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (chunk.choices.length === 0) {
     return events
   }
