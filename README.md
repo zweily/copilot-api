@@ -5,6 +5,12 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E519XS7W)
 
+---
+
+**Note:** If you are using [opencode](https://github.com/sst/opencode), you do not need this project. Opencode supports the GitHub Copilot provider out of the box.
+
+---
+
 ## Project Overview
 
 A reverse-engineered proxy for the GitHub Copilot API that exposes it as an OpenAI and Anthropic compatible service. This allows you to use GitHub Copilot with any tool that supports the OpenAI Chat Completions API or the Anthropic Messages API, including to power [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview).
