@@ -7,7 +7,7 @@
 
 ---
 
-**Note:** If you are using [opencode](https://github.com/sst/opencode), you do not need this project. Opencode supports the GitHub Copilot provider out of the box.
+**Note:** If you are using [opencode](https://github.com/sst/opencode), you do not need this project. Opencode supports GitHub Copilot provider out of the box.
 
 ---
 
