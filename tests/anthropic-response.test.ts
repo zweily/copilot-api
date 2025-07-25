@@ -63,7 +63,7 @@ const anthropicStreamEventSchema = z
       "message_stop",
     ]),
   })
-  .loose()
+  .passthrough()
 
 function isValidAnthropicStreamEvent(payload: unknown): boolean {
   return anthropicStreamEventSchema.safeParse(payload).success
