@@ -39,6 +39,7 @@
     "*": "bun run lint --fix"
   },
   "dependencies": {
+    "bun": "^1.2.19",
     "citty": "^0.1.6",
     "clipboardy": "^4.0.0",
     "consola": "^3.4.2",

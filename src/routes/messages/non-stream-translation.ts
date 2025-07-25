@@ -15,6 +15,7 @@ import {
   type AnthropicMessagesPayload,
   type AnthropicResponse,
   type AnthropicTextBlock,
+  type AnthropicThinkingBlock,
   type AnthropicTool,
   type AnthropicToolResultBlock,
   type AnthropicToolUseBlock,
@@ -131,11 +132,21 @@ function handleAssistantMessage(
     (block): block is AnthropicTextBlock => block.type === "text",
   )
 
+  const thinkingBlocks = message.content.filter(
+    (block): block is AnthropicThinkingBlock => block.type === "thinking",
+  )
+
+  // Combine text and thinking blocks, as OpenAI doesn't have separate thinking blocks
+  const allTextContent = [
+    ...textBlocks.map((b) => b.text),
+    ...thinkingBlocks.map((b) => b.thinking),
+  ].join("\n\n")
+
   return toolUseBlocks.length > 0 ?
       [
         {
           role: "assistant",
-          content: textBlocks.map((b) => b.text).join("\n\n") || null,
+          content: allTextContent || null,
           tool_calls: toolUseBlocks.map((toolUse) => ({
             id: toolUse.id,
             type: "function",
@@ -169,8 +180,9 @@ function mapContent(
   const hasImage = content.some((block) => block.type === "image")
   if (!hasImage) {
     return content
-      .filter((block): block is AnthropicTextBlock => block.type === "text")
-      .map((block) => block.text)
+      .filter((block): block is AnthropicTextBlock | AnthropicThinkingBlock => 
+        block.type === "text" || block.type === "thinking")
+      .map((block) => block.type === "text" ? block.text : block.thinking)
       .join("\n\n")
   }
 
@@ -178,6 +190,8 @@ function mapContent(
   for (const block of content) {
     if (block.type === "text") {
       contentParts.push({ type: "text", text: block.text })
+    } else if (block.type === "thinking") {
+      contentParts.push({ type: "text", text: block.thinking })
     } else if (block.type === "image") {
       contentParts.push({
         type: "image_url",
@@ -246,6 +260,7 @@ export function translateToAnthropic(
   const choice = response.choices[0]
   const textBlocks = getAnthropicTextBlocks(choice.message.content)
   const toolUseBlocks = getAnthropicToolUseBlocks(choice.message.tool_calls)
+  // Note: GitHub Copilot doesn't generate thinking blocks, so we don't include them in responses
 
   return {
     id: response.id,
