@@ -180,25 +180,38 @@ function mapContent(
   const hasImage = content.some((block) => block.type === "image")
   if (!hasImage) {
     return content
-      .filter((block): block is AnthropicTextBlock | AnthropicThinkingBlock => 
-        block.type === "text" || block.type === "thinking")
-      .map((block) => block.type === "text" ? block.text : block.thinking)
+      .filter(
+        (block): block is AnthropicTextBlock | AnthropicThinkingBlock =>
+          block.type === "text" || block.type === "thinking",
+      )
+      .map((block) => (block.type === "text" ? block.text : block.thinking))
       .join("\n\n")
   }
 
   const contentParts: Array<ContentPart> = []
   for (const block of content) {
-    if (block.type === "text") {
-      contentParts.push({ type: "text", text: block.text })
-    } else if (block.type === "thinking") {
-      contentParts.push({ type: "text", text: block.thinking })
-    } else if (block.type === "image") {
-      contentParts.push({
-        type: "image_url",
-        image_url: {
-          url: `data:${block.source.media_type};base64,${block.source.data}`,
-        },
-      })
+    switch (block.type) {
+      case "text": {
+        contentParts.push({ type: "text", text: block.text })
+
+        break
+      }
+      case "thinking": {
+        contentParts.push({ type: "text", text: block.thinking })
+
+        break
+      }
+      case "image": {
+        contentParts.push({
+          type: "image_url",
+          image_url: {
+            url: `data:${block.source.media_type};base64,${block.source.data}`,
+          },
+        })
+
+        break
+      }
+      // No default
     }
   }
   return contentParts
