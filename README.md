@@ -84,6 +84,7 @@ Copilot API now uses a subcommand structure with these main commands:
 - `start`: Start the Copilot API server. This command will also handle authentication if needed.
 - `auth`: Run GitHub authentication flow without starting the server. This is typically used if you need to generate a token for use with the `--github-token` option, especially in non-interactive environments.
 - `check-usage`: Show your current GitHub Copilot usage and quota information directly in the terminal (no server required).
+- `debug`: Display diagnostic information including version, runtime details, file paths, and authentication status. Useful for troubleshooting and support.
 
 ## Command Line Options
 
@@ -109,6 +110,12 @@ The following command line options are available for the `start` command:
 | ------------ | ------------------------- | ------- | ----- |
 | --verbose    | Enable verbose logging    | false   | -v    |
 | --show-token | Show GitHub token on auth | false   | none  |
+
+### Debug Command Options
+
+| Option | Description                    | Default | Alias |
+| ------ | ------------------------------ | ------- | ----- |
+| --json | Output debug info as JSON      | false   | none  |
 
 ## API Endpoints
 
@@ -179,6 +186,12 @@ npx copilot-api@latest auth --verbose
 
 # Show your Copilot usage/quota in the terminal (no server needed)
 npx copilot-api@latest check-usage
+
+# Display debug information for troubleshooting
+npx copilot-api@latest debug
+
+# Display debug information in JSON format
+npx copilot-api@latest debug --json
 ```
 
 ## Using the Usage Viewer
