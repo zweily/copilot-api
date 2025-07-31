@@ -54,8 +54,17 @@ docker build -t copilot-api .
 Run the container
 
 ```sh
-docker run -p 4141:4141 copilot-api
+# Create a directory on your host to persist the GitHub token and related data
+mkdir -p ./copilot-data
+
+# Run the container with a bind mount to persist the token
+# This ensures your authentication survives container restarts
+
+docker run -p 4141:4141 -v $(pwd)/copilot-data:/root/.local/share/copilot-api copilot-api
 ```
+
+> **Note:**
+> The GitHub token and related data will be stored in `copilot-data` on your host. This is mapped to `/root/.local/share/copilot-api` inside the container, ensuring persistence across restarts.
 
 ### Docker with Environment Variables
 
