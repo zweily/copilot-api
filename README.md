@@ -57,6 +57,41 @@ Run the container
 docker run -p 4141:4141 copilot-api
 ```
 
+### Docker with Environment Variables
+
+You can pass the GitHub token directly to the container using environment variables:
+
+```sh
+# Build with GitHub token
+docker build --build-arg GH_TOKEN=your_github_token_here -t copilot-api .
+
+# Run with GitHub token
+docker run -p 4141:4141 -e GH_TOKEN=your_github_token_here copilot-api
+
+# Run with additional options
+docker run -p 4141:4141 -e GH_TOKEN=your_token copilot-api start --verbose --port 4141
+```
+
+### Docker Compose Example
+
+```yaml
+version: '3.8'
+services:
+  copilot-api:
+    build: .
+    ports:
+      - "4141:4141"
+    environment:
+      - GH_TOKEN=your_github_token_here
+    restart: unless-stopped
+```
+
+The Docker image includes:
+- Multi-stage build for optimized image size
+- Non-root user for enhanced security
+- Health check for container monitoring
+- Pinned base image version for reproducible builds
+
 ## Using with npx
 
 You can run the project directly using npx:

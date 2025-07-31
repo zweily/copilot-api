@@ -1,0 +1,14 @@
+node_modules
+bun.lock
+
+.vscode/
+
+.git/
+.github/
+.gitignore
+
+dist/
+tests/
+*.md
+
+.eslintcache
