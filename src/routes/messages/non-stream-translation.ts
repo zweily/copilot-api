@@ -285,7 +285,7 @@ export function translateToAnthropic(
     allToolUseBlocks.push(...toolUseBlocks)
     
     // Use the finish_reason from the first choice, or prioritize tool_calls
-    if (choice.finish_reason === "tool_calls" || stopReason === "stop") {
+    if (choice.finish_reason === "tool_calls" || (stopReason === "stop" && choice.finish_reason !== null)) {
       stopReason = choice.finish_reason
     }
   }
