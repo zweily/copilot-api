@@ -26,8 +26,6 @@ import { mapOpenAIStopReasonToAnthropic } from "./utils"
 
 // Payload translation
 
-
-
 export function translateToOpenAI(
   payload: AnthropicMessagesPayload,
 ): ChatCompletionsPayload {
