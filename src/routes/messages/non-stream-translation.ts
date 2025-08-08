@@ -274,8 +274,9 @@ export function translateToAnthropic(
   // Merge content from all choices
   let allTextBlocks: Array<AnthropicTextBlock> = []
   let allToolUseBlocks: Array<AnthropicToolUseBlock> = []
-  let stopReason: "stop" | "length" | "tool_calls" | "content_filter" | null = "stop" // default
-
+  let stopReason: "stop" | "length" | "tool_calls" | "content_filter" | null = null // default
+  stopReason = response.choices[0]?.finish_reason ?? stopReason;
+  
   // Process all choices to extract text and tool use blocks
   for (const choice of response.choices) {
     const textBlocks = getAnthropicTextBlocks(choice.message.content)
