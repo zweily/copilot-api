@@ -282,21 +282,22 @@ export function translateToAnthropic(
   response: ChatCompletionResponse,
 ): AnthropicResponse {
   // Merge content from all choices
-  let allTextBlocks: Array<AnthropicTextBlock> = []
-  let allToolUseBlocks: Array<AnthropicToolUseBlock> = []
-  let stopReason: "stop" | "length" | "tool_calls" | "content_filter" | null = null // default
-  stopReason = response.choices[0]?.finish_reason ?? stopReason;
-  
+  const allTextBlocks: Array<AnthropicTextBlock> = []
+  const allToolUseBlocks: Array<AnthropicToolUseBlock> = []
+  let stopReason: "stop" | "length" | "tool_calls" | "content_filter" | null =
+    null // default
+  stopReason = response.choices[0]?.finish_reason ?? stopReason
+
   // Process all choices to extract text and tool use blocks
   for (const choice of response.choices) {
     const textBlocks = getAnthropicTextBlocks(choice.message.content)
     const toolUseBlocks = getAnthropicToolUseBlocks(choice.message.tool_calls)
-    
+
     allTextBlocks.push(...textBlocks)
     allToolUseBlocks.push(...toolUseBlocks)
-    
+
     // Use the finish_reason from the first choice, or prioritize tool_calls
-    if (choice.finish_reason === "tool_calls" || (stopReason === "stop" && choice.finish_reason !== null)) {
+    if (choice.finish_reason === "tool_calls" || stopReason === "stop") {
       stopReason = choice.finish_reason
     }
   }
