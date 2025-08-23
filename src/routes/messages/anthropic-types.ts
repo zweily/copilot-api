@@ -157,7 +157,10 @@ export interface AnthropicMessageDeltaEvent {
     stop_reason?: AnthropicResponse["stop_reason"]
     stop_sequence?: string | null
   }
-  usage?: { output_tokens: number }
+  usage?: {
+    input_tokens?: number
+    output_tokens: number
+  }
 }
 
 export interface AnthropicMessageStopEvent {
