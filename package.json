@@ -22,7 +22,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "dev": "bun run --watch ./src/main.ts",
     "knip": "knip-bun",
     "lint": "eslint . --cache",
@@ -57,7 +57,7 @@
     "lint-staged": "^16.1.5",
     "prettier-plugin-packagejson": "^2.5.19",
     "simple-git-hooks": "^2.13.1",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.14.2",
     "typescript": "^5.9.2"
   }
 }
