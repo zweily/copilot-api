@@ -1,59 +1,59 @@
 #!/usr/bin/env node
 
-import { defineCommand } from "citty";
-import consola from "consola";
+import { defineCommand } from "citty"
+import consola from "consola"
 
-import { PATHS, ensurePaths } from "./lib/paths";
+import { PATHS, ensurePaths } from "./lib/paths"
 import {
   ProxyManager,
   getProxyFromEnv,
   parseProxyUrl,
-} from "./lib/proxy-config";
-import { state } from "./lib/state";
-import { setupGitHubToken } from "./lib/token";
+} from "./lib/proxy-config"
+import { state } from "./lib/state"
+import { setupGitHubToken } from "./lib/token"
 
 interface RunAuthOptions {
-  verbose: boolean;
-  showToken: boolean;
-  proxyUrl?: string;
+  verbose: boolean
+  showToken: boolean
+  proxyUrl?: string
 }
 
 export async function runAuth(options: RunAuthOptions): Promise<void> {
   if (options.verbose) {
-    consola.level = 5;
-    consola.info("Verbose logging enabled");
+    consola.level = 5
+    consola.info("Verbose logging enabled")
   }
 
-  state.showToken = options.showToken;
+  state.showToken = options.showToken
 
   // Setup proxy configuration
-  const proxyManager = ProxyManager.getInstance();
+  const proxyManager = ProxyManager.getInstance()
 
   if (options.proxyUrl) {
     try {
-      const proxyConfig = parseProxyUrl(options.proxyUrl);
-      proxyManager.setConfig(proxyConfig);
+      const proxyConfig = parseProxyUrl(options.proxyUrl)
+      proxyManager.setConfig(proxyConfig)
       consola.info(
         `Using ${proxyConfig.type?.toUpperCase()} proxy: ${proxyConfig.host}:${proxyConfig.port}`,
-      );
+      )
     } catch (error) {
-      consola.error("Invalid proxy URL:", error.message);
-      process.exit(1);
+      consola.error("Invalid proxy URL:", error.message)
+      process.exit(1)
     }
   } else {
     // Try to get proxy from environment variables
-    const envProxy = getProxyFromEnv();
+    const envProxy = getProxyFromEnv()
     if (envProxy) {
-      proxyManager.setConfig(envProxy);
+      proxyManager.setConfig(envProxy)
       consola.info(
         `Using ${envProxy.type?.toUpperCase()} proxy from environment: ${envProxy.host}:${envProxy.port}`,
-      );
+      )
     }
   }
 
-  await ensurePaths();
-  await setupGitHubToken({ force: true });
-  consola.success("GitHub token written to", PATHS.GITHUB_TOKEN_PATH);
+  await ensurePaths()
+  await setupGitHubToken({ force: true })
+  consola.success("GitHub token written to", PATHS.GITHUB_TOKEN_PATH)
 }
 
 export const auth = defineCommand({
@@ -83,6 +83,6 @@ export const auth = defineCommand({
       verbose: args.verbose,
       showToken: args["show-token"],
       proxyUrl: args["proxy-url"],
-    });
+    })
   },
-});
+})

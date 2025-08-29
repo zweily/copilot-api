@@ -32,7 +32,9 @@ A reverse-engineered proxy for the GitHub Copilot API that exposes it as an Open
 ## Features
 
 - **OpenAI & Anthropic Compatibility**: Exposes GitHub Copilot as an OpenAI-compatible (`/v1/chat/completions`, `/v1/models`, `/v1/embeddings`) and Anthropic-compatible (`/v1/messages`) API.
-- **Claude Code Integration**: Easily configure and launch [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) to use Copilot as its backend with a simple command-line flag (`--claude-code`).
+- **SOCKS5 & HTTP Proxy Support**: Full proxy support for GitHub API communication, perfect for restricted networks (China, corporate firewalls, etc.).
+- **Claude Code Integration**: Easily configure and launch [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) to use Copilot as its backend with enhanced multi-platform shell detection.
+- **Multi-Platform Shell Detection**: Smart detection and command generation for PowerShell, Command Prompt, Bash/Zsh, and Fish shells.
 - **Usage Dashboard**: A web-based dashboard to monitor your Copilot API usage, view quotas, and see detailed statistics.
 - **Rate Limit Control**: Manage API usage with rate-limiting options (`--rate-limit`) and a waiting mechanism (`--wait`) to prevent errors from rapid requests.
 - **Manual Request Approval**: Manually approve or deny each API request for fine-grained control over usage (`--manual`).
@@ -51,10 +53,38 @@ https://github.com/user-attachments/assets/7654b383-669d-4eb9-b23c-06d7aefee8c5
 
 ## Installation
 
-To install dependencies, run:
+### Option 1: Using npx (Recommended)
+
+You can run the project directly using npx without installation:
 
 ```sh
+npx copilot-api@latest start
+```
+
+### Option 2: From GitHub Release
+
+Download the latest release from [GitHub Releases](https://github.com/zweily/copilot-api/releases):
+
+```sh
+# Download and install
+curl -fsSL https://raw.githubusercontent.com/zweily/copilot-api/master/install.sh | bash
+```
+
+### Option 3: From Source
+
+Clone and build from source:
+
+```sh
+git clone https://github.com/zweily/copilot-api.git
+cd copilot-api
 bun install
+bun run build
+```
+
+To install globally:
+
+```sh
+npm install -g .
 ```
 
 ## Using with Docker
@@ -162,6 +192,7 @@ The following command line options are available for the `start` command:
 | --github-token | Provide GitHub token directly (must be generated using the `auth` subcommand) | none       | -g    |
 | --claude-code  | Generate a command to launch Claude Code with Copilot API config              | false      | -c    |
 | --show-token   | Show GitHub and Copilot tokens on fetch and refresh                           | false      | none  |
+| --proxy-url    | Proxy URL (supports http:// and socks5:// protocols)                          | none       | none  |
 
 ### Auth Command Options
 
@@ -169,6 +200,7 @@ The following command line options are available for the `start` command:
 | ------------ | ------------------------- | ------- | ----- |
 | --verbose    | Enable verbose logging    | false   | -v    |
 | --show-token | Show GitHub token on auth | false   | none  |
+| --proxy-url  | Proxy URL (supports http:// and socks5:// protocols) | none | none |
 
 ### Debug Command Options
 
@@ -253,16 +285,102 @@ npx copilot-api@latest debug
 npx copilot-api@latest debug --json
 ```
 
+## Proxy Support
+
+copilot-api v0.6.1+ includes full proxy support for GitHub API communication, perfect for restricted networks (China, corporate firewalls, etc.).
+
+### Supported Proxy Types
+
+- **SOCKS5**: `socks5://127.0.0.1:1080`
+- **HTTP**: `http://127.0.0.1:8080`
+- **HTTPS**: `https://proxy.example.com:3128`
+
+### Usage with Command Line
+
+```sh
+# Using SOCKS5 proxy
+copilot-api auth --proxy-url socks5://127.0.0.1:1080
+copilot-api start --proxy-url socks5://127.0.0.1:1080
+
+# Using HTTP proxy
+copilot-api auth --proxy-url http://127.0.0.1:8080
+copilot-api start --proxy-url http://127.0.0.1:8080
+
+# With authentication
+copilot-api auth --proxy-url socks5://username:password@127.0.0.1:1080
+```
+
+### Usage with Environment Variables
+
+```sh
+# SOCKS5 proxy (highest priority)
+export SOCKS5_PROXY=socks5://127.0.0.1:1080
+copilot-api auth
+
+# HTTP proxy
+export HTTP_PROXY=http://127.0.0.1:8080
+copilot-api start
+
+# HTTPS proxy
+export HTTPS_PROXY=https://proxy.example.com:3128
+copilot-api start
+```
+
+### Environment Variable Priority
+
+1. `SOCKS5_PROXY` or `socks5_proxy` (highest priority)
+2. `HTTP_PROXY` or `http_proxy`
+3. `HTTPS_PROXY` or `https_proxy`
+
+## Enhanced Claude Code Integration
+
+copilot-api v0.6.1+ includes enhanced multi-platform shell detection for Claude Code integration.
+
+### Multi-Platform Shell Support
+
+When you use `--claude-code`, the tool automatically detects your shell and provides appropriate commands:
+
+```sh
+copilot-api start --claude-code
+```
+
+**Output example:**
+```
+🚀 Claude Code Commands (Detected: PowerShell)
+
+📋 PowerShell:
+$env:ANTHROPIC_BASE_URL = "http://localhost:4141"; $env:ANTHROPIC_AUTH_TOKEN = "dummy"; $env:ANTHROPIC_MODEL = "claude-sonnet-4"; $env:ANTHROPIC_SMALL_FAST_MODEL = "claude-3.7-sonnet"; claude
+
+📋 Command Prompt:
+set ANTHROPIC_BASE_URL="http://localhost:4141" & set ANTHROPIC_AUTH_TOKEN="dummy" & set ANTHROPIC_MODEL="claude-sonnet-4" & set ANTHROPIC_SMALL_FAST_MODEL="claude-3.7-sonnet" & claude
+
+📋 Bash/Zsh (Linux/Mac):
+export ANTHROPIC_BASE_URL='http://localhost:4141'; export ANTHROPIC_AUTH_TOKEN='dummy'; export ANTHROPIC_MODEL='claude-sonnet-4'; export ANTHROPIC_SMALL_FAST_MODEL='claude-3.7-sonnet'; claude
+
+📋 Fish Shell:
+set -gx ANTHROPIC_BASE_URL 'http://localhost:4141'; set -gx ANTHROPIC_AUTH_TOKEN 'dummy'; set -gx ANTHROPIC_MODEL 'claude-sonnet-4'; set -gx ANTHROPIC_SMALL_FAST_MODEL 'claude-3.7-sonnet'; claude
+```
+
+The command for your detected shell is automatically copied to your clipboard!
+
+### Supported Shells
+
+- **Windows**: PowerShell, Command Prompt
+- **Linux/Mac**: Bash, Zsh, Fish, Shell
+
 ## Using the Usage Viewer
 
 After starting the server, a URL to the Copilot Usage Dashboard will be displayed in your console. This dashboard is a web interface for monitoring your API usage.
 
-1.  Start the server. For example, using npx:
+1. Start the server. For example, using npx:
+
     ```sh
     npx copilot-api@latest start
     ```
-2.  The server will output a URL to the usage viewer. Copy and paste this URL into your browser. It will look something like this:
+
+2. The server will output a URL to the usage viewer. Copy and paste this URL into your browser. It will look something like this:
     `https://ericc-ch.github.io/copilot-api?endpoint=http://localhost:4141/usage`
+
     - If you use the `start.bat` script on Windows, this page will open automatically.
 
 The dashboard provides a user-friendly interface to view your Copilot usage data:

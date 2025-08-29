@@ -36,6 +36,70 @@ interface RunServerOptions {
   proxyType?: string
 }
 
+/**
+ * Handle Claude Code integration setup
+ */
+async function handleClaudeCodeSetup(serverUrl: string): Promise<void> {
+  invariant(state.models, "Models should be loaded by now")
+
+  const selectedModel = await consola.prompt(
+    "Select a model to use with Claude Code",
+    {
+      type: "select",
+      options: state.models.data.map((model) => model.id),
+    },
+  )
+
+  const selectedSmallModel = await consola.prompt(
+    "Select a small model to use with Claude Code",
+    {
+      type: "select",
+      options: state.models.data.map((model) => model.id),
+    },
+  )
+
+  const envVars = {
+    ANTHROPIC_BASE_URL: serverUrl,
+    ANTHROPIC_AUTH_TOKEN: "dummy",
+    ANTHROPIC_MODEL: selectedModel,
+    ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
+  }
+
+  const detectedShell = getDetectedShell()
+  const primaryCommand = generateEnvScript(envVars, "claude")
+  const allCommands = generateAllPlatformCommands(envVars, "claude")
+
+  try {
+    clipboard.writeSync(primaryCommand)
+    consola.success(
+      `Copied Claude Code command to clipboard! (Detected: ${detectedShell})`,
+    )
+  } catch {
+    consola.warn(
+      "Failed to copy to clipboard. Here are the Claude Code commands:",
+    )
+  }
+
+  // Always show the commands for all platforms
+  consola.box(
+    [
+      `🚀 Claude Code Commands (Detected: ${detectedShell})`,
+      "",
+      "📋 PowerShell:",
+      allCommands.PowerShell,
+      "",
+      "📋 Command Prompt:",
+      allCommands["Command Prompt"],
+      "",
+      "📋 Bash/Zsh (Linux/Mac):",
+      allCommands["Bash/Zsh"],
+      "",
+      "📋 Fish Shell:",
+      allCommands.Fish,
+    ].join("\n"),
+  )
+}
+
 export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.verbose) {
     consola.level = 5
@@ -63,7 +127,10 @@ export async function runServer(options: RunServerOptions): Promise<void> {
         `Using ${proxyConfig.type?.toUpperCase()} proxy: ${proxyConfig.host}:${proxyConfig.port}`,
       )
     } catch (error) {
-      consola.error("Invalid proxy URL:", error.message)
+      consola.error(
+        "Invalid proxy URL:",
+        error instanceof Error ? error.message : String(error),
+      )
       process.exit(1)
     }
   } else {
@@ -97,64 +164,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   const serverUrl = `http://localhost:${options.port}`
 
   if (options.claudeCode) {
-    invariant(state.models, "Models should be loaded by now")
-
-    const selectedModel = await consola.prompt(
-      "Select a model to use with Claude Code",
-      {
-        type: "select",
-        options: state.models.data.map((model) => model.id),
-      },
-    )
-
-    const selectedSmallModel = await consola.prompt(
-      "Select a small model to use with Claude Code",
-      {
-        type: "select",
-        options: state.models.data.map((model) => model.id),
-      },
-    )
-
-    const envVars = {
-      ANTHROPIC_BASE_URL: serverUrl,
-      ANTHROPIC_AUTH_TOKEN: "dummy",
-      ANTHROPIC_MODEL: selectedModel,
-      ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
-    }
-
-    const detectedShell = getDetectedShell()
-    const primaryCommand = generateEnvScript(envVars, "claude")
-    const allCommands = generateAllPlatformCommands(envVars, "claude")
-
-    try {
-      clipboard.writeSync(primaryCommand)
-      consola.success(
-        `Copied Claude Code command to clipboard! (Detected: ${detectedShell})`,
-      )
-    } catch {
-      consola.warn(
-        "Failed to copy to clipboard. Here are the Claude Code commands:",
-      )
-    }
-
-    // Always show the commands for all platforms
-    consola.box(
-      [
-        `🚀 Claude Code Commands (Detected: ${detectedShell})`,
-        "",
-        "📋 PowerShell:",
-        allCommands.PowerShell,
-        "",
-        "📋 Command Prompt:",
-        allCommands["Command Prompt"],
-        "",
-        "📋 Bash/Zsh (Linux/Mac):",
-        allCommands["Bash/Zsh"],
-        "",
-        "📋 Fish Shell:",
-        allCommands.Fish,
-      ].join("\n"),
-    )
+    await handleClaudeCodeSetup(serverUrl)
   }
 
   consola.box(

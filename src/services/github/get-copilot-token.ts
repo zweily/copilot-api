@@ -1,7 +1,7 @@
-import { GITHUB_API_BASE_URL, githubHeaders } from "~/lib/api-config";
-import { HTTPError } from "~/lib/error";
-import { proxyFetch } from "~/lib/proxy-fetch";
-import { state } from "~/lib/state";
+import { GITHUB_API_BASE_URL, githubHeaders } from "~/lib/api-config"
+import { HTTPError } from "~/lib/error"
+import { proxyFetch } from "~/lib/proxy-fetch"
+import { state } from "~/lib/state"
 
 export const getCopilotToken = async () => {
   const response = await proxyFetch(
@@ -9,17 +9,16 @@ export const getCopilotToken = async () => {
     {
       headers: githubHeaders(state),
     },
-  );
+  )
 
-  if (!response.ok)
-    throw new HTTPError("Failed to get Copilot token", response);
+  if (!response.ok) throw new HTTPError("Failed to get Copilot token", response)
 
-  return (await response.json()) as GetCopilotTokenResponse;
-};
+  return (await response.json()) as GetCopilotTokenResponse
+}
 
 // Trimmed for the sake of simplicity
 interface GetCopilotTokenResponse {
-  expires_at: number;
-  refresh_in: number;
-  token: string;
+  expires_at: number
+  refresh_in: number
+  token: string
 }

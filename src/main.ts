@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { defineCommand, runMain } from "citty";
+import { defineCommand, runMain } from "citty"
 
-import { auth } from "./auth";
-import { checkUsage } from "./check-usage";
-import { debug } from "./debug";
-import { start } from "./start";
+import { auth } from "./auth"
+import { checkUsage } from "./check-usage"
+import { debug } from "./debug"
+import { start } from "./start"
 
 const main = defineCommand({
   meta: {
@@ -14,6 +14,6 @@ const main = defineCommand({
       "A wrapper around GitHub Copilot API to make it OpenAI compatible, making it usable for other tools.",
   },
   subCommands: { auth, start, "check-usage": checkUsage, debug },
-});
+})
 
-await runMain(main);
+await runMain(main)

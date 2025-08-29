@@ -1,3 +1,5 @@
+import type { Agent } from "node:http"
+
 import http from "node:http"
 import https from "node:https"
 import { ProxyAgent } from "proxy-agent"
@@ -37,14 +39,14 @@ export class ProxyManager {
     return this.config
   }
 
-  public createAgent(): ProxyAgent | undefined {
+  public createAgent(): Agent {
     if (!this.config) {
-      return undefined
+      return new https.Agent({ rejectUnauthorized: false })
     }
 
     // Use proxy-agent which supports multiple proxy types including SOCKS5
     const proxyUrl = this.config.url || this.buildProxyUrl()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return new (ProxyAgent as any)(proxyUrl)
   }
 
@@ -66,10 +68,9 @@ export class ProxyManager {
     try {
       const agent = this.createAgent()
 
-      if (agent) {
-        https.globalAgent = agent
-        http.globalAgent = agent
-      }
+      // Set global agents for both HTTP and HTTPS
+      https.globalAgent = agent as unknown as https.Agent
+      http.globalAgent = agent
     } catch (error) {
       console.debug("Could not set global agents:", error)
     }

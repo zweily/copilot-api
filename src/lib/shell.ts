@@ -46,24 +46,18 @@ function getShell(): ShellName {
  * Properly quotes a value for shell usage
  */
 function quoteValue(value: string, shell: ShellName): string {
-  switch (shell) {
-    case "powershell": {
-      // Use double quotes and escape inner quotes
-      return `"${value.replaceAll('"', '`"')}"`
-    }
-    case "cmd": {
-      // CMD doesn't need quotes for most values, but wrap in quotes if contains spaces
-      return value.includes(" ") ? `"${value}"` : value
-    }
-    case "fish":
-    case "bash":
-    case "zsh":
-    case "sh":
-    default: {
-      // Use single quotes for bash/zsh/sh, escape single quotes
-      return `'${value.replaceAll("'", String.raw`'\''`)}'`
-    }
+  if (shell === "powershell") {
+    // Use double quotes and escape inner quotes
+    return `"${value.replaceAll('"', '`"')}"`
   }
+
+  if (shell === "cmd") {
+    // CMD doesn't need quotes for most values, but wrap in quotes if contains spaces
+    return value.includes(" ") ? `"${value}"` : value
+  }
+
+  // All POSIX-compatible shells (fish, bash, zsh, sh) use single quotes with escaping
+  return `'${value.replaceAll("'", String.raw`'\''`)}'`
 }
 
 /**
