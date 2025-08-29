@@ -1,31 +1,31 @@
-import { describe, test, expect } from "bun:test"
-import { z } from "zod"
+import { describe, test, expect } from "bun:test";
+import { z } from "zod";
 
 import type {
   ChatCompletionChunk,
   ChatCompletionResponse,
-} from "~/services/copilot/create-chat-completions"
+} from "~/services/copilot/create-chat-completions";
 
-import { type AnthropicStreamState } from "~/routes/messages/anthropic-types"
-import { translateToAnthropic } from "~/routes/messages/non-stream-translation"
-import { translateChunkToAnthropicEvents } from "~/routes/messages/stream-translation"
+import { type AnthropicStreamState } from "~/routes/messages/anthropic-types";
+import { translateToAnthropic } from "~/routes/messages/non-stream-translation";
+import { translateChunkToAnthropicEvents } from "~/routes/messages/stream-translation";
 
 const anthropicUsageSchema = z.object({
   input_tokens: z.number().int(),
   output_tokens: z.number().int(),
-})
+});
 
 const anthropicContentBlockTextSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
-})
+});
 
 const anthropicContentBlockToolUseSchema = z.object({
   type: z.literal("tool_use"),
   id: z.string(),
   name: z.string(),
   input: z.record(z.any()),
-})
+});
 
 const anthropicMessageResponseSchema = z.object({
   id: z.string(),
@@ -41,7 +41,7 @@ const anthropicMessageResponseSchema = z.object({
   stop_reason: z.enum(["end_turn", "max_tokens", "stop_sequence", "tool_use"]),
   stop_sequence: z.string().nullable(),
   usage: anthropicUsageSchema,
-})
+});
 
 /**
  * Validates if a response payload conforms to the Anthropic Message shape.
@@ -49,7 +49,7 @@ const anthropicMessageResponseSchema = z.object({
  * @returns True if the payload is valid, false otherwise.
  */
 function isValidAnthropicResponse(payload: unknown): boolean {
-  return anthropicMessageResponseSchema.safeParse(payload).success
+  return anthropicMessageResponseSchema.safeParse(payload).success;
 }
 
 const anthropicStreamEventSchema = z
@@ -63,10 +63,10 @@ const anthropicStreamEventSchema = z
       "message_stop",
     ]),
   })
-  .passthrough()
+  .passthrough();
 
 function isValidAnthropicStreamEvent(payload: unknown): boolean {
-  return anthropicStreamEventSchema.safeParse(payload).success
+  return anthropicStreamEventSchema.safeParse(payload).success;
 }
 
 describe("OpenAI to Anthropic Non-Streaming Response Translation", () => {
@@ -92,24 +92,24 @@ describe("OpenAI to Anthropic Non-Streaming Response Translation", () => {
         completion_tokens: 12,
         total_tokens: 21,
       },
-    }
+    };
 
-    const anthropicResponse = translateToAnthropic(openAIResponse)
+    const anthropicResponse = translateToAnthropic(openAIResponse);
 
-    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true)
+    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true);
 
-    expect(anthropicResponse.id).toBe("chatcmpl-123")
-    expect(anthropicResponse.stop_reason).toBe("end_turn")
-    expect(anthropicResponse.usage.input_tokens).toBe(9)
-    expect(anthropicResponse.content[0].type).toBe("text")
+    expect(anthropicResponse.id).toBe("chatcmpl-123");
+    expect(anthropicResponse.stop_reason).toBe("end_turn");
+    expect(anthropicResponse.usage.input_tokens).toBe(9);
+    expect(anthropicResponse.content[0].type).toBe("text");
     if (anthropicResponse.content[0].type === "text") {
       expect(anthropicResponse.content[0].text).toBe(
         "Hello! How can I help you today?",
-      )
+      );
     } else {
-      throw new Error("Expected text block")
+      throw new Error("Expected text block");
     }
-  })
+  });
 
   test("should translate a response with tool calls", () => {
     const openAIResponse: ChatCompletionResponse = {
@@ -143,24 +143,24 @@ describe("OpenAI to Anthropic Non-Streaming Response Translation", () => {
         completion_tokens: 20,
         total_tokens: 50,
       },
-    }
+    };
 
-    const anthropicResponse = translateToAnthropic(openAIResponse)
+    const anthropicResponse = translateToAnthropic(openAIResponse);
 
-    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true)
+    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true);
 
-    expect(anthropicResponse.stop_reason).toBe("tool_use")
-    expect(anthropicResponse.content[0].type).toBe("tool_use")
+    expect(anthropicResponse.stop_reason).toBe("tool_use");
+    expect(anthropicResponse.content[0].type).toBe("tool_use");
     if (anthropicResponse.content[0].type === "tool_use") {
-      expect(anthropicResponse.content[0].id).toBe("call_abc")
-      expect(anthropicResponse.content[0].name).toBe("get_current_weather")
+      expect(anthropicResponse.content[0].id).toBe("call_abc");
+      expect(anthropicResponse.content[0].name).toBe("get_current_weather");
       expect(anthropicResponse.content[0].input).toEqual({
         location: "Boston, MA",
-      })
+      });
     } else {
-      throw new Error("Expected tool_use block")
+      throw new Error("Expected tool_use block");
     }
-  })
+  });
 
   test("should translate a response stopped due to length", () => {
     const openAIResponse: ChatCompletionResponse = {
@@ -184,14 +184,14 @@ describe("OpenAI to Anthropic Non-Streaming Response Translation", () => {
         completion_tokens: 2048,
         total_tokens: 2058,
       },
-    }
+    };
 
-    const anthropicResponse = translateToAnthropic(openAIResponse)
+    const anthropicResponse = translateToAnthropic(openAIResponse);
 
-    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true)
-    expect(anthropicResponse.stop_reason).toBe("max_tokens")
-  })
-})
+    expect(isValidAnthropicResponse(anthropicResponse)).toBe(true);
+    expect(anthropicResponse.stop_reason).toBe("max_tokens");
+  });
+});
 
 describe("OpenAI to Anthropic Streaming Response Translation", () => {
   test("should translate a simple text stream correctly", () => {
@@ -247,22 +247,22 @@ describe("OpenAI to Anthropic Streaming Response Translation", () => {
           { index: 0, delta: {}, finish_reason: "stop", logprobs: null },
         ],
       },
-    ]
+    ];
 
     const streamState: AnthropicStreamState = {
       messageStartSent: false,
       contentBlockIndex: 0,
       contentBlockOpen: false,
       toolCalls: {},
-    }
+    };
     const translatedStream = openAIStream.flatMap((chunk) =>
       translateChunkToAnthropicEvents(chunk, streamState),
-    )
+    );
 
     for (const event of translatedStream) {
-      expect(isValidAnthropicStreamEvent(event)).toBe(true)
+      expect(isValidAnthropicStreamEvent(event)).toBe(true);
     }
-  })
+  });
 
   test("should translate a stream with tool calls", () => {
     const openAIStream: Array<ChatCompletionChunk> = [
@@ -346,7 +346,7 @@ describe("OpenAI to Anthropic Streaming Response Translation", () => {
           { index: 0, delta: {}, finish_reason: "tool_calls", logprobs: null },
         ],
       },
-    ]
+    ];
 
     // Streaming translation requires state
     const streamState: AnthropicStreamState = {
@@ -354,14 +354,14 @@ describe("OpenAI to Anthropic Streaming Response Translation", () => {
       contentBlockIndex: 0,
       contentBlockOpen: false,
       toolCalls: {},
-    }
+    };
     const translatedStream = openAIStream.flatMap((chunk) =>
       translateChunkToAnthropicEvents(chunk, streamState),
-    )
+    );
 
     // These tests will fail until the stub is implemented
     for (const event of translatedStream) {
-      expect(isValidAnthropicStreamEvent(event)).toBe(true)
+      expect(isValidAnthropicStreamEvent(event)).toBe(true);
     }
-  })
-})
+  });
+});

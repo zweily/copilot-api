@@ -1,20 +1,20 @@
-import type { ModelsResponse } from "~/services/copilot/get-models"
+import type { ModelsResponse } from "~/services/copilot/get-models";
 
 export interface State {
-  githubToken?: string
-  copilotToken?: string
+  githubToken?: string;
+  copilotToken?: string;
 
-  accountType: string
-  models?: ModelsResponse
-  vsCodeVersion?: string
+  accountType: string;
+  models?: ModelsResponse;
+  vsCodeVersion?: string;
 
-  manualApprove: boolean
-  rateLimitWait: boolean
-  showToken: boolean
+  manualApprove: boolean;
+  rateLimitWait: boolean;
+  showToken: boolean;
 
   // Rate limiting configuration
-  rateLimitSeconds?: number
-  lastRequestTimestamp?: number
+  rateLimitSeconds?: number;
+  lastRequestTimestamp?: number;
 }
 
 export const state: State = {
@@ -22,4 +22,4 @@ export const state: State = {
   manualApprove: false,
   rateLimitWait: false,
   showToken: false,
-}
+};

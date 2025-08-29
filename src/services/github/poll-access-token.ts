@@ -1,24 +1,25 @@
-import consola from "consola"
+import consola from "consola";
 
 import {
   GITHUB_BASE_URL,
   GITHUB_CLIENT_ID,
   standardHeaders,
-} from "~/lib/api-config"
-import { sleep } from "~/lib/utils"
+} from "~/lib/api-config";
+import { proxyFetch } from "~/lib/proxy-fetch";
+import { sleep } from "~/lib/utils";
 
-import type { DeviceCodeResponse } from "./get-device-code"
+import type { DeviceCodeResponse } from "./get-device-code";
 
 export async function pollAccessToken(
   deviceCode: DeviceCodeResponse,
 ): Promise<string> {
   // Interval is in seconds, we need to multiply by 1000 to get milliseconds
   // I'm also adding another second, just to be safe
-  const sleepDuration = (deviceCode.interval + 1) * 1000
-  consola.debug(`Polling access token with interval of ${sleepDuration}ms`)
+  const sleepDuration = (deviceCode.interval + 1) * 1000;
+  consola.debug(`Polling access token with interval of ${sleepDuration}ms`);
 
   while (true) {
-    const response = await fetch(
+    const response = await proxyFetch(
       `${GITHUB_BASE_URL}/login/oauth/access_token`,
       {
         method: "POST",
@@ -29,30 +30,30 @@ export async function pollAccessToken(
           grant_type: "urn:ietf:params:oauth:grant-type:device_code",
         }),
       },
-    )
+    );
 
     if (!response.ok) {
-      await sleep(sleepDuration)
-      consola.error("Failed to poll access token:", await response.text())
+      await sleep(sleepDuration);
+      consola.error("Failed to poll access token:", await response.text());
 
-      continue
+      continue;
     }
 
-    const json = await response.json()
-    consola.debug("Polling access token response:", json)
+    const json = await response.json();
+    consola.debug("Polling access token response:", json);
 
-    const { access_token } = json as AccessTokenResponse
+    const { access_token } = json as AccessTokenResponse;
 
     if (access_token) {
-      return access_token
+      return access_token;
     } else {
-      await sleep(sleepDuration)
+      await sleep(sleepDuration);
     }
   }
 }
 
 interface AccessTokenResponse {
-  access_token: string
-  token_type: string
-  scope: string
+  access_token: string;
+  token_type: string;
+  scope: string;
 }

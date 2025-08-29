@@ -1,19 +1,19 @@
-import { type ChatCompletionChunk } from "~/services/copilot/create-chat-completions"
+import { type ChatCompletionChunk } from "~/services/copilot/create-chat-completions";
 
 import {
   type AnthropicStreamEventData,
   type AnthropicStreamState,
-} from "./anthropic-types"
-import { mapOpenAIStopReasonToAnthropic } from "./utils"
+} from "./anthropic-types";
+import { mapOpenAIStopReasonToAnthropic } from "./utils";
 
 function isToolBlockOpen(state: AnthropicStreamState): boolean {
   if (!state.contentBlockOpen) {
-    return false
+    return false;
   }
   // Check if the current block index corresponds to any known tool call
   return Object.values(state.toolCalls).some(
     (tc) => tc.anthropicBlockIndex === state.contentBlockIndex,
-  )
+  );
 }
 
 // eslint-disable-next-line max-lines-per-function, complexity
@@ -21,14 +21,14 @@ export function translateChunkToAnthropicEvents(
   chunk: ChatCompletionChunk,
   state: AnthropicStreamState,
 ): Array<AnthropicStreamEventData> {
-  const events: Array<AnthropicStreamEventData> = []
+  const events: Array<AnthropicStreamEventData> = [];
 
   if (chunk.choices.length === 0) {
-    return events
+    return events;
   }
 
-  const choice = chunk.choices[0]
-  const { delta } = choice
+  const choice = chunk.choices[0];
+  const { delta } = choice;
 
   if (!state.messageStartSent) {
     events.push({
@@ -46,8 +46,8 @@ export function translateChunkToAnthropicEvents(
           output_tokens: 0, // Will be updated in message_delta when finished
         },
       },
-    })
-    state.messageStartSent = true
+    });
+    state.messageStartSent = true;
   }
 
   if (delta.content) {
@@ -56,9 +56,9 @@ export function translateChunkToAnthropicEvents(
       events.push({
         type: "content_block_stop",
         index: state.contentBlockIndex,
-      })
-      state.contentBlockIndex++
-      state.contentBlockOpen = false
+      });
+      state.contentBlockIndex++;
+      state.contentBlockOpen = false;
     }
 
     if (!state.contentBlockOpen) {
@@ -69,8 +69,8 @@ export function translateChunkToAnthropicEvents(
           type: "text",
           text: "",
         },
-      })
-      state.contentBlockOpen = true
+      });
+      state.contentBlockOpen = true;
     }
 
     events.push({
@@ -80,7 +80,7 @@ export function translateChunkToAnthropicEvents(
         type: "text_delta",
         text: delta.content,
       },
-    })
+    });
   }
 
   if (delta.tool_calls) {
@@ -92,17 +92,17 @@ export function translateChunkToAnthropicEvents(
           events.push({
             type: "content_block_stop",
             index: state.contentBlockIndex,
-          })
-          state.contentBlockIndex++
-          state.contentBlockOpen = false
+          });
+          state.contentBlockIndex++;
+          state.contentBlockOpen = false;
         }
 
-        const anthropicBlockIndex = state.contentBlockIndex
+        const anthropicBlockIndex = state.contentBlockIndex;
         state.toolCalls[toolCall.index] = {
           id: toolCall.id,
           name: toolCall.function.name,
           anthropicBlockIndex,
-        }
+        };
 
         events.push({
           type: "content_block_start",
@@ -113,12 +113,12 @@ export function translateChunkToAnthropicEvents(
             name: toolCall.function.name,
             input: {},
           },
-        })
-        state.contentBlockOpen = true
+        });
+        state.contentBlockOpen = true;
       }
 
       if (toolCall.function?.arguments) {
-        const toolCallInfo = state.toolCalls[toolCall.index]
+        const toolCallInfo = state.toolCalls[toolCall.index];
         // Tool call can still be empty
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (toolCallInfo) {
@@ -129,7 +129,7 @@ export function translateChunkToAnthropicEvents(
               type: "input_json_delta",
               partial_json: toolCall.function.arguments,
             },
-          })
+          });
         }
       }
     }
@@ -140,8 +140,8 @@ export function translateChunkToAnthropicEvents(
       events.push({
         type: "content_block_stop",
         index: state.contentBlockIndex,
-      })
-      state.contentBlockOpen = false
+      });
+      state.contentBlockOpen = false;
     }
 
     events.push(
@@ -154,8 +154,8 @@ export function translateChunkToAnthropicEvents(
         usage: {
           input_tokens: chunk.usage?.prompt_tokens ?? 0,
           output_tokens: chunk.usage?.completion_tokens ?? 0,
-          ...(chunk.usage?.prompt_tokens_details?.cached_tokens
-            !== undefined && {
+          ...(chunk.usage?.prompt_tokens_details?.cached_tokens !==
+            undefined && {
             cache_read_input_tokens:
               chunk.usage.prompt_tokens_details.cached_tokens,
           }),
@@ -164,10 +164,10 @@ export function translateChunkToAnthropicEvents(
       {
         type: "message_stop",
       },
-    )
+    );
   }
 
-  return events
+  return events;
 }
 
 export function translateErrorToAnthropicErrorEvent(): AnthropicStreamEventData {
@@ -177,5 +177,5 @@ export function translateErrorToAnthropicErrorEvent(): AnthropicStreamEventData 
       type: "api_error",
       message: "An unexpected error occurred during streaming.",
     },
-  }
+  };
 }

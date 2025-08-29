@@ -1,67 +1,99 @@
 #!/usr/bin/env node
 
-import { defineCommand } from "citty"
-import clipboard from "clipboardy"
-import consola from "consola"
-import { serve, type ServerHandler } from "srvx"
-import invariant from "tiny-invariant"
+import { defineCommand } from "citty";
+import clipboard from "clipboardy";
+import consola from "consola";
+import { serve, type ServerHandler } from "srvx";
+import invariant from "tiny-invariant";
 
-import { ensurePaths } from "./lib/paths"
-import { generateEnvScript } from "./lib/shell"
-import { state } from "./lib/state"
-import { setupCopilotToken, setupGitHubToken } from "./lib/token"
-import { cacheModels, cacheVSCodeVersion } from "./lib/utils"
-import { server } from "./server"
+import { ensurePaths } from "./lib/paths";
+import {
+  ProxyManager,
+  getProxyFromEnv,
+  parseProxyUrl,
+} from "./lib/proxy-config";
+import { generateEnvScript } from "./lib/shell";
+import { state } from "./lib/state";
+import { setupCopilotToken, setupGitHubToken } from "./lib/token";
+import { cacheModels, cacheVSCodeVersion } from "./lib/utils";
+import { server } from "./server";
 
 interface RunServerOptions {
-  port: number
-  verbose: boolean
-  accountType: string
-  manual: boolean
-  rateLimit?: number
-  rateLimitWait: boolean
-  githubToken?: string
-  claudeCode: boolean
-  showToken: boolean
+  port: number;
+  verbose: boolean;
+  accountType: string;
+  manual: boolean;
+  rateLimit?: number;
+  rateLimitWait: boolean;
+  githubToken?: string;
+  claudeCode: boolean;
+  showToken: boolean;
+  proxyUrl?: string;
+  proxyType?: string;
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
   if (options.verbose) {
-    consola.level = 5
-    consola.info("Verbose logging enabled")
+    consola.level = 5;
+    consola.info("Verbose logging enabled");
   }
 
-  state.accountType = options.accountType
+  state.accountType = options.accountType;
   if (options.accountType !== "individual") {
-    consola.info(`Using ${options.accountType} plan GitHub account`)
+    consola.info(`Using ${options.accountType} plan GitHub account`);
   }
 
-  state.manualApprove = options.manual
-  state.rateLimitSeconds = options.rateLimit
-  state.rateLimitWait = options.rateLimitWait
-  state.showToken = options.showToken
+  state.manualApprove = options.manual;
+  state.rateLimitSeconds = options.rateLimit;
+  state.rateLimitWait = options.rateLimitWait;
+  state.showToken = options.showToken;
 
-  await ensurePaths()
-  await cacheVSCodeVersion()
+  // Setup proxy configuration
+  const proxyManager = ProxyManager.getInstance();
+
+  if (options.proxyUrl) {
+    try {
+      const proxyConfig = parseProxyUrl(options.proxyUrl);
+      proxyManager.setConfig(proxyConfig);
+      consola.info(
+        `Using ${proxyConfig.type?.toUpperCase()} proxy: ${proxyConfig.host}:${proxyConfig.port}`,
+      );
+    } catch (error) {
+      consola.error("Invalid proxy URL:", error.message);
+      process.exit(1);
+    }
+  } else {
+    // Try to get proxy from environment variables
+    const envProxy = getProxyFromEnv();
+    if (envProxy) {
+      proxyManager.setConfig(envProxy);
+      consola.info(
+        `Using ${envProxy.type?.toUpperCase()} proxy from environment: ${envProxy.host}:${envProxy.port}`,
+      );
+    }
+  }
+
+  await ensurePaths();
+  await cacheVSCodeVersion();
 
   if (options.githubToken) {
-    state.githubToken = options.githubToken
-    consola.info("Using provided GitHub token")
+    state.githubToken = options.githubToken;
+    consola.info("Using provided GitHub token");
   } else {
-    await setupGitHubToken()
+    await setupGitHubToken();
   }
 
-  await setupCopilotToken()
-  await cacheModels()
+  await setupCopilotToken();
+  await cacheModels();
 
   consola.info(
     `Available models: \n${state.models?.data.map((model) => `- ${model.id}`).join("\n")}`,
-  )
+  );
 
-  const serverUrl = `http://localhost:${options.port}`
+  const serverUrl = `http://localhost:${options.port}`;
 
   if (options.claudeCode) {
-    invariant(state.models, "Models should be loaded by now")
+    invariant(state.models, "Models should be loaded by now");
 
     const selectedModel = await consola.prompt(
       "Select a model to use with Claude Code",
@@ -69,7 +101,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
         type: "select",
         options: state.models.data.map((model) => model.id),
       },
-    )
+    );
 
     const selectedSmallModel = await consola.prompt(
       "Select a small model to use with Claude Code",
@@ -77,7 +109,7 @@ export async function runServer(options: RunServerOptions): Promise<void> {
         type: "select",
         options: state.models.data.map((model) => model.id),
       },
-    )
+    );
 
     const command = generateEnvScript(
       {
@@ -87,27 +119,27 @@ export async function runServer(options: RunServerOptions): Promise<void> {
         ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
       },
       "claude",
-    )
+    );
 
     try {
-      clipboard.writeSync(command)
-      consola.success("Copied Claude Code command to clipboard!")
+      clipboard.writeSync(command);
+      consola.success("Copied Claude Code command to clipboard!");
     } catch {
       consola.warn(
         "Failed to copy to clipboard. Here is the Claude Code command:",
-      )
-      consola.log(command)
+      );
+      consola.log(command);
     }
   }
 
   consola.box(
     `🌐 Usage Viewer: https://ericc-ch.github.io/copilot-api?endpoint=${serverUrl}/usage`,
-  )
+  );
 
   serve({
     fetch: server.fetch as ServerHandler,
     port: options.port,
-  })
+  });
 }
 
 export const start = defineCommand({
@@ -169,12 +201,18 @@ export const start = defineCommand({
       default: false,
       description: "Show GitHub and Copilot tokens on fetch and refresh",
     },
+    "proxy-url": {
+      type: "string",
+      description: "Proxy URL (supports http:// and socks5:// protocols)",
+    },
   },
   run({ args }) {
-    const rateLimitRaw = args["rate-limit"]
+    const rateLimitRaw = args["rate-limit"];
     const rateLimit =
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      rateLimitRaw === undefined ? undefined : Number.parseInt(rateLimitRaw, 10)
+      rateLimitRaw === undefined
+        ? undefined
+        : Number.parseInt(rateLimitRaw, 10);
 
     return runServer({
       port: Number.parseInt(args.port, 10),
@@ -186,6 +224,7 @@ export const start = defineCommand({
       githubToken: args["github-token"],
       claudeCode: args["claude-code"],
       showToken: args["show-token"],
-    })
+      proxyUrl: args["proxy-url"],
+    });
   },
-})
+});

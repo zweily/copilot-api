@@ -91,8 +91,6 @@
         --tw-ring-color: var(--color-blue);
         border-color: var(--color-blue);
       }
-
-
     </style>
   </head>
   <body class="antialiased">
@@ -419,7 +417,7 @@
               lucide.createIcons({
                 nodes: [container.querySelector("[data-lucide]")],
               }),
-            0
+            0,
           );
           return container.outerHTML;
         }
@@ -460,7 +458,7 @@
             const response = await fetch(url);
             if (!response.ok) {
               throw new Error(
-                `Request failed with status ${response.status}: ${response.statusText}`
+                `Request failed with status ${response.status}: ${response.statusText}`,
               );
             }
             const jsonData = await response.json();
