@@ -34,6 +34,8 @@ interface RunServerOptions {
   showToken: boolean
   proxyUrl?: string
   proxyType?: string
+  apiKeys?: Array<string>
+  disableAuth: boolean
 }
 
 /**
@@ -58,9 +60,31 @@ async function handleClaudeCodeSetup(serverUrl: string): Promise<void> {
     },
   )
 
+  // Check if API authentication is enabled
+  const { ApiKeyManager } = await import("./lib/api-auth")
+  const apiKeyManager = ApiKeyManager.getInstance()
+
+  let authToken = "dummy"
+
+  if (apiKeyManager.isEnabled()) {
+    const availableKeys = apiKeyManager.listKeys()
+    if (availableKeys.length > 0) {
+      // Use the first available API key
+      authToken = availableKeys[0].key
+      consola.info("ℹ️  Using API key authentication for Claude Code")
+    } else {
+      consola.warn(
+        "⚠️  Authentication is enabled but no API keys found. Using dummy token.",
+      )
+      consola.warn("   Generate an API key with: copilot-api api-keys generate")
+    }
+  } else {
+    consola.info("ℹ️  API authentication is disabled - using dummy token")
+  }
+
   const envVars = {
     ANTHROPIC_BASE_URL: serverUrl,
-    ANTHROPIC_AUTH_TOKEN: "dummy",
+    ANTHROPIC_AUTH_TOKEN: authToken,
     ANTHROPIC_MODEL: selectedModel,
     ANTHROPIC_SMALL_FAST_MODEL: selectedSmallModel,
   }
@@ -80,10 +104,17 @@ async function handleClaudeCodeSetup(serverUrl: string): Promise<void> {
     )
   }
 
+  // Show authentication status in the box
+  const authStatus =
+    apiKeyManager.isEnabled() ?
+      "🔐 Authentication: Enabled (API key included)"
+    : "🔓 Authentication: Disabled (dummy token)"
+
   // Always show the commands for all platforms
   consola.box(
     [
       `🚀 Claude Code Commands (Detected: ${detectedShell})`,
+      authStatus,
       "",
       "📋 PowerShell:",
       allCommands.PowerShell,
@@ -106,6 +137,8 @@ export async function runServer(options: RunServerOptions): Promise<void> {
     consola.info("Verbose logging enabled")
   }
 
+  await ensurePaths()
+
   state.accountType = options.accountType
   if (options.accountType !== "individual") {
     consola.info(`Using ${options.accountType} plan GitHub account`)
@@ -115,6 +148,30 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   state.rateLimitSeconds = options.rateLimit
   state.rateLimitWait = options.rateLimitWait
   state.showToken = options.showToken
+
+  // Setup API key authentication
+  const { ApiKeyManager } = await import("./lib/api-auth")
+  const apiKeyManager = ApiKeyManager.getInstance()
+
+  await apiKeyManager.loadKeysFromFile()
+
+  if (options.disableAuth) {
+    apiKeyManager.setConfig([], false)
+    consola.warn(
+      "⚠️  API authentication disabled - server is open to all requests!",
+    )
+  } else if (options.apiKeys && options.apiKeys.length > 0) {
+    apiKeyManager.setConfig(options.apiKeys, true)
+  } else {
+    // Try to use existing keys from file
+    const existingKeys = apiKeyManager.listKeys()
+    if (existingKeys.length === 0) {
+      consola.warn(
+        "⚠️  No API keys configured. Run 'copilot-api api-keys generate' to create one, or use --disable-auth for local development",
+      )
+      apiKeyManager.setConfig([], false)
+    }
+  }
 
   // Setup proxy configuration
   const proxyManager = ProxyManager.getInstance()
@@ -240,6 +297,16 @@ export const start = defineCommand({
       type: "string",
       description: "Proxy URL (supports http:// and socks5:// protocols)",
     },
+    "api-keys": {
+      type: "string",
+      description:
+        "Comma-separated list of API keys (alternative to file-based keys)",
+    },
+    "disable-auth": {
+      type: "boolean",
+      default: false,
+      description: "Disable API key authentication (for local development)",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -258,6 +325,11 @@ export const start = defineCommand({
       claudeCode: args["claude-code"],
       showToken: args["show-token"],
       proxyUrl: args["proxy-url"],
+      apiKeys:
+        args["api-keys"] ?
+          args["api-keys"].split(",").map((k) => k.trim())
+        : undefined,
+      disableAuth: args["disable-auth"],
     })
   },
 })

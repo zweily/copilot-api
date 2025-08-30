@@ -2,6 +2,7 @@ import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { logger } from "hono/logger"
 
+import { addAuthInfoMiddleware, authMiddleware } from "./lib/auth-middleware"
 import { completionRoutes } from "./routes/chat-completions/route"
 import { embeddingRoutes } from "./routes/embeddings/route"
 import { messageRoutes } from "./routes/messages/route"
@@ -13,8 +14,23 @@ export const server = new Hono()
 
 server.use(logger())
 server.use(cors())
+server.use(addAuthInfoMiddleware)
 
+// Health check endpoint (unprotected)
 server.get("/", (c) => c.text("Server running"))
+server.get("/health", (c) =>
+  c.json({ status: "ok", timestamp: new Date().toISOString() }),
+)
+
+// Protected API endpoints
+server.use("/chat/completions/*", authMiddleware)
+server.use("/v1/chat/completions/*", authMiddleware)
+server.use("/models/*", authMiddleware)
+server.use("/v1/models/*", authMiddleware)
+server.use("/embeddings/*", authMiddleware)
+server.use("/v1/embeddings/*", authMiddleware)
+server.use("/v1/messages/*", authMiddleware)
+server.use("/token/*", authMiddleware)
 
 server.route("/chat/completions", completionRoutes)
 server.route("/models", modelRoutes)
